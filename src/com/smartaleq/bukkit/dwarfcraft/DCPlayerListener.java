@@ -1,10 +1,13 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import java.util.List;
+
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerItemEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
 
 import com.smartaleq.bukkit.dwarfcraft.ui.Command;
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
@@ -19,7 +22,10 @@ public class DCPlayerListener extends PlayerListener {
 	}
    
 
-
+/**
+ * Reads player input and checks for a /dc command
+ * this functionality may soon be obsolete and use the Command class from bukkit
+ */
 	public void onPlayerCommand(PlayerChatEvent event) {
 		Player player = event.getPlayer();
 		String[] fullPlayerInput = event.getMessage().split(" ");
@@ -45,6 +51,12 @@ public class DCPlayerListener extends PlayerListener {
 		}
 	}
 	
+	/**
+	 * When a player joins the server this initialized their data
+	 * from the database or creates new info for them.
+	 * 
+	 * also broadcasts a welcome "player" message
+	 */
 	public void onPlayerJoin(PlayerEvent event){
 		Player player = event.getPlayer();
 		Dwarf dwarf = Dwarf.find(player);
@@ -60,9 +72,33 @@ public class DCPlayerListener extends PlayerListener {
 	
     /**
      * Called when a player uses an item
+     * Eating food will cause extra health or less health to be gained
      *
      * @param event Relevant event details
      */
     public void onPlayerItem(PlayerItemEvent event) {
+    	 //General information
+    	Player player = event.getPlayer();
+    	Dwarf dwarf = Dwarf.find(player);
+    	List<Skill> skills = dwarf.skills;
+    	
+   	//Effect Specific information
+    	ItemStack item = player.getItemInHand();
+    	int itemId = -1;
+    	if (item!=null) {
+    		itemId = item.getTypeId();	
+    	}
+    	
+    	for(Skill s: skills){
+    		if (s==null)continue;
+    		for(Effect e:s.effects){
+    			if (e==null) continue;
+    			if(e.effectType == EffectType.EAT && e.initiatorId==itemId){
+    				player.setHealth((int) (player.getHealth()+e.getEffectAmount(s.level)));
+    				item.setAmount(item.getAmount()-1);
+    				
+				}
+			}
+		}
     }
 }

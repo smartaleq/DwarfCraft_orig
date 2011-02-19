@@ -1,5 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+
 public class Util {
 	
 	static Dwarf mostRecentAttacker;
@@ -8,5 +11,18 @@ public class Util {
 		double rand = Math.random();
 		if (rand>input%1) return (int) Math.floor(input);
 		else return (int) Math.ceil(input);
+	}
+	
+    /**
+     * Drops blocks at a block based on a specific effect(and level)
+     * @param block Block being destroyed
+     * @param e Effect causing a block to drop
+     * @param effectAmount Double number of blocks to drop
+     * @param drop item naturally or not
+     */
+	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally) {
+		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount));
+		if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
+		else loc.getWorld().dropItem(loc, item);
 	}
 }

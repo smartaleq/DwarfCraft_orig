@@ -100,7 +100,7 @@ public class Dwarf {
 		
 		//create output item stack of new items
 		for(ItemStack item:skill.trainingCost){
-			if (item != null){
+			if (item.getAmount() != 0){
 				trainingStack[i] = new ItemStack(item.getTypeId(), (int) Math.floor(item.getAmount()*multiplier));
 				i++;
 			}

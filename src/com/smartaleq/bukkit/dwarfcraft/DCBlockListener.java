@@ -5,9 +5,9 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockRightClickEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +22,10 @@ public class DCBlockListener extends BlockListener {
 	public DCBlockListener(final DwarfCraft plugin) {
 	}
  
-    public void onBlockDamage(BlockDamageEvent event) {
+  /**
+   * onBlockDamage used to accelerate how quickly blocks are destroyed. setDamage() not implemented yet
+   */
+	/*  public void onBlockDamage(BlockDamageEvent event) {
     	if (DwarfCraft.disableEffects) return;
     //General information
     	Player player = event.getPlayer();
@@ -41,9 +44,10 @@ public class DCBlockListener extends BlockListener {
 //    	event.setDamageLevel(event.getDamageLevel() + effectAmount);
 //		event.setCancelled(true);
     }
+    */
 
     /**
-     * Called when a player right clicks a block
+     * Called when a player right clicks a block, used for hoe-ing grass.
      *
      * @param event Relevant event details
      */
@@ -62,11 +66,41 @@ public class DCBlockListener extends BlockListener {
     		toolId = tool.getTypeId();  
     		damage = tool.getDurability(); 	
     	}
-    	boolean correctTool = false;
     	Block block = event.getBlock();
+    	Location loc = block.getLocation();
     	int materialId = event.getBlock().getTypeId();
-    	//if hoeing land do stuff
+    	boolean durabilityChange = false;
+    	boolean blockDropChange = false;
+    	
+    	for(Skill s: skills){
+    		if (s==null)continue;
+    		for(Effect e:s.effects){
+    			if (e==null) continue;
+    			if(e.effectType == EffectType.PLOWDURABILITY){
+    				for(int id:e.tools){
+    					if(id == toolId && (materialId == 3 || materialId == 2)) {
+		    				double effectAmount = e.getEffectAmount(s.level);
+		    				tool.setDurability((short) (damage + Util.randomAmount(effectAmount)));	
+		    				block.setTypeId(60);
+		    				durabilityChange = true;
+		    			}
+    				}
+    			}
+				if(e.effectType == EffectType.PLOW){
+					for(int id:e.tools){
+						if(id == toolId && materialId == 3){
+		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(s.level), true);
+			    			blockDropChange = true;
+						}
+					}
+    			}
+    		}
+    	}
+    	if (durabilityChange || blockDropChange) {
+    		((Cancellable) event).setCancelled(true);
+    	}
     }
+    	
 
     /**
      * Called when a block is destroyed by a player.
@@ -90,6 +124,7 @@ public class DCBlockListener extends BlockListener {
     	}
     	boolean correctTool = false;
     	Block block = event.getBlock();
+    	Location loc = block.getLocation();
     	int materialId = event.getBlock().getTypeId();
     	
     //Logic vars, would be better with methods, but kept ugly for code simplicity
@@ -115,7 +150,8 @@ public class DCBlockListener extends BlockListener {
     				correctTool = false;
 	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
 		    		if(correctTool || e.allowFist){
-		    			dropBlockEffect(block, e, e.getEffectAmount(s.level));
+		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(s.level), true);
+		    			blockDropChange = true;
 	    			}
 	   			}
     		}
@@ -127,15 +163,6 @@ public class DCBlockListener extends BlockListener {
     	}
     }
 
-    /**
-     * Drops blocks at a block based on a specific effect(and level)
-     * @param block Block being destroyed
-     * @param e Effect causing a block to drop
-     * @param effectAmount Double number of blocks to drop
-     */
-	private void dropBlockEffect(Block block, Effect e, double effectAmount) {
-		Location loc = block.getLocation();
-		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount));
-		block.getWorld().dropItemNaturally(loc, item);
-	}
+
+
 }
