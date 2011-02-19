@@ -1,0 +1,81 @@
+package com.smartaleq.bukkit.dwarfcraft;
+
+import java.io.*;
+import org.bukkit.Server;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginLoader;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.PluginManager;
+
+/**
+ * 
+ * DwarfCraft is a RPG-like plugin for minecraft (via Bukkit) that allows players to improve their characters.
+ * Players(Dwarfs!) may pay materials in a school area to improve a skill level, which will provide benefits
+ * such as increased weapon damage, decreased tool durability drop, increased drops from blocks or mobs, etc.
+ * 
+ * Data used for this plugin comes from two places: 
+ * On each load, a list of skills and effects is pulled from flatfiles.
+ * Dwarf's skill levels and world training zones are kept in database (currently supports only sqlite)  
+ * 
+ * @author smartaleq
+ * 
+ */
+public class DwarfCraft extends JavaPlugin {
+
+private final DCBlockListener	blockListener 	= new DCBlockListener(this);
+private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
+private final DCEntityListener	entityListener	= new DCEntityListener(this);
+private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
+
+public static boolean debugMessages = true;
+public static boolean disableEffects = false;
+
+
+
+public DwarfCraft(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
+    super(pluginLoader, instance, desc, folder, plugin, cLoader);
+}
+	
+	/**	
+	 * Called upon enabling the plugin
+	 */
+	public void onEnable() {
+	    PluginManager pm = getServer().getPluginManager();
+	    
+		pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Low, this);
+		
+		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_BLOCK, entityListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.High, this);
+		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+		
+		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
+		pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Low, this);
+		
+		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, vehicleListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Lowest, this);
+		
+		if(ConfigManager.setUpSkillsArray()) ConfigManager.setUpEffects();
+		DataManager.dbInitialize();
+		
+				
+	    PluginDescriptionFile pdfFile = this.getDescription();
+	    System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
+	}
+		
+
+	/**
+	 * Called upon disabling the plugin.
+	 */
+	public void onDisable() {
+		/*
+		 * close dbs
+		 */
+	}
+}
+
