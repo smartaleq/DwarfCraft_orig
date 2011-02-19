@@ -7,3 +7,5 @@ On each load, a list of skills and effects is pulled from flatfiles.
 Dwarf's skill levels and world training zones are kept in a database (currently supports only sqlite)  
 
 Useful commands to get started: '/dc help' '/dc tutorial' '/dc info'
+
+Work in Progress
