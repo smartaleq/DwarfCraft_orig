@@ -302,9 +302,9 @@ public class Dwarf {
 		player.sendMessage(string);
 	}
 
-	public int isElf() {
-		if (isElf) return 1;
-		return 0;
+	public boolean isElf() {
+		if (isElf) return true;
+		return false;
 	}
 
 	

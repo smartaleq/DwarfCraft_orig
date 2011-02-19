@@ -17,21 +17,31 @@ public class Command {
 	
 	Player player;
 	String[] playerInput = new String[10];
-//	private final DwarfCraft plugin;
+	private final DwarfCraft plugin;
 	
-	public Command(/*DwarfCraft instance,*/ Player player, String[] playerInput){
-//		this.plugin = instance;
+	public Command(DwarfCraft instance, Player player, String[] playerInput){
+		this.plugin = instance;
 		this.player = player;
 		this.playerInput = playerInput;
 	}
 	
 	public Player getPlayer(String playerName){
-//		Player[] players = plugin.getServer().getOnlinePlayers();
-//        for (Player player : players) {
-//            if (player.getName().equalsIgnoreCase(playerName)) return player;
-//        }
+		Player[] players = plugin.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(playerName)) return player;
+        }
         return null;
 	}	
+	
+	public boolean isInt (String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch(NumberFormatException nfe) {
+			return false;
+		}
+	}
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started execute");
@@ -180,15 +190,58 @@ public class Command {
 	private boolean setSkill() {
 //		if (!player.hasPermission()) return false;
 		try{
-			Dwarf dwarf = (Dwarf) getPlayer(playerInput[1]);
-			Skill skill = dwarf.getSkill(Integer.parseInt(playerInput[2]));
-			int level = Integer.parseInt(playerInput[3]);
+			
+			if (playerInput[1] == null || playerInput[2] == null || playerInput[3] == null || playerInput[4] != null) {
+				Out.sendMessage(player, "&cSyntax: &e/dc setskill &9<player> &b<skill> &3<level>");
+				return true;
+			}
+			
+			Player target = getPlayer(playerInput[1]);
+			if (target == null) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &ecould not be found.");
+				return true;
+			}
+			Dwarf dwarf = Dwarf.find(target);
+			if (dwarf == null) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &efound, but could not find associated Dwarf.");
+				return true;
+			}
+			if (dwarf.isElf()) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &eis an elf.");
+				return true;
+			}
+			
+			Skill skill;
+			if (isInt(playerInput[2]))
+				skill = dwarf.getSkill(Integer.parseInt(playerInput[2]));
+			else
+				skill = dwarf.getSkill(playerInput[2]);
+			
+			if (skill == null) {
+				Out.sendMessage(player, "&cError: &eCould not find skill &b" + playerInput[2]);
+				return true;
+			}
+			
+			if (!isInt(playerInput[3])) {
+				Out.sendMessage(player, "&cError: &eSkill value not a number");
+				return true;
+			}
+			Integer level = Integer.parseInt(playerInput[3]);
+			
+			if ( level < 0 || level > 30) { // only support setting in-bounds skills. (0-30)
+				Out.sendMessage(player, "&cError: &eskill level &3" + level + "&e out of bounds.");
+				return true;
+			}
+			
 			skill.level = level;
+			Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + target.getDisplayName() + "&e to &3" + level);
+/*
 			Out.sendMessage(new Player[]{(Player)dwarf, player}, 
 					" Admin " + player +
 					" changed Skill " + skill.displayName +
 					" for player " + dwarf.player.getName() +
 					" to level " + level);
+					*/
 			return true;
 		}
 		catch (Exception e){
