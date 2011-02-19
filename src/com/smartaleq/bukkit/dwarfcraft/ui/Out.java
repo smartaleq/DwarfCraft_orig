@@ -99,10 +99,10 @@ public class Out {
 	
 	public static boolean printSkillSheet(Dwarf dwarf, Player viewer) {
 		String message1;
-		String message2 = "  ";
+		String message2 = "";
 		String prefix1 = "&6[&dSkillsheet&6] ";
 		String prefix2 = "&6[&dDC&6] ";	
-		message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+		message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + prefix1 + "Dwarf &6Level is &3" + dwarf.getDwarfLevel());
 		sendMessage(viewer, message1, prefix1);
 		
 		if(dwarf.isElf){
@@ -110,9 +110,12 @@ public class Out {
 			sendMessage(viewer, message2, prefix2);
 			return true;
 		}
-		for (Skill s:dwarf.skills){
+		boolean odd = false;
+		for (Skill s:dwarf.skills){	
 			if(s == null) continue;
-			message2 = message2.concat("&b"+ s.displayName + ":&6[&3" + s.level + "&6]  ");
+			odd = !odd;
+			message2 = message2.concat("&b"+ s.displayName + "\t\t:&6[&3" + s.level + "&6]  ");
+			if (odd) message2 = message2.concat("\n");
 		}
 		sendMessage(viewer, message2, prefix2);
 		return true;

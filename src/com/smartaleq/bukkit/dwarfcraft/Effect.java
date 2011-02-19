@@ -116,7 +116,7 @@ public class Effect {
 		double elfAmount = getEffectAmount(elfEffectLevel);
 		String toolType = toolType();
 		
-		description = String.format("ID: %i | Init: %s | Output: %s | Lvl0: %d | Lvl30: %d | ElfLevel: %i | ElfEffect: %d | Tools: %s",
+		description = String.format("ID: %d | Init: %s | Output: %s | Lvl0: %.2f | Lvl30: %.2f | ElfLevel: %d | ElfEffect: %.2f | Tools: %s",
 				id, 
 				initiator,
 				output,
@@ -137,7 +137,6 @@ public class Effect {
 	 */
 	public String describeLevel(int skillLevel){
 		String description = "no skill description";
-		
 		// Variables used in skill descriptions
 		String initiator = Material.getMaterial(initiatorId).toString();
 		String output = Material.getMaterial(outputId).toString();
@@ -148,139 +147,140 @@ public class Effect {
 		String toolType = toolType();
 		
 		if (effectType.equals(EffectType.ARMORHIT)){
-			if (moreThanOne){description = String.format("&6When attacked your &2%s&6 takes %s%d &cMore &6damage",
+			if (moreThanOne){description = String.format("&6When attacked your &2%s&6 takes %s%.2f &cMore &6damage",
 						initiator,
 						effectLevelColor,
 						effectAmount);
 			}
-			else {description = String.format("&6When attacked your &2%s&6 takes %s%d &aLess &6 damage",
+			else {description = String.format("&6When attacked your &2%s&6 takes %s%.2f &aLess &6 damage",
 					initiator,
 					effectLevelColor,
 					effectAmount);
 			}
 		}
 		else if (effectType.equals(EffectType.BLOCKDROP)){
-			description = String.format("&6When you break a &2%s &6approx. %s%d &2%s&6 are created",
+			description = String.format("&6When you break a &2%s &6approx. %s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
 				effectAmount,
 				output );
+
+			System.out.println(description);
 		}
 		else if (effectType.equals(EffectType.BOWATTACK)){
-			description = String.format("&6Your Arrows do %s%i &6hp damage (half hearts)",
+			description = String.format("&6Your Arrows do %s%.0f &6hp damage (half hearts)",
 				effectLevelColor,
-				(int)effectAmount);
+				effectAmount);
 		}
 		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
-			description = String.format("&6As a town resident you contribute %s%d &6to max town size",
+			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
 				effectLevelColor,
 				effectAmount );
 		}
 		else if (effectType.equals(EffectType.CRAFT)){
-			description = String.format("&6You craft %s%i &2%s instead of &e%i",
+			description = String.format("&6You craft %s%.0f &2%s instead of &e%.0f",
 				effectLevelColor,
-				(int)effectAmount,
+				effectAmount,
 				output,
-				(int)elfAmount);
+				elfAmount);
 		}
 		else if (effectType.equals(EffectType.DIGTIME)){
-			if (moreThanOne){description = String.format("&6You dig %s%i%% slower &6with &2%s",
+			if (moreThanOne){description = String.format("&6You dig %s%d%% slower &6with &2%s",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100),
 					toolType);
 			}
-			else {description = String.format("&6You dig %s%i%% faster &6with &2%s",
+			else {description = String.format("&6You dig %s%d%% faster &6with &2%s",
 					effectLevelColor,
 					(int)(100 - effectAmount*100),
 					toolType);
 			}
 		}
 		else if (effectType.equals(EffectType.TOOLDURABILITY)){
-			description = String.format("&6Each use of a &2%s &6removes approx. %s%d &6durability",
+			description = String.format("&6Each use of a &2%s &6removes approx. %s%.2f &6durability",
 					toolType,
 					effectLevelColor,
 					effectAmount);
 		}
 		else if (effectType.equals(EffectType.EAT)){
-			description = String.format("&6You gain %s%d hearts instead of &e%d when you eat &2%s",
+			description = String.format("&6You gain %s%.2f hearts instead of &e%.2f when you eat &2%s",
 					effectLevelColor,
 					effectAmount,
 					elfAmount,
 					initiator);
 		}
 		else if (effectType.equals(EffectType.EXPLOSIONDAMAGE)){
-			if (moreThanOne){description = String.format("&6You take %s%i%% more &6damage from explosions",
+			if (moreThanOne){description = String.format("&6You take %s%d%% more &6damage from explosions",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}
-			else {description = String.format("&6You take %s%i%% less &6damage from explosions",
+			else {description = String.format("&6You take %s%d%% less &6damage from explosions",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}
 		}
 		else if (effectType.equals(EffectType.FIREDAMAGE)){
-			if (moreThanOne){description = String.format("&6You take %s%i%% more &6damage from fire",
+			if (moreThanOne){description = String.format("&6You take %s%d%% more &6damage from fire",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}
-			else {description = String.format("&6You take %s%i%% less &6damage from fire",
+			else {description = String.format("&6You take %s%d%% less &6damage from fire",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}
 		}
 		else if (effectType.equals(EffectType.MOBDROP)){
-			description = String.format("&6When you kill a mob that drops &2%s you get approx %s%d&6",
+			description = String.format("&6When you kill a mob that drops &2%s you get approx %s%.2f&6",
 					output,
 					effectLevelColor,
 					effectAmount,
 					output );
 			//special zombie exception
 			if(id == 850||id == 851){
-				description = String.format("&6When you kill a zombie you get approx %s%d &2%s",
+				description = String.format("&6When you kill a zombie you get approx %s%.2f &2%s",
 						effectLevelColor,
 						effectAmount,
 						output );
 			}
 		}
 		else if (effectType.equals(EffectType.PLOW)){
-			description = String.format("&6You gain %s%d seeds instead of &e%d when you plow grass",
+			description = String.format("&6You gain %s%.2f seeds instead of &e%.2f when you plow grass",
 					effectLevelColor,
 					effectAmount,
 					elfAmount);
 		}
 		else if (effectType.equals(EffectType.PVEDAMAGE)){
-			description = String.format("&6You do %s%i&6%% of normal &2%s damage when fighting mobs",
+			description = String.format("&6You do %s%d&6%% of normal &2%s damage when fighting mobs",
 				effectLevelColor,
 				(int)(effectAmount*100),
 				toolType);
 		}
 		else if (effectType.equals(EffectType.PVPDAMAGE)){
-			description = String.format("&6You do %s%i&6%% of normal &2%s damage when fighting players",
+			description = String.format("&6You do %s%d&6%% of normal &2%s damage when fighting players",
 				effectLevelColor,
 				(int)(effectAmount*100),
 				toolType);
 		}				
 		
 		else if (effectType.equals(EffectType.TOWNBLOCKS)){
-			description = String.format("&6As a town mayor your town can claim no more than %s%d &6blocks, or the sum of your residents' Citizen skills",
+			description = String.format("&6As a town mayor your town can claim no more than %s%.2f &6blocks, or the sum of your residents' citizen skills",
 				effectLevelColor,
 				effectAmount );
 		}
 		else if (effectType.equals(EffectType.VEHICLEDROP)){
-			description = String.format("&6When you break a boat &6approx. %s%d &2%s&6 are created",
+			description = String.format("&6When you break a boat &6approx. %s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
 				effectAmount,
 				output );
 		}
 		else if (effectType.equals(EffectType.VEHICLEMOVE)){
-			description = String.format("&6Your boat travels %s%i%% faster than normal",
+			description = String.format("&6Your boat travels %s%d%% faster than normal",
 				effectLevelColor,
 				(int)(effectAmount*100 - 100));
 		}
 		else if (effectType.equals(EffectType.SPECIAL)){
-			description = String.format("special"
-				);
+			description = String.format("special");
 		}
 		
 		return description;

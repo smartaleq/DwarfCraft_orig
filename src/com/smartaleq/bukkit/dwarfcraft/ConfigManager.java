@@ -55,20 +55,7 @@ public class ConfigManager {
 				Effect[] effects;
 				effects = new Effect[10];
 				//create the new skill in the skillsarray
-				int i=0;
-				adder: for(Skill s:skillsArray){
-					if(s.id>id){
-						skillsArray.add(i,new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
-						break adder;
-					}
-					else if(i+1 == skillsArray.size()){
-						skillsArray.add(i,new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
-					}
-					break adder;
-						
-					}
-					i++;
-					
+				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
 			}
 			return true;
 		}
@@ -100,25 +87,25 @@ public class ConfigManager {
 					continue;
 					}
 				
-				int effectId = Integer.parseInt(theline[0]); 
-				double baseValue = Double.parseDouble(theline[1]);
-				double levelUpMultiplier = Double.parseDouble(theline[2]);
-				double noviceLevelUpMultiplier = Double.parseDouble(theline[3]);
-				double minValue = Double.parseDouble(theline[4]);
-				double maxValue = Double.parseDouble(theline[5]);
-				boolean floorResult = (theline[6] == "1"); 
-				boolean hasException = (theline[7] == "1"); 
-				int exceptionLow = Integer.parseInt(theline[8]); 
-				int exceptionHigh = Integer.parseInt(theline[9]); 
-				double exceptionValue = Double.parseDouble(theline[10]);
-				int elfLevel = Integer.parseInt(theline[11]);
-				EffectType effectType = EffectType.getEffectType(theline[12]);
-				int initiator = Integer.parseInt(theline[13]); 
-				int output = Integer.parseInt(theline[14]); 
-				boolean allowFist = (theline[15] == "TRUE");
+				int			effectId 				= Integer.parseInt(theline[0]); 
+				double 		baseValue 				= Double.parseDouble(theline[1]);
+				double 		levelUpMultiplier 		= Double.parseDouble(theline[2]);
+				double 		noviceLevelUpMultiplier = Double.parseDouble(theline[3]);
+				double 		minValue 				= Double.parseDouble(theline[4]);
+				double 		maxValue 				= Double.parseDouble(theline[5]);
+				boolean 	floorResult 			= (theline[6] == "1"); 
+				boolean 	hasException 			= (theline[7] == "1"); 
+				int 		exceptionLow 			= Integer.parseInt(theline[8]); 
+				int 		exceptionHigh 			= Integer.parseInt(theline[9]); 
+				double 		exceptionValue 			= Double.parseDouble(theline[10]);
+				int 		elfLevel 				= Integer.parseInt(theline[11]);
+				EffectType 	effectType 				= EffectType.getEffectType(theline[12]);
+				int 		initiator 				= Integer.parseInt(theline[13]); 
+				int 		output 					= Integer.parseInt(theline[14]); 
+				boolean 	allowFist 				= (theline[15] == "TRUE");
 
 				int[] tooltable = 
-						{Integer.parseInt(theline[16]),
+					{	Integer.parseInt(theline[16]),
 						Integer.parseInt(theline[17]),
 						Integer.parseInt(theline[18]),
 						Integer.parseInt(theline[19]),
