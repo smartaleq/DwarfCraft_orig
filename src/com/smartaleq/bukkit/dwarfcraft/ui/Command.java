@@ -33,6 +33,10 @@ public class Command {
         return null;
 	}	
 	
+	/*
+	 * isInt(String)
+	 * returns true if string is an int, false if not
+	 */
 	public boolean isInt (String str) {
 		try {
 			Integer.parseInt(str);
@@ -45,33 +49,33 @@ public class Command {
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started execute");
-		if (playerInput[0].equalsIgnoreCase("help")) return help();
-		if (playerInput[0].equalsIgnoreCase("?")) return help();
-		if (playerInput[0].equalsIgnoreCase("info")) return info();
-		if (playerInput[0].equalsIgnoreCase("commands")) return commands(1);
-		if (playerInput[0].equalsIgnoreCase("commands2")) return commands(2);
-		if (playerInput[0].equalsIgnoreCase("tutorial")) return tutorial(1);
-		if (playerInput[0].equalsIgnoreCase("tutorial2")) return tutorial(2);
-		if (playerInput[0].equalsIgnoreCase("tutorial3")) return tutorial(3);
-		if (playerInput[0].equalsIgnoreCase("tutorial4")) return tutorial(4);
-		if (playerInput[0].equalsIgnoreCase("tutorial5")) return tutorial(5);
+		if (playerInput[0].equalsIgnoreCase("help")) 				return help();
+		if (playerInput[0].equalsIgnoreCase("?")) 					return help();
+		if (playerInput[0].equalsIgnoreCase("info")) 				return info();
+		if (playerInput[0].equalsIgnoreCase("commands")) 			return commands(1);
+		if (playerInput[0].equalsIgnoreCase("commands2")) 			return commands(2);
+		if (playerInput[0].equalsIgnoreCase("tutorial")) 			return tutorial(1);
+		if (playerInput[0].equalsIgnoreCase("tutorial2")) 			return tutorial(2);
+		if (playerInput[0].equalsIgnoreCase("tutorial3")) 			return tutorial(3);
+		if (playerInput[0].equalsIgnoreCase("tutorial4")) 			return tutorial(4);
+		if (playerInput[0].equalsIgnoreCase("tutorial5")) 			return tutorial(5);
 
-		if (playerInput[0].equalsIgnoreCase("skillsheet")) return skillSheet();
-		if (playerInput[0].equalsIgnoreCase("skillinfo")) return skillInfo();
-		if (playerInput[0].equalsIgnoreCase("effectinfo")) return effectInfo();
+		if (playerInput[0].equalsIgnoreCase("skillsheet")) 			return skillSheet();
+		if (playerInput[0].equalsIgnoreCase("skillinfo")) 			return skillInfo();
+		if (playerInput[0].equalsIgnoreCase("effectinfo")) 			return effectInfo();
 		
-		if (playerInput[0].equalsIgnoreCase("train")) return train();
-		if (playerInput[0].equalsIgnoreCase("setskill")) return setSkill();
+		if (playerInput[0].equalsIgnoreCase("train")) 				return train();
+		if (playerInput[0].equalsIgnoreCase("setskill")) 			return setSkill();
 		
-		if (playerInput[0].equalsIgnoreCase("MAKEMEADWARF")) return makeMeADwarf(false);
-		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEADWARF"))return makeMeADwarf(true);
-		if (playerInput[0].equalsIgnoreCase("MAKEMEANELF")) return makeMeAnElf(false);
-		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEANELF")) return makeMeAnElf(true);
+		if (playerInput[0].equalsIgnoreCase("MAKEMEADWARF")) 		return makeMeADwarf(false);
+		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEADWARF"))	return makeMeADwarf(true);
+		if (playerInput[0].equalsIgnoreCase("MAKEMEANELF")) 		return makeMeAnElf(false);
+		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEANELF")) 	return makeMeAnElf(true);
 		
-		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) return schoolList();
-		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) return schoolInfo();
-		if (playerInput[0].equalsIgnoreCase("HERE")) return here();
-		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) return createSchool();
+		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) 			return schoolList();
+		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) 			return schoolInfo();
+		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
+		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return createSchool();
 				
 		return false;
 	}
@@ -109,13 +113,20 @@ public class Command {
 
 	/**
 	 * Parses input for a player name, or uses the command issuer if blank
+	 * Does own sanitization and error checking.
 	 */
 	private boolean skillSheet() {
 		if (DwarfCraft.debugMessages) System.out.println("Debug Message: starting skillsheet");
-		Dwarf target = (Dwarf)getPlayer(playerInput[1]);
-		if(target == null) {
+		Dwarf target;
+		if (playerInput[1] != null) {
+			target = (Dwarf)getPlayer(playerInput[1]);
+			if (target == null) {
+				Out.sendMessage(player, "Could not find player &9" + playerInput[1]);
+				return true;
+			}
+		}
+		else { // playerinput was null
 			target = Dwarf.find(player);
-			
 		}
 		if (DwarfCraft.debugMessages) System.out.println("Debug Message: skillsheet target =" + target.player.getName());
 		return Out.printSkillSheet(target, player);
@@ -185,7 +196,10 @@ public class Command {
 	}
 	
 	/**
-	 * Admin Command to change another players skills. Fails quietly
+	 * Admin Command to change another player's skill.
+	 * Syntax: /dc setskill <player> <skill> <level>
+	 * Performs input sanitization and cursory error checking,
+	 * Outputs own condition messages.
 	 */
 	private boolean setSkill() {
 //		if (!player.hasPermission()) return false;
@@ -211,12 +225,7 @@ public class Command {
 				return true;
 			}
 			
-			Skill skill;
-			if (isInt(playerInput[2]))
-				skill = dwarf.getSkill(Integer.parseInt(playerInput[2]));
-			else
-				skill = dwarf.getSkill(playerInput[2]);
-			
+			Skill skill = dwarf.getSkill(playerInput[2]);
 			if (skill == null) {
 				Out.sendMessage(player, "&cError: &eCould not find skill &b" + playerInput[2]);
 				return true;
@@ -235,13 +244,6 @@ public class Command {
 			
 			skill.level = level;
 			Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + target.getDisplayName() + "&e to &3" + level);
-/*
-			Out.sendMessage(new Player[]{(Player)dwarf, player}, 
-					" Admin " + player +
-					" changed Skill " + skill.displayName +
-					" for player " + dwarf.player.getName() +
-					" to level " + level);
-					*/
 			return true;
 		}
 		catch (Exception e){

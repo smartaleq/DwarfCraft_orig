@@ -168,7 +168,7 @@ public class Dwarf {
 		}
 	
 	/**
-	 * Gets a dwarf's skill from an effeft
+	 * Gets a dwarf's skill from an effect
 	 * @param effect (does not have to be this dwarf's effect, only used for ID#)
 	 * @return Skill or null if none found
 	 */
