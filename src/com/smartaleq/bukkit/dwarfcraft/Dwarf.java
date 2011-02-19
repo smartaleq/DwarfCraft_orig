@@ -75,7 +75,7 @@ public class Dwarf {
 		int dwarfLevel = getDwarfLevel();
 		int quartileSize = Math.min(4,highSkills/4);
 		int quartileNumber = 1; //1 = top, 2 = 2nd, etc.
-		int[] levelList = new int[highSkills];
+		int[] levelList = new int[highSkills+1];
 		ItemStack[] trainingStack = new ItemStack[3];
 		int i = 0;
 		
