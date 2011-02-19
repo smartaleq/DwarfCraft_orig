@@ -55,20 +55,7 @@ public class ConfigManager {
 				Effect[] effects;
 				effects = new Effect[10];
 				//create the new skill in the skillsarray
-				int i=0;
-				adder: for(Skill s:skillsArray){
-					if(s.id>id){
-						skillsArray.add(i,new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
-						break adder;
-					}
-					else if(i+1 == skillsArray.size()){
-						skillsArray.add(i,new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
-					}
-					break adder;
-						
-					}
-					i++;
-					
+				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
 			}
 			return true;
 		}
