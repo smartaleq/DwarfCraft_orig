@@ -33,7 +33,7 @@ public class Command {
         return null;
 	}	
 	
-	/*
+	/**
 	 * isInt(String)
 	 * returns true if string is an int, false if not
 	 */
@@ -95,7 +95,7 @@ public class Command {
 				return Out.commandHelp(player, c);
 			}
 		}
-		//this is not a command
+		// this is not a command
 		Out.error(player, Messages.ERRORBADINPUT);
 		return false;
 	}
@@ -112,14 +112,16 @@ public class Command {
 	}
 
 	/**
-	 * Parses input for a player name, or uses the command issuer if blank
+	 * Player command to print current skillsheet
+	 * Syntax: /dc skillsheet [target]
 	 * Does own sanitization and error checking.
+	 * Target is optional, will print caller's skillsheet on null
 	 */
 	private boolean skillSheet() {
 		if (DwarfCraft.debugMessages) System.out.println("Debug Message: starting skillsheet");
 		Dwarf target;
 		if (playerInput[1] != null) {
-			target = (Dwarf)getPlayer(playerInput[1]);
+			target = Dwarf.find(getPlayer(playerInput[1]));
 			if (target == null) {
 				Out.sendMessage(player, "Could not find player &9" + playerInput[1]);
 				return true;
@@ -133,22 +135,60 @@ public class Command {
 	}
 
 	/**
-	 * Parses input and passes skill to output
+	 * Player command to print skill information
+	 * Syntax: /dc skillinfo <skill>
+	 * <skill> is skill ID or skill name
+	 * Does own error checking.
 	 */
 	private boolean skillInfo() {
-		if (playerInput[2] != null) playerInput[1] = playerInput[1].concat(" " + playerInput[2]);
-		Skill skill = (Dwarf.find(player)).getSkill(playerInput[1]);
-		if (skill == null) return false;
+		if ( playerInput[1] == null || playerInput[2] != null ) {
+			Out.sendMessage(player, "Usage: /dc skillinfo &b<skill>");
+			return true;
+		}
+//		wtf does this do?			
+//		if (playerInput[2] != null) playerInput[1] = playerInput[1].concat(" " + playerInput[2]);
+		Dwarf dwarf = Dwarf.find(player);
+		if (dwarf == null) { // can this ever happen?
+			System.out.println("Error: in skillInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
+			return false;
+		}
+		
+		Skill skill = dwarf.getSkill(playerInput[1]);
+		if (skill == null) {
+			Out.sendMessage(player, "Skill &b" + playerInput[1] + "&6 not found.");
+			return true;
+		}
 		return Out.printSkillInfo(player, skill);
 	}
 
 	/**
-	 * Parses input and passes effect to output
+	 * Player command to print effect information
+	 * Syntax: /dc effectinfo <effect>
+	 * <effect> is effect ID
+	 * Does own error checking.
 	 */
 	private boolean effectInfo() {
-		Effect effect = (Dwarf.find(player)).getEffect(Integer.parseInt(playerInput[1]));
-		if(effect != null) return Out.effectInfo(player, effect);
-		return false;
+		if (playerInput[1] == null || playerInput[2] != null) { 
+			Out.sendMessage(player, "Usage: /dc effectinfo &5<effect>");
+			return true;
+		}
+		Dwarf dwarf = Dwarf.find(player);
+		if (dwarf == null) { // can this ever happen?
+			System.out.println("Error: in effectInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
+			return false;			
+		}
+		
+		if (!isInt(playerInput[1])) {
+			Out.sendMessage(player, "Effect must be a numeric effect ID");
+			return true;			
+		}
+		Effect effect = dwarf.getEffect(Integer.parseInt(playerInput[1]));
+		if(effect == null) {
+			Out.sendMessage(player, "Could not find effect ID &5" + playerInput[1]);
+			return true;
+		}
+		else
+			return Out.effectInfo(player, effect);
 	}
 	
 	/**
@@ -198,8 +238,9 @@ public class Command {
 	/**
 	 * Admin Command to change another player's skill.
 	 * Syntax: /dc setskill <player> <skill> <level>
+	 * <player> is target, <skill> is skill ID or alpha
+	 * <level> is desired level in range 0-30
 	 * Performs input sanitization and cursory error checking,
-	 * Outputs own condition messages.
 	 */
 	private boolean setSkill() {
 //		if (!player.hasPermission()) return false;
