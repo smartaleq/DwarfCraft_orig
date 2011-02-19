@@ -203,12 +203,19 @@ public class Command {
 			ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
 			boolean canTrain = true;
 			
-			if (!dwarf.isElf){
-				if (skill.level < 30) Out.sendMessage(dwarf, "&aYou are a &9Dwarf &a&& your skill is below 30", "&6[Train &b"+skill.id+"&6] ");
-				else {Out.sendMessage(dwarf, "&cYou are a &9Dwarf &cbut your skill is max level!", "&6[Train &b"+skill.id+"&6] ");
-					canTrain = false;}}
-			else {Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
-				return canTrain = false;}
+			if (!dwarf.isElf) {
+				if (skill.level < 30)
+					Out.sendMessage(dwarf, "&aYou are a &9Dwarf &aand your skill is below 30", "&6[Train &b"+skill.id+"&6] ");
+				else {
+					Out.sendMessage(dwarf, "&cYou are a &9Dwarf &cbut your skill is max level!", "&6[Train &b"+skill.id+"&6] ");
+					canTrain = false;
+				}
+			}
+			else {
+				Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
+				return canTrain = false;
+			}
+			
 			if (dwarf.isInZone(skill.school)) Out.sendMessage(dwarf, "&aYou are in a &1"+skill.school+" &atraining zone", "&6[Train &b"+skill.id+"&6] ");
 			else {Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
 				canTrain = false;}

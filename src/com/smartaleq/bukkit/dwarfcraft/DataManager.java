@@ -165,13 +165,13 @@ public class DataManager {
 	public static TrainingZone[] getSchoolZones(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
-		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+		    Connection conn = DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 		    Statement statement = conn.createStatement();
-		    String query = "select * from schoolzones Where world="+world.getName()+");";
+		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
 			if (rs == null) return null;
-			rs.last();
+//			rs.last();
+// i am not sure if this statement has value, but it throws an exception
 			TrainingZone[] zoneList = new TrainingZone[rs.getRow()];
 			rs = statement.executeQuery(query);
 			rs.next();
