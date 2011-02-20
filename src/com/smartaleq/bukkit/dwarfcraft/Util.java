@@ -5,8 +5,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class Util {
 	
-	static Dwarf mostRecentAttacker;
-	
 	static int randomAmount(double input){
 		double rand = Math.random();
 		if (rand>input%1) return (int) Math.floor(input);
@@ -22,7 +20,12 @@ public class Util {
      */
 	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally) {
 		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount));
+		if (item.getAmount() == 0){
+			if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("Debug: dropped " + item.toString());
+			return;
+		}
 		if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
 		else loc.getWorld().dropItem(loc, item);
+		if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug: dropped " + item.toString());	
 	}
 }

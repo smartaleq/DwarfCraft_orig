@@ -61,10 +61,10 @@ public class DCBlockListener extends BlockListener {
    	//Effect Specific information
     	ItemStack tool = player.getItemInHand();
     	int toolId = -1;
-    	short damage = 0;
+    	short durability = 0;
     	if (tool!=null) {
     		toolId = tool.getTypeId();  
-    		damage = tool.getDurability(); 	
+    		durability = tool.getDurability(); 	
     	}
     	Block block = event.getBlock();
     	Location loc = block.getLocation();
@@ -80,7 +80,9 @@ public class DCBlockListener extends BlockListener {
     				for(int id:e.tools){
     					if(id == toolId && (materialId == 3 || materialId == 2)) {
 		    				double effectAmount = e.getEffectAmount(s.level);
-		    				tool.setDurability((short) (damage + Util.randomAmount(effectAmount)));	
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - old:"+durability);
+		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - new:"+tool.getDurability());
 		    				block.setTypeId(60);
 		    				durabilityChange = true;
 		    			}

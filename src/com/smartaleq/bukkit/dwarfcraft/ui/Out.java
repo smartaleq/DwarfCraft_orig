@@ -16,8 +16,8 @@ public class Out {
 /*
  * Messaging Statics	
  */
-	static int lineLength = 65;
-	static int maxLines = 10;
+	static final int lineLength = 68;
+	static final int maxLines = 18;
 	
 /*
  *     Color Schema: 
@@ -41,13 +41,13 @@ public class Out {
 	
 	
 	public static boolean generalHelp(Player player) {
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help6");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help6");
 		Out.sendMessage(player, "&d" + Messages.GENERALHELPMESSAGE.message, "&6[&d?&6] ");
 		return true;
 	}
 		
 	public static boolean commandHelp(Player player, CommandInfo c) {
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help5");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help5");
 		Out.sendMessage(player, "&d" + c.helpText, "&6[&d?&6] " );
 		return true;
 	}
@@ -239,7 +239,7 @@ public class Out {
 	 */
 	static void messagePrinter(Player player, String message, String prefix){
 		// if no message throw exception		
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started printer");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started printer");
 		int messageSectionLength = lineLength - prefix.length();
 		String currentLine = "";
 		String words[] = message.split(" ");
@@ -284,10 +284,10 @@ public class Out {
 	 */
 	static String parseColors(String message){	
 		if (message == null){
-			if (DwarfCraft.debugMessages) System.out.println("Debug Message: printing null message!");
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: printing null message!");
 			return null;
 		}
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: parsing colors for: "+ message);
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: parsing colors for: "+ message);
 		for(int i =0; i<message.length();i++){
 			try{
 				if(message.charAt(i)=='&'){

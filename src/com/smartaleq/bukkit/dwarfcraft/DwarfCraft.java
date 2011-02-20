@@ -20,6 +20,7 @@ import org.bukkit.plugin.PluginManager;
  * Dwarf's skill levels and world training zones are kept in database (currently supports only sqlite)  
  * 
  * @author smartaleq
+ * @author RCarretta
  * 
  */
 public class DwarfCraft extends JavaPlugin {
@@ -29,7 +30,7 @@ private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 
-public static boolean debugMessages = true;
+public static int debugMessagesThreshold = 5;
 public static boolean disableEffects = false;
 
 

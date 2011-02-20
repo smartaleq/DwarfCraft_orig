@@ -34,7 +34,8 @@ public class Command {
 	}	
 	
 	public boolean execute(){
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started execute");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
+		if (playerInput[0].equalsIgnoreCase("debug")) if (playerInput[1] != null) DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
 		if (playerInput[0].equalsIgnoreCase("help")) return help();
 		if (playerInput[0].equalsIgnoreCase("?")) return help();
 		if (playerInput[0].equalsIgnoreCase("info")) return info();
@@ -70,13 +71,13 @@ public class Command {
 	 * Sends detailed help text from command help listing or general help text with no argument
 	 */
 	public boolean help() {
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help");
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: started help");
 		if (playerInput[1] == null)	return Out.generalHelp(player);
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help2");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help2");
 		for (CommandInfo c: CommandInfo.values()){
-			if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help3");
+			if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help3");
 			if (playerInput[1].equalsIgnoreCase(c.toString())){		
-				if (DwarfCraft.debugMessages) System.out.println("Debug Message: started help4");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help4");
 				//this is a command
 				return Out.commandHelp(player, c);
 			}
@@ -101,13 +102,13 @@ public class Command {
 	 * Parses input for a player name, or uses the command issuer if blank
 	 */
 	private boolean skillSheet() {
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: starting skillsheet");
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skillsheet");
 		Dwarf target = (Dwarf)getPlayer(playerInput[1]);
 		if(target == null) {
 			target = Dwarf.find(player);
 			
 		}
-		if (DwarfCraft.debugMessages) System.out.println("Debug Message: skillsheet target =" + target.player.getName());
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + target.player.getName());
 		return Out.printSkillSheet(target, player);
 	}
 

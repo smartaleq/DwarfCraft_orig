@@ -10,13 +10,13 @@ import org.bukkit.inventory.ItemStack;
 
 public class ConfigManager {
 
-	static String configDirectory = "./DwarfCraft/";
-	static String configSkillsFileName = "skills.config";
-	static String configEffectsFileName = "effects.config";
+	static final String configDirectory = "./DwarfCraft/";
+	static final String configSkillsFileName = "skills.config";
+	static final String configEffectsFileName = "effects.config";
 		
 	
-	static int maximumSkillCount = 100;
-	static int maximumEffectCount = 1000;	
+	static final int maximumSkillCount = 100;
+	static final int maximumEffectCount = 1000;	
 	
 	static List<Skill> skillsArray = new ArrayList<Skill>();
 	
