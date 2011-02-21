@@ -1,5 +1,9 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,13 +30,48 @@ public class Dwarf {
 	 * @param player
 	 * @return dwarf or null
 	 */
-	public static Dwarf find(Player player){
+	public static Dwarf find(Player player) {
 		for(Dwarf d:DataManager.getDwarves()) {
-			if (d.player != null)
-				if (d.player.getName().equalsIgnoreCase(player.getName()))
-					return d;
+			if (d != null)
+				if (d.player != null)
+					if (d.player.getName().equalsIgnoreCase(player.getName()))
+						return d;
 		}
 		return null;
+	}
+
+	public static Dwarf find(String name) {
+		Dwarf dwarf = new Dwarf(null);
+		try {
+			String sanitizedName;			
+			sanitizedName = name;
+			
+			Class.forName("org.sqlite.JDBC");
+			Connection conn =
+			DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("select * from dwarfs where playername='" + sanitizedName + "';");
+		    if(rs == null) {
+		    	conn.close();
+		    	return null;
+		    }    
+			rs.next();
+			if (rs.isClosed()) {
+				conn.close();
+				return null;
+			}
+			dwarf.isElf = rs.getBoolean("iself");
+			for (Skill skill: dwarf.skills) {
+				if (skill!=null) skill.level = rs.getInt(skill.toString());
+			}
+			rs.close();
+	    	conn.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		    	//total failure
+		}
+		return dwarf;
 	}
 
 	
