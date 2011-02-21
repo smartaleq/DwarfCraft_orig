@@ -251,7 +251,7 @@ public class Command {
 			else{
 				return true; //something else goes here
 			}
-			return false;
+			return false; // useless comment
 		}
 		
 		catch (Exception e){
