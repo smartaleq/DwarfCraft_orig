@@ -252,7 +252,7 @@ public class Command {
 			if(itemStack == null) continue;
 			if(itemStack.getAmount() == 0) continue;
 			if(dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
-				Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.toString()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
+				Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
 				soFarSoGood = false;
 			}
 			else Out.sendMessage(dwarf, "&aYou have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &arequired", "&6[Train &b"+skill.id+"&6] ");
@@ -265,6 +265,7 @@ public class Command {
 			for (ItemStack itemStack: trainingCosts)
 				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
 			Out.sendMessage(dwarf,"&6Training Successful!","&6[&b"+skill.id+"&6] ");
+			DataManager.saveDwarfData(dwarf);
 			return true;
 		}
 		else{
@@ -322,6 +323,7 @@ public class Command {
 			
 			skill.level = level;
 			Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + target.getDisplayName() + "&e to &3" + level);
+			DataManager.saveDwarfData(dwarf);
 			return true;
 		}
 		catch (Exception e){
