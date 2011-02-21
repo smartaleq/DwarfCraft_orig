@@ -16,7 +16,7 @@ import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 public class Command {
 	
 	Player player;
-	String[] playerInput = new String[10];
+	String[] playerInput;
 	private final DwarfCraft plugin;
 	
 	public Command(DwarfCraft instance, Player player, String[] playerInput){
@@ -49,6 +49,7 @@ public class Command {
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
+		
 		if (playerInput[0].equalsIgnoreCase("debug")) {
 			if (playerInput[1] != null) {
 				DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
@@ -251,7 +252,6 @@ public class Command {
 			else{
 				return true; //something else goes here
 			}
-			return false; // useless comment
 		}
 		
 		catch (Exception e){

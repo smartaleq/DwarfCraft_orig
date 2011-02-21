@@ -28,8 +28,9 @@ public class Dwarf {
 	 */
 	public static Dwarf find(Player player){
 		for(Dwarf d:DataManager.getDwarves()) {
-			if (d == null) continue;
-			if (d.player.getName().equalsIgnoreCase(player.getName())) return d;
+			if (d.player != null)
+				if (d.player.getName().equalsIgnoreCase(player.getName()))
+					return d;
 		}
 		return null;
 	}
