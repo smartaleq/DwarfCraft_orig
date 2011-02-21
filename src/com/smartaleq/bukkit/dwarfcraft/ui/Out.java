@@ -98,27 +98,33 @@ public class Out {
 	}
 	
 	public static boolean printSkillSheet(Dwarf dwarf, Player viewer) {
-		String message1;
-		String message2 = "";
-		String prefix1 = "&6[&dSkillsheet&6] ";
-		String prefix2 = "&6[&dDC&6] ";	
-		message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + prefix1 + "Dwarf &6Level is &3" + dwarf.getDwarfLevel());
-		sendMessage(viewer, message1, prefix1);
-		
-		if(dwarf.isElf){
-			message2 = ("&fElves &6don't have skills, numbskull");
+		try {
+			String message1;
+			String message2 = "";
+			String prefix1 = "&6[&dSS&6] ";
+			String prefix2 = "&6[&dDC&6] ";	
+			message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + prefix1 + "Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+			sendMessage(viewer, message1, prefix1);
+			
+			if(dwarf.isElf){
+				message2 = ("&fElves &6don't have skills, numbskull");
+				sendMessage(viewer, message2, prefix2);
+				return true;
+			}
+			boolean odd = false;
+			for (Skill s:dwarf.skills){	
+				if(s == null) continue;
+				odd = !odd;
+				message2 = message2.concat("&b"+ s.displayName + "\t\t:&6[&3" + s.level + "&6] ");
+				if (odd) message2 = message2.concat("\n");
+			}
 			sendMessage(viewer, message2, prefix2);
 			return true;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
 		}
-		boolean odd = false;
-		for (Skill s:dwarf.skills){	
-			if(s == null) continue;
-			odd = !odd;
-			message2 = message2.concat("&b"+ s.displayName + "\t\t:&6[&3" + s.level + "&6]  ");
-			if (odd) message2 = message2.concat("\n");
-		}
-		sendMessage(viewer, message2, prefix2);
-		return true;
 	}	
 		
 	public static boolean effectInfo(Player player, Effect effect) {
@@ -307,14 +313,14 @@ public class Out {
 					else if (message.charAt(i+1)=='d') message = message.replace("&d", "§d");
 					else if (message.charAt(i+1)=='e') message = message.replace("&e", "§e");
 					else if (message.charAt(i+1)=='f') message = message.replace("&f", "§f");
-					else message = message.replaceFirst("&", "AND");
+					else message = message.replaceFirst("&", " AND ");
 				}
 			}
 			catch (Exception e){
 				e.printStackTrace();
 			}
 		}
-		message = message.replaceAll("AND", "&");
+		message = message.replaceAll(" AND ", "&");
 		return message;
 	}
 

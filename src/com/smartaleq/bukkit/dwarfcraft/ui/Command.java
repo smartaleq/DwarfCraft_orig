@@ -35,7 +35,13 @@ public class Command {
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
-		if (playerInput[0].equalsIgnoreCase("debug")) if (playerInput[1] != null) DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
+		if (playerInput[0].equalsIgnoreCase("debug")) {
+			if (playerInput[1] != null) {
+				DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
+				return true;
+			}
+			return false;
+		}
 		if (playerInput[0].equalsIgnoreCase("help")) return help();
 		if (playerInput[0].equalsIgnoreCase("?")) return help();
 		if (playerInput[0].equalsIgnoreCase("info")) return info();

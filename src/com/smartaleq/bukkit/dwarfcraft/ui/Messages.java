@@ -2,11 +2,13 @@ package com.smartaleq.bukkit.dwarfcraft.ui;
 
 public enum Messages {
 	GENERALHELPMESSAGE (
-			"ZOMG LONG MESSAGE LONG " +
-			"MESSAGE long message zomg really" +
-			"long message"),
+			"Welcome to Dan, Joey, and Ryan's Minecraft Server with DwarfCraft," +
+			"Towny, and InterestingPlaces. We want you to have a good time, but" +
+			"there are a few rules you should follow. Use /dc rules to get the" +
+			"rules message. For more information about DwarfCraft, use /dc help." +
+			"for more information about Towny, use /towny help."),
 	SERVERRULESMESSAGE (
-			"server rules"),
+			"Server Rules: (1)Play to have fun. (2)You should know how you got here, how you're connected to Dan/Joey/Ryan"),
 	INFO ( "&dWelcome to DwarfCraft. You are a Dwarf with " +
 			"a set of skills that let you do minecraft tasks better." +
 			" When you first start, things may be more difficult" +

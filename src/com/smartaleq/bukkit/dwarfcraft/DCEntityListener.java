@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
@@ -18,8 +18,23 @@ public class DCEntityListener extends EntityListener {
 	public DCEntityListener(final DwarfCraft plugin) {
 	}
 
+	public void onEntityDamaged(EntityDamageEvent event){
+		if(
+			event.getCause() == DamageCause.BLOCK_EXPLOSION ||
+			event.getCause() == DamageCause.ENTITY_EXPLOSION || 
+			event.getCause() == DamageCause.FALL || 
+			event.getCause() == DamageCause.FIRE || 
+			event.getCause() == DamageCause.FIRE_TICK){
+			onEntityDamagedByEnvirons(event);
+		}
+		else if (event.getCause() == DamageCause.ENTITY_ATTACK){
+			if(event instanceof EntityDamageByProjectileEvent)
+			EntityAttack((EntityDamageByEntityEvent) event);
+		}
+		else return;
+	}
 	
-    public void onEntityDamageByBlock(EntityDamageByBlockEvent event) {
+    public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
     	if (DwarfCraft.disableEffects) return;
         //General information
        	if(!(event.getEntity() instanceof Player)) return;
@@ -39,7 +54,8 @@ public class DCEntityListener extends EntityListener {
     			if(	(e.effectType == EffectType.FALLDAMAGE && event.getCause() == DamageCause.FALL) ||
 					(e.effectType == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE) ||
 					(e.effectType == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE_TICK) ||
-					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.ENTITY_EXPLOSION)){
+					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.ENTITY_EXPLOSION) ||
+					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.BLOCK_EXPLOSION)){
     				if(hp <= 0) {event.setCancelled(true); return;}
     				chgDmg = (int) Math.floor((e.getEffectAmount(s.level)) * dmg) - dmg;
     				if (DwarfCraft.debugMessagesThreshold < 8) System.out.println("Debug Message: environment damage type:" + event.getCause() +
@@ -51,7 +67,7 @@ public class DCEntityListener extends EntityListener {
        	}  	
     }
 
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+    public void EntityAttack(EntityDamageByEntityEvent event) {
     	if (DwarfCraft.disableEffects) return;
     	Entity damager = event.getDamager();
     	LivingEntity victim;
@@ -118,7 +134,7 @@ public class DCEntityListener extends EntityListener {
     	}    	
     }
 
-    public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
+    public void EntityDamageByProjectile(EntityDamageByProjectileEvent event) {
     	if(!(event.getDamager() instanceof Player)) return;
     	Dwarf dwarf = Dwarf.find((Player) event.getDamager());
     	LivingEntity hitThing = ((LivingEntity) event.getEntity());

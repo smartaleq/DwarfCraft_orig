@@ -102,7 +102,7 @@ public class ConfigManager {
 				EffectType 	effectType 				= EffectType.getEffectType(theline[12]);
 				int 		initiator 				= Integer.parseInt(theline[13]); 
 				int 		output 					= Integer.parseInt(theline[14]); 
-				boolean 	allowFist 				= (theline[15] == "TRUE");
+				boolean 	allowFist 				= (theline[15].equalsIgnoreCase("TRUE"));
 
 				int[] tooltable = 
 					{	Integer.parseInt(theline[16]),

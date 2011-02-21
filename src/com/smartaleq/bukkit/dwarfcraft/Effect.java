@@ -108,23 +108,24 @@ public class Effect {
 	 * @return
 	 */
 	public String describeGeneral(){
-		String description = "no skill description";
+		String description;
 		String initiator = Material.getMaterial(initiatorId).toString();
+		if (initiator.equalsIgnoreCase("AIR")) initiator = "None";
 		String output = Material.getMaterial(outputId).toString();
+		if (output.equalsIgnoreCase("AIR")) output = "None";
 		double effectAmountLow = getEffectAmount(0);
 		double effectAmountHigh = getEffectAmount(30);
 		double elfAmount = getEffectAmount(elfEffectLevel);
 		String toolType = toolType();
-		
-		description = String.format("ID: %d | Init: %s | Output: %s | Lvl0: %.2f | Lvl30: %.2f | ElfLevel: %d | ElfEffect: %.2f | Tools: %s",
-				id, 
-				initiator,
-				output,
-				effectAmountLow,
-				effectAmountHigh,
-				elfEffectLevel,
-				elfAmount,
-				toolType);
+		description = String.format(
+			"Effect Block Trigger: %s Block Output: %s . " +
+			"Effect value ranges from %.2f - %.2f for levels 0 to 30. " +
+			"Elves have the effect %.2f , as if they were level %.0F . " +
+			"Tools affected: %s. No tool needed: %b", 
+			initiator, output,
+			effectAmountLow, effectAmountHigh,
+			elfAmount, elfEffectLevel,
+			toolType, allowFist);
 		
 		return description;
 	}

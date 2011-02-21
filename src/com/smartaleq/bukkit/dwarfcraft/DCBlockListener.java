@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
+import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRightClickEvent;
@@ -25,7 +25,7 @@ public class DCBlockListener extends BlockListener {
   /**
    * onBlockDamage used to accelerate how quickly blocks are destroyed. setDamage() not implemented yet
    */
-	/*  public void onBlockDamage(BlockDamageEvent event) {
+/*	public void onBlockDamage(BlockDamageEvent event) {
     	if (DwarfCraft.disableEffects) return;
     //General information
     	Player player = event.getPlayer();
@@ -40,11 +40,12 @@ public class DCBlockListener extends BlockListener {
     	}
     	boolean correctTool = false;
     	int materialId = event.getBlock().getTypeId();	
-    	
+    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: damage level = " + event.getDamageLevel() +
+    			" damage amount = " + event.getDamageLevel());
 //    	event.setDamageLevel(event.getDamageLevel() + effectAmount);
 //		event.setCancelled(true);
     }
-    */
+*/
 
     /**
      * Called when a player right clicks a block, used for hoe-ing grass.
@@ -111,6 +112,7 @@ public class DCBlockListener extends BlockListener {
      */
     public void onBlockBreak(BlockBreakEvent event) {
     	if (DwarfCraft.disableEffects) return;
+    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: on block break called");
     //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = Dwarf.find(player);
@@ -119,10 +121,10 @@ public class DCBlockListener extends BlockListener {
    	//Effect Specific information
     	ItemStack tool = player.getItemInHand();
     	int toolId = -1;
-    	short damage = 0;
+    	short durability = 0;
     	if (tool!=null) {
     		toolId = tool.getTypeId();  
-    		damage = tool.getDurability(); 	
+    		durability = tool.getDurability(); 	
     	}
     	boolean correctTool = false;
     	Block block = event.getBlock();
@@ -142,7 +144,10 @@ public class DCBlockListener extends BlockListener {
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
 		    				double effectAmount = e.getEffectAmount(s.level);
-		    				tool.setDurability((short) (damage + Util.randomAmount(effectAmount)));
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
+		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
+
 		    				durabilityChange = true;
 		    			}
 		    		}
@@ -151,6 +156,7 @@ public class DCBlockListener extends BlockListener {
     			if(e.effectType == EffectType.BLOCKDROP && e.initiatorId == materialId){
     				correctTool = false;
 	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
+		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("Debug Message: Effect:" +e.id + " tool: " + toolId+" and allowFist?:"+e.allowFist );
 		    		if(correctTool || e.allowFist){
 		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(s.level), true);
 		    			blockDropChange = true;

@@ -1,11 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-import java.io.*;
-import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -30,13 +27,13 @@ private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 
-public static int debugMessagesThreshold = 5;
+public static int debugMessagesThreshold = 1;
 public static boolean disableEffects = false;
 
 
 
-public DwarfCraft(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-    super(pluginLoader, instance, desc, folder, plugin, cLoader);
+public DwarfCraft() {
+
 }
 	
 	/**	
@@ -49,9 +46,7 @@ public DwarfCraft(PluginLoader pluginLoader, Server instance, PluginDescriptionF
 		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Low, this);
 		
-		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_BLOCK, entityListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.High, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
 		
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
