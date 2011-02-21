@@ -109,6 +109,7 @@ public class DCEntityListener extends EntityListener {
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - new:"+tool.getDurability());
+		    				Util.toolChecker((Player) damager);
 		    			}
 		    		}
     			}
@@ -158,6 +159,7 @@ public class DCEntityListener extends EntityListener {
     }
 
     public void onEntityDeath(EntityDeathEvent event) {
+    	if (event.getEntity() instanceof Player) return;
     	List<ItemStack> items = event.getDrops();
     	int numbItems = items.size();
     	if (numbItems == 0) return;

@@ -40,8 +40,8 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Low, this);
 		
-		pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.High, this);
+		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Low, this);
 		
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);

@@ -84,6 +84,7 @@ public class DCBlockListener extends BlockListener {
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - new:"+tool.getDurability());
+		    				Util.toolChecker(player);
 		    				block.setTypeId(60);
 		    				durabilityChange = true;
 		    			}
@@ -147,7 +148,7 @@ public class DCBlockListener extends BlockListener {
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
-
+		    				Util.toolChecker(player);
 		    				durabilityChange = true;
 		    			}
 		    		}
