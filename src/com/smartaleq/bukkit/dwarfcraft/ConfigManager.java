@@ -93,8 +93,8 @@ public class ConfigManager {
 				double 		noviceLevelUpMultiplier = Double.parseDouble(theline[3]);
 				double 		minValue 				= Double.parseDouble(theline[4]);
 				double 		maxValue 				= Double.parseDouble(theline[5]);
-				boolean 	floorResult 			= (theline[6] == "1"); 
-				boolean 	hasException 			= (theline[7] == "1"); 
+				boolean 	floorResult 			= (theline[6].equalsIgnoreCase("1")); 
+				boolean 	hasException 			= (theline[7].equalsIgnoreCase("1")); 
 				int 		exceptionLow 			= Integer.parseInt(theline[8]); 
 				int 		exceptionHigh 			= Integer.parseInt(theline[9]); 
 				double 		exceptionValue 			= Double.parseDouble(theline[10]);

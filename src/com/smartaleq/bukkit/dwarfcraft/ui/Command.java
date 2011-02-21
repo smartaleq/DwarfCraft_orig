@@ -49,13 +49,8 @@ public class Command {
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
-		if (playerInput[0].equalsIgnoreCase("debug")) {
-			if (playerInput[1] != null) {
-				DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
-				return true;
-			}
-			return false;
-		}
+		if (playerInput[0].equalsIgnoreCase("debug")) return debug();
+			
 		if (playerInput[0].equalsIgnoreCase("help")) return help();
 		if (playerInput[0].equalsIgnoreCase("?")) return help();
 		if (playerInput[0].equalsIgnoreCase("info")) return info();
@@ -86,6 +81,18 @@ public class Command {
 		return false;
 	}
 	
+	/**
+	 * Changes the level of debug reporting in console
+	 */
+	private boolean debug() {
+		if (playerInput[1] != null ) {
+			DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
+			if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("*** DEBUG LEVEL CHANGED TO "+playerInput[1]+" ***");
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Sends detailed help text from command help listing or general help text with no argument
 	 */
@@ -204,59 +211,62 @@ public class Command {
 	 * Does own error checking
 	 */
 	private boolean train() {
-		try{
-			boolean soFarSoGood = true;
-			if ( playerInput[1] == null || playerInput[2] != null ) {
-				Out.sendMessage(player, "Usage: /dc train &b<skill>");
-				return true;
-			}
-			
-			Dwarf dwarf = (Dwarf.find(player));
-			Skill skill = dwarf.getSkill(playerInput[1]);
-			if (skill == null) { 
-				Out.sendMessage(player, "&cCould not find skill &b" + playerInput[1]);
-				return true;
-			}
-			
-			ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
-			
-			if (dwarf.isElf) {
-				Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
-				return true;
-			}
-			else if ( skill.level >= 30) {
-				Out.sendMessage(dwarf, "&cYou are a &9Dwarf &cbut your skill is max level!", "&6[Train &b"+skill.id+"&6] ");
-				return true;
-			}
-				
-			if (!dwarf.isInZone(skill.school)) {
-				Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
-				return true;
-			}
-			
-			for (ItemStack itemStack: trainingCosts) {
-				if(itemStack == null) continue;
-				if(dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
-					Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.toString()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
-					return true;
-				}
-			}
-			if(soFarSoGood){
-				skill.level++;
-				for (ItemStack itemStack: trainingCosts)
-					dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
-				Out.sendMessage(dwarf,"&6Training Successful");
-				return true;
-			}
-			else{
-				return true; //something else goes here
-			}
-			return false;
+		boolean soFarSoGood = true;
+		if ( playerInput[1] == null || playerInput[2] != null ) {
+			Out.sendMessage(player, "Usage: /dc train &b<skill>");
+			return true;
 		}
 		
-		catch (Exception e){
-			e.printStackTrace();
-			return false;
+		Dwarf dwarf = (Dwarf.find(player));
+		Skill skill = dwarf.getSkill(playerInput[1]);
+		if (skill == null) { 
+			Out.sendMessage(player, "&cCould not find skill &b" + playerInput[1]);
+			return true;
+		}
+		
+		ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
+		
+		//Must be a dwarf, not an elf
+		if (dwarf.isElf) {
+			Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
+			soFarSoGood = false;
+		}
+		else Out.sendMessage(dwarf, "&aYou are a &9Dwarf &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
+		
+		//Must have skill level between 0 and 29
+		if ( skill.level >= 30) {
+			Out.sendMessage(dwarf, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
+			soFarSoGood = false;
+		}
+			
+		//Must be in training Zone, may change this to near a trainer if/when NPCs are implemented
+		if (!dwarf.isInSchoolZone(skill.school)) {
+			Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
+			soFarSoGood = false;
+		}
+		else Out.sendMessage(dwarf, "&aYou are in a &1"+skill.school+" &atraining zone", "&6[Train &b"+skill.id+"&6] ");
+		
+		//Must have enough materials to train
+		for (ItemStack itemStack: trainingCosts) {
+			if(itemStack == null) continue;
+			if(itemStack.getAmount() == 0) continue;
+			if(dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
+				Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.toString()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
+				soFarSoGood = false;
+			}
+			else Out.sendMessage(dwarf, "&aYou have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &arequired", "&6[Train &b"+skill.id+"&6] ");
+		}
+		
+		//If passed all the 'musts' successfully
+		if(soFarSoGood){
+			skill.level++;
+			for (ItemStack itemStack: trainingCosts)
+				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
+			Out.sendMessage(dwarf,"&6Training Successful!","&6[&b"+skill.id+"&6] ");
+			return true;
+		}
+		else{
+			return true; //something else goes here
 		}
 	}
 	
@@ -367,7 +377,7 @@ public class Command {
 	}
 	
 	private boolean here() {
-		return Out.here(player,(Dwarf.find(player)).listZones());
+		return Out.here(player,(Dwarf.find(player)).listAllZones());
 	}
 	
 	private boolean createSchool() {

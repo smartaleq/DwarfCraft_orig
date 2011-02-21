@@ -137,11 +137,12 @@ public class DCBlockListener extends BlockListener {
     	boolean blockDropChange = false;
     	    	
    	//Check if durability change happens
+    	
     	for(Skill s: skills){
     		if (s==null)continue;
     		for(Effect e:s.effects){
     			if (e==null) continue;
-    			if(e.effectType == EffectType.TOOLDURABILITY){
+    			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
 		    				double effectAmount = e.getEffectAmount(s.level);

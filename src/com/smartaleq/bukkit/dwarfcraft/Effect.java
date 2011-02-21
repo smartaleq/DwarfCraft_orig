@@ -77,6 +77,16 @@ public class Effect {
 		effectAmount = Math.min(effectAmount, maxValue);
 		effectAmount = Math.max(effectAmount, minValue);
 		if (hasException && skillLevel <= exceptionHigh && skillLevel >= exceptionLow) effectAmount = exceptionValue;
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: GetEffectAmount Id: " + id +
+				" base: " + baseValue +
+				" LevelUp multi:  " + levelUpMultiplier+ 
+				" Novice:  " + noviceLevelUpMultiplier+ 
+				" Max:  " + maxValue+ 
+				" Min: " + minValue+ 
+				" Exception: " +hasException + 
+				" ExcLow: " + exceptionLow+ 
+				" ExcHigh: " + exceptionHigh+ 
+				" Excvalue:  " + exceptionValue);
 		return effectAmount;
 	}
 	
