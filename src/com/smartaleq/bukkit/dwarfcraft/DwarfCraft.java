@@ -1,11 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-import java.io.*;
-import org.bukkit.Server;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -33,9 +30,6 @@ private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 public static int debugMessagesThreshold = 1;
 public static boolean disableEffects = false;
 
-public DwarfCraft(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-	super(pluginLoader, instance, desc, folder, plugin, cLoader);
-}
 	/**	
 	 * Called upon enabling the plugin
 	 */

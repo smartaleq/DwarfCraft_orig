@@ -124,7 +124,7 @@ public class Command {
 	 * Target is optional, will print caller's skillsheet on null
 	 */
 	private boolean skillSheet() {
-//		if (DwarfCraft.debugMessages) System.out.println("Debug Message: starting skillsheet");
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skillsheet");
 		Dwarf target;
 		if (playerInput[1] != null) {
 			target = Dwarf.find(getPlayer(playerInput[1]));
