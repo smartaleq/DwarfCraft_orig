@@ -18,7 +18,8 @@ public class DCEntityListener extends EntityListener {
 	public DCEntityListener(final DwarfCraft plugin) {
 	}
 
-	public void onEntityDamaged(EntityDamageEvent event){
+
+	public void onEntityDamage(EntityDamageEvent event){
 		if(
 			event.getCause() == DamageCause.BLOCK_EXPLOSION ||
 			event.getCause() == DamageCause.ENTITY_EXPLOSION || 

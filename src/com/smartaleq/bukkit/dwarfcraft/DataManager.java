@@ -116,7 +116,7 @@ public class DataManager {
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 		    Statement statement = conn.createStatement();
-	    	String sqlsend = "UPDATE dwarfs "+ "SET iself=" + dwarf.isElf + ", "; 
+	    	String sqlsend = "UPDATE dwarfs "+ "SET iself='" + dwarf.isElf + "', "; 
 	    	for (Skill skill: dwarf.skills) 
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
@@ -170,6 +170,7 @@ public class DataManager {
 		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
 			if (rs == null) return null;
+			zoneList.clear();
 			while(rs.next()){
 				zoneList.add(new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name")));
 				rs.next();
@@ -211,6 +212,23 @@ public class DataManager {
 	    	e.printStackTrace();
 	    	return false;
 	    }	    
+	}
+	
+	public static boolean removeSchoolZone(String name){
+		 try{
+	    	Class.forName("org.sqlite.JDBC");
+	    	Connection conn =
+	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+	    	Statement statement = conn.createStatement();
+	    	String query = "delete * from schoolzones where name = '"+name+"'";
+	    	statement.executeUpdate(query);
+	    	conn.close();
+	    	return true;
+		    }
+		    catch (Exception e){
+		    	e.printStackTrace();
+		    	return false;
+		    }	    
 	}
 
 	public static List<Dwarf> getDwarves() {

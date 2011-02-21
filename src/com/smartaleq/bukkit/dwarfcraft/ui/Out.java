@@ -253,7 +253,7 @@ public class Out {
 	 * Used to parse and send multiple line messages
 	 * Sends actual output commands
 	 */
-	static void messagePrinter(Player player, String message, String prefix){
+	private static void messagePrinter(Player player, String message, String prefix){
 		// if no message throw exception		
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started printer");
 		int messageSectionLength = lineLength - prefix.length();
