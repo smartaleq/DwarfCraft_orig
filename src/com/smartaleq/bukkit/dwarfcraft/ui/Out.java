@@ -119,13 +119,10 @@ public class Out {
 				odd = !odd;
 				String interim = String.format("&b%s  &6[&3%2d&6]  ", s.displayName, s.level);
 				message2 = message2.concat(interim);
-				if (odd) {
-					sendMessage(viewer, message2, prefix2);
-					message2 = "";
-				}
+				if (odd)
+					message2 = message2.concat("\n");
 			}
-			if ( message2 != "" );
-				sendMessage(viewer, message2, prefix2);
+			sendMessage(viewer, message2, prefix2);
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
