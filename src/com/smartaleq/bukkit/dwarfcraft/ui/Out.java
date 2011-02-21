@@ -123,7 +123,7 @@ public class Out {
 			for (Skill s:dwarf.skills){	
 				if(s == null) continue;
 				odd = !odd;
-				String interim = String.format("&b%s  &6[&3%d&6]  ", s.displayName, s.level);
+				String interim = String.format("&b%s  &6[&3%d&6] ", s.displayName, s.level);
 				message2 = message2.concat(interim);
 				if (odd)
 					message2 = message2.concat("\n");
@@ -267,7 +267,7 @@ public class Out {
 				currentLine = currentLine.concat(word+" ");
 			}
 			else {
-				player.sendMessage(prefix.concat(lastColor + currentLine));
+				player.sendMessage(prefix.concat(lastColor + currentLine).trim());
 				lineTotal++;
 				if (lineTotal >= maxLines) return;
 				lastColor = lastColor(lastColor + currentLine);
@@ -275,7 +275,7 @@ public class Out {
 			}
 		}
 		lastColor = lastColor(lastColor + currentLine);
-		player.sendMessage(prefix.concat(lastColor + currentLine));
+		player.sendMessage(prefix.concat(lastColor + currentLine).trim());
 	}
 	
 	private static String lastColor(String currentLine) {

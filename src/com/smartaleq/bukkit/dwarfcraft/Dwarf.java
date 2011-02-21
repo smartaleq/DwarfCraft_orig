@@ -96,8 +96,14 @@ public class Dwarf {
 	 * @return total level
 	 */
 	int level(){
-		//for skills do math from old version
-		return 0;	
+		int playerLevel = 5;
+		int highestSkill = 0;
+		for(Skill s:skills){
+			if(s.level > highestSkill) highestSkill = s.level;
+			if(s.level > 5) playerLevel += s.level - 5;;
+		}
+		if(playerLevel == 5) playerLevel = highestSkill;
+		return playerLevel;
 	}
 	
 	public ItemStack[] calculateTrainingCost(Skill skill) {
@@ -156,6 +162,7 @@ public class Dwarf {
 		if (isElf) return false;
 		isElf = true;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
+		DataManager.saveDwarfData(this);
 		return isElf;
 	}
 	
@@ -165,6 +172,7 @@ public class Dwarf {
 	public boolean makeDwarf(){
 		isElf = false;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
+		DataManager.saveDwarfData(this);
 		return true;
 	}
 	
