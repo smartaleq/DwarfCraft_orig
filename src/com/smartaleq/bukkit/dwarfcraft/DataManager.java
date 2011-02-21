@@ -116,7 +116,7 @@ public class DataManager {
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 		    Statement statement = conn.createStatement();
-	    	String sqlsend = "UPDATE dwarfs "+ "SET iself=" + dwarf.isElf + ", "; 
+	    	String sqlsend = "UPDATE dwarfs "+ "SET iself='" + dwarf.isElf + "', "; 
 	    	for (Skill skill: dwarf.skills) 
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)

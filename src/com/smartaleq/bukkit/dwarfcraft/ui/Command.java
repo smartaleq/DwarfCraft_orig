@@ -135,7 +135,12 @@ public class Command {
 		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skillsheet");
 		Dwarf target;
 		if (playerInput[1] != null) {
-			target = Dwarf.find(playerInput[1]);
+			Player playerTarget = getPlayer(playerInput[1]);
+			if (playerTarget != null && playerTarget.isOnline())
+				target = Dwarf.find(playerTarget);
+			else
+				target = Dwarf.find(playerInput[1]);
+			
 			if (target == null) {
 				Out.sendMessage(player, "Could not find player &9" + playerInput[1]);
 				return true;

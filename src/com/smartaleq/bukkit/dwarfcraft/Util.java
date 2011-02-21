@@ -13,6 +13,39 @@ public class Util {
 		else return (int) Math.ceil(input);
 	}
 	
+	// Stolen from nossr50
+    private static int charLength(char x) {
+    	if("i.:,;|!".indexOf(x) != -1)
+    		return 2;
+    	else if("l'".indexOf(x) != -1)
+    		return 3;	
+    	else if("tI[]".indexOf(x) != -1)	
+    		return 4;
+    	else if("fk{}<>\"*()".indexOf(x) != -1)
+    		return 5;	
+    	else if("abcdeghjmnopqrsuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ1234567890\\/#?$%-=_+&^".indexOf(x) != -1)
+    		return 6;	
+    	else if("@~".indexOf(x) != -1)	
+    		return 7;	
+    	else if(x==' ')	
+    		return 4;	
+    	else	
+    		return -1;    
+    }
+    
+    public static int msgLength(String str) {
+    	int len = 0;
+    	
+    	for ( int i = 0; i < str.length(); i++ ) {
+    		if (str.charAt(i) == '&'){
+    			i++;
+    			continue; // increment by 2 for colors, as in the case of "&3"
+    		}
+    		len += charLength(str.charAt(i));
+    	}
+    	return len;
+    }
+	
     /**
      * Drops blocks at a block based on a specific effect(and level)
      * @param block Block being destroyed

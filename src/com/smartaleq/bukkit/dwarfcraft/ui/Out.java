@@ -12,6 +12,7 @@ import com.smartaleq.bukkit.dwarfcraft.Effect;
 import com.smartaleq.bukkit.dwarfcraft.School;
 import com.smartaleq.bukkit.dwarfcraft.Skill;
 import com.smartaleq.bukkit.dwarfcraft.TrainingZone;
+import com.smartaleq.bukkit.dwarfcraft.Util;
 
 public class Out {
 	
@@ -110,8 +111,7 @@ public class Out {
 			String prefix1 = "&6[&dSS&6] ";
 
 			String prefix2 = "&6[&dSS&6] ";	
-			message1 = ("&6Printing Skill Sheet for &9" + displayName + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
-
+			message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? viewer.getName() : displayName) + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
 			sendMessage(viewer, message1, prefix1);
 			
 			if(dwarf.isElf){
@@ -123,12 +123,39 @@ public class Out {
 			for (Skill s:dwarf.skills){	
 				if(s == null) continue;
 				odd = !odd;
-				String interim = String.format("&b%s  &6[&3%d&6] ", s.displayName, s.level);
+				// the goal here is for every skill sheet line to be 60 characters long.
+				// each skill should take 30 characters - no more, no less
+				String interim;
+				if ( s.level < 10 )
+					interim = String.format("&6[&30%d&6] &b%.18s", s.level, s.displayName);
+				else 
+					interim = String.format("&6[&3%d&6] &b%.18s", s.level, s.displayName);
+				
+				if (!odd) { 
+					int interimLen = Util.msgLength(interim);
+					int numSpaces = ((140 - interimLen) / 4) - 1;
+					for ( int i = 0; i < numSpaces; i++ )
+						interim = interim.concat(" ");
+					interimLen = 140 - interimLen - numSpaces*4;
+				// 	4 possible cases - need 4, 5, 6, or 7
+					if ( interimLen == 4 )
+						interim = interim.concat(".| ");
+					else if ( interimLen == 5)
+						interim = interim.concat("'| ");
+					else if ( interimLen == 6)
+						interim = interim.concat(" | ");
+					else if ( interimLen == 7)
+						interim = interim.concat("'.| ");
+				}
+					
 				message2 = message2.concat(interim);
-				if (odd)
-					message2 = message2.concat("\n");
+				if (odd) {
+					sendMessage(viewer, message2, prefix2);
+					message2 = "";
+				}
 			}
-			sendMessage(viewer, message2, prefix2);
+			if (!message2.equals(""))
+				sendMessage(viewer, message2, prefix2);
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
