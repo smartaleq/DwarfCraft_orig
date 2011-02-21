@@ -115,21 +115,17 @@ public class DCEntityListener extends EntityListener {
     			}
     			if(e.effectType == EffectType.PVEDAMAGE && !isPVP && sword){
     				if(hp <= 0) {event.setCancelled(true); return;}
-    				damage = (int) Math.round(Util.randomAmount((e.getEffectAmount(s.level)) * damage));
+    				damage = (int) Util.randomAmount((e.getEffectAmount(s.level)) * damage);
     				if(damage >= hp){
     					deadThingDrop(victim, attacker);
-    					damage = hp;
     				}
-    				victim.setHealth(hp-damage+event.getDamage());
-    				if (victim.getHealth() > hp) System.out.println("something fucked up" + hp + " " + victim.getHealth());
-    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for %" + e.getEffectAmount(s.level)+ " - ("+ damage + ") of "+ hp + " eventdmg:" + event.getDamage() );
+    				event.setDamage(damage);
+    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(s.level)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
     			}
     			if(e.effectType == EffectType.PVPDAMAGE && isPVP && sword){
-    				if(hp <= 0) {event.setCancelled(true); return;}
     				damage = (int) Util.randomAmount((e.getEffectAmount(s.level)) * damage);
-    				if(damage > hp) victim.setHealth(event.getDamage());
-    				else victim.setHealth(hp-damage+event.getDamage());
-    				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for %" + e.getEffectAmount(s.level)+ " - "+ damage + " of "+ hp + " eventdmg:" + event.getDamage() );
+    				event.setDamage(damage);
+       				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(s.level)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
        			}
     		}
     	}    	
