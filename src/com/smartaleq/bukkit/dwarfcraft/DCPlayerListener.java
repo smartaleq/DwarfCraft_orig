@@ -36,7 +36,7 @@ public class DCPlayerListener extends PlayerListener {
 				for(int i=1; i < fullPlayerInput.length; i++){
 					playerInput[i-1] = fullPlayerInput[i];
 				}
-				Command input = new Command(/*plugin,*/ player, playerInput);
+				Command input = new Command(plugin, player, playerInput);
 				if (input.execute()) {
 					event.setCancelled(true);
 					return;

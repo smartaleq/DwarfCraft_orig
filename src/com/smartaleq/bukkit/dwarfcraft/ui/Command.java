@@ -17,21 +17,35 @@ public class Command {
 	
 	Player player;
 	String[] playerInput = new String[10];
-//	private final DwarfCraft plugin;
+	private final DwarfCraft plugin;
 	
-	public Command(/*DwarfCraft instance,*/ Player player, String[] playerInput){
-//		this.plugin = instance;
+	public Command(DwarfCraft instance, Player player, String[] playerInput){
+		this.plugin = instance;
 		this.player = player;
 		this.playerInput = playerInput;
 	}
 	
 	public Player getPlayer(String playerName){
-//		Player[] players = plugin.getServer().getOnlinePlayers();
-//        for (Player player : players) {
-//            if (player.getName().equalsIgnoreCase(playerName)) return player;
-//        }
+		Player[] players = plugin.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(playerName)) return player;
+        }
         return null;
 	}	
+	
+	/**
+	 * isInt(String)
+	 * returns true if string is an int, false if not
+	 */
+	public boolean isInt (String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch(NumberFormatException nfe) {
+			return false;
+		}
+	}
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
@@ -52,23 +66,22 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("tutorial3")) return tutorial(3);
 		if (playerInput[0].equalsIgnoreCase("tutorial4")) return tutorial(4);
 		if (playerInput[0].equalsIgnoreCase("tutorial5")) return tutorial(5);
-
-		if (playerInput[0].equalsIgnoreCase("skillsheet")) return skillSheet();
-		if (playerInput[0].equalsIgnoreCase("skillinfo")) return skillInfo();
-		if (playerInput[0].equalsIgnoreCase("effectinfo")) return effectInfo();
+		if (playerInput[0].equalsIgnoreCase("skillsheet")) 			return skillSheet();
+		if (playerInput[0].equalsIgnoreCase("skillinfo")) 			return skillInfo();
+		if (playerInput[0].equalsIgnoreCase("effectinfo")) 			return effectInfo();
 		
-		if (playerInput[0].equalsIgnoreCase("train")) return train();
-		if (playerInput[0].equalsIgnoreCase("setskill")) return setSkill();
+		if (playerInput[0].equalsIgnoreCase("train")) 				return train();
+		if (playerInput[0].equalsIgnoreCase("setskill")) 			return setSkill();
 		
-		if (playerInput[0].equalsIgnoreCase("MAKEMEADWARF")) return makeMeADwarf(false);
-		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEADWARF"))return makeMeADwarf(true);
-		if (playerInput[0].equalsIgnoreCase("MAKEMEANELF")) return makeMeAnElf(false);
-		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEANELF")) return makeMeAnElf(true);
+		if (playerInput[0].equalsIgnoreCase("MAKEMEADWARF")) 		return makeMeADwarf(false);
+		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEADWARF"))	return makeMeADwarf(true);
+		if (playerInput[0].equalsIgnoreCase("MAKEMEANELF")) 		return makeMeAnElf(false);
+		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEANELF")) 	return makeMeAnElf(true);
 		
-		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) return schoolList();
-		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) return schoolInfo();
-		if (playerInput[0].equalsIgnoreCase("HERE")) return here();
-		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) return createSchool();
+		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) 			return schoolList();
+		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) 			return schoolInfo();
+		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
+		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return createSchool();
 				
 		return false;
 	}
@@ -88,7 +101,7 @@ public class Command {
 				return Out.commandHelp(player, c);
 			}
 		}
-		//this is not a command
+		// this is not a command
 		Out.error(player, Messages.ERRORBADINPUT);
 		return false;
 	}
@@ -105,76 +118,137 @@ public class Command {
 	}
 
 	/**
-	 * Parses input for a player name, or uses the command issuer if blank
+	 * Player command to print current skillsheet
+	 * Syntax: /dc skillsheet [target]
+	 * Does own sanitization and error checking.
+	 * Target is optional, will print caller's skillsheet on null
 	 */
 	private boolean skillSheet() {
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skillsheet");
-		Dwarf target = (Dwarf)getPlayer(playerInput[1]);
-		if(target == null) {
+//		if (DwarfCraft.debugMessages) System.out.println("Debug Message: starting skillsheet");
+		Dwarf target;
+		if (playerInput[1] != null) {
+			target = Dwarf.find(getPlayer(playerInput[1]));
+			if (target == null) {
+				Out.sendMessage(player, "Could not find player &9" + playerInput[1]);
+				return true;
+			}
+		}
+		else { // playerinput was null
 			target = Dwarf.find(player);
-			
 		}
 		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + target.player.getName());
 		return Out.printSkillSheet(target, player);
 	}
 
 	/**
-	 * Parses input and passes skill to output
+	 * Player command to print skill information
+	 * Syntax: /dc skillinfo <skill>
+	 * <skill> is skill ID or skill name
+	 * Does own error checking.
 	 */
 	private boolean skillInfo() {
-		if (playerInput[2] != null) playerInput[1] = playerInput[1].concat(" " + playerInput[2]);
-		Skill skill = (Dwarf.find(player)).getSkill(playerInput[1]);
-		if (skill == null) return false;
+		if ( playerInput[1] == null || playerInput[2] != null ) {
+			Out.sendMessage(player, "Usage: /dc skillinfo &b<skill>");
+			return true;
+		}
+//		wtf does this do?			
+//		if (playerInput[2] != null) playerInput[1] = playerInput[1].concat(" " + playerInput[2]);
+		Dwarf dwarf = Dwarf.find(player);
+		if (dwarf == null) { // can this ever happen?
+			System.out.println("Error: in skillInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
+			return false;
+		}
+		
+		Skill skill = dwarf.getSkill(playerInput[1]);
+		if (skill == null) {
+			Out.sendMessage(player, "Skill &b" + playerInput[1] + "&6 not found.");
+			return true;
+		}
 		return Out.printSkillInfo(player, skill);
 	}
 
 	/**
-	 * Parses input and passes effect to output
+	 * Player command to print effect information
+	 * Syntax: /dc effectinfo <effect>
+	 * <effect> is effect ID
+	 * Does own error checking.
 	 */
 	private boolean effectInfo() {
-		Effect effect = (Dwarf.find(player)).getEffect(Integer.parseInt(playerInput[1]));
-		if(effect != null) return Out.effectInfo(player, effect);
-		return false;
+		if (playerInput[1] == null || playerInput[2] != null) { 
+			Out.sendMessage(player, "Usage: /dc effectinfo &5<effect>");
+			return true;
+		}
+		Dwarf dwarf = Dwarf.find(player);
+		if (dwarf == null) { // can this ever happen?
+			System.out.println("Error: in effectInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
+			return false;			
+		}
+		
+		if (!isInt(playerInput[1])) {
+			Out.sendMessage(player, "Effect must be a numeric effect ID");
+			return true;			
+		}
+		Effect effect = dwarf.getEffect(Integer.parseInt(playerInput[1]));
+		if(effect == null) {
+			Out.sendMessage(player, "Could not find effect ID &5" + playerInput[1]);
+			return true;
+		}
+		else
+			return Out.effectInfo(player, effect);
 	}
 	
 	/**
-	 * Parses input, checks each requirement, prints results
+	 * Player command for training skills
+	 * Syntax: /dc train <skill>
 	 * If successful increases skill, removes items
-	 * 
+	 * Does own error checking
 	 */
 	private boolean train() {
 		try{
+			
+			if ( playerInput[1] == null || playerInput[2] != null ) {
+				Out.sendMessage(player, "Usage: /dc train &b<skill>");
+				return true;
+			}
+			
 			Dwarf dwarf = (Dwarf.find(player));
 			Skill skill = dwarf.getSkill(playerInput[1]);
-			ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
-			boolean canTrain = true;
+			if (skill == null) { 
+				Out.sendMessage(player, "&cCould not find skill &b" + playerInput[1]);
+				return true;
+			}
 			
-			if (!dwarf.isElf){
-				if (skill.level < 30) Out.sendMessage(dwarf, "&aYou are a &9Dwarf &a&& your skill is below 30", "&6[Train &b"+skill.id+"&6] ");
-				else {Out.sendMessage(dwarf, "&cYou are a &9Dwarf &cbut your skill is max level!", "&6[Train &b"+skill.id+"&6] ");
-					canTrain = false;}}
-			else {Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
-				return canTrain = false;}
-			if (dwarf.isInZone(skill.school)) Out.sendMessage(dwarf, "&aYou are in a &1"+skill.school+" &atraining zone", "&6[Train &b"+skill.id+"&6] ");
-			else {Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
-				canTrain = false;}
-			for (ItemStack itemStack: trainingCosts){
+			ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
+			
+			if (dwarf.isElf) {
+				Out.sendMessage(dwarf, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
+				return true;
+			}
+			else if ( skill.level >= 30) {
+				Out.sendMessage(dwarf, "&cYou are a &9Dwarf &cbut your skill is max level!", "&6[Train &b"+skill.id+"&6] ");
+				return true;
+			}
+				
+			if (!dwarf.isInZone(skill.school)) {
+				Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
+				return true;
+			}
+			
+			for (ItemStack itemStack: trainingCosts) {
 				if(itemStack == null) continue;
-				if(dwarf.countItem(itemStack.getTypeId()) > itemStack.getAmount()) Out.sendMessage(dwarf, "&aYou have the &2"+itemStack.toString()+ " &arequired", "&6[Train &b"+skill.id+"&6] ");
-				else{Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.toString()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
-					canTrain = false;}
+				if(dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
+					Out.sendMessage(dwarf, "&cYou do not have the &2"+itemStack.toString()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
+					return true;
+				}
 			}
-			if (canTrain){
-				skill.level++;
-				for (ItemStack itemStack: trainingCosts) dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
-				Out.sendMessage(dwarf,"&6Training Successful");
-				return true;
-			}
-			else {
-				Out.sendMessage(dwarf,"&6Training Unsuccessful");
-				return true;
-			}
+			
+			skill.level++;
+			for (ItemStack itemStack: trainingCosts)
+				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
+			Out.sendMessage(dwarf,"&6Training Successful");
+			return true;
 		}
+		
 		catch (Exception e){
 			e.printStackTrace();
 			return false;
@@ -182,20 +256,55 @@ public class Command {
 	}
 	
 	/**
-	 * Admin Command to change another players skills. Fails quietly
+	 * Admin Command to change another player's skill.
+	 * Syntax: /dc setskill <player> <skill> <level>
+	 * <player> is target, <skill> is skill ID or alpha
+	 * <level> is desired level in range 0-30
+	 * Performs input sanitization and cursory error checking,
 	 */
 	private boolean setSkill() {
 //		if (!player.hasPermission()) return false;
 		try{
-			Dwarf dwarf = (Dwarf) getPlayer(playerInput[1]);
-			Skill skill = dwarf.getSkill(Integer.parseInt(playerInput[2]));
-			int level = Integer.parseInt(playerInput[3]);
+			
+			if (playerInput[1] == null || playerInput[2] == null || playerInput[3] == null || playerInput[4] != null) {
+				Out.sendMessage(player, "&cSyntax: &e/dc setskill &9<player> &b<skill> &3<level>");
+				return true;
+			}
+			
+			Player target = getPlayer(playerInput[1]);
+			if (target == null) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &ecould not be found.");
+				return true;
+			}
+			Dwarf dwarf = Dwarf.find(target);
+			if (dwarf == null) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &efound, but could not find associated Dwarf.");
+				return true;
+			}
+			if (dwarf.isElf()) {
+				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &eis an elf.");
+				return true;
+			}
+			
+			Skill skill = dwarf.getSkill(playerInput[2]);
+			if (skill == null) {
+				Out.sendMessage(player, "&cError: &eCould not find skill &b" + playerInput[2]);
+				return true;
+			}
+			
+			if (!isInt(playerInput[3])) {
+				Out.sendMessage(player, "&cError: &eSkill value not a number");
+				return true;
+			}
+			Integer level = Integer.parseInt(playerInput[3]);
+			
+			if ( level < 0 || level > 30) { // only support setting in-bounds skills. (0-30)
+				Out.sendMessage(player, "&cError: &eskill level &3" + level + "&e out of bounds.");
+				return true;
+			}
+			
 			skill.level = level;
-			Out.sendMessage(new Player[]{(Player)dwarf, player}, 
-					" Admin " + player +
-					" changed Skill " + skill.displayName +
-					" for player " + dwarf.player.getName() +
-					" to level " + level);
+			Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + target.getDisplayName() + "&e to &3" + level);
 			return true;
 		}
 		catch (Exception e){

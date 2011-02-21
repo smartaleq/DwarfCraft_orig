@@ -169,7 +169,7 @@ public class Dwarf {
 		}
 	
 	/**
-	 * Gets a dwarf's skill from an effeft
+	 * Gets a dwarf's skill from an effect
 	 * @param effect (does not have to be this dwarf's effect, only used for ID#)
 	 * @return Skill or null if none found
 	 */
@@ -298,9 +298,9 @@ public class Dwarf {
 		player.sendMessage(string);
 	}
 
-	public int isElf() {
-		if (isElf) return 1;
-		return 0;
+	public boolean isElf() {
+		if (isElf) return true;
+		return false;
 	}
 
 	
