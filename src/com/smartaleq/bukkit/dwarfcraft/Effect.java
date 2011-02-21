@@ -130,7 +130,7 @@ public class Effect {
 		description = String.format(
 			"Effect Block Trigger: %s Block Output: %s . " +
 			"Effect value ranges from %.2f - %.2f for levels 0 to 30. " +
-			"Elves have the effect %.2f , as if they were level %.0F . " +
+			"Elves have the effect %.2f , as if they were level %d . " +
 			"Tools affected: %s. No tool needed: %b", 
 			initiator, output,
 			effectAmountLow, effectAmountHigh,
