@@ -110,7 +110,7 @@ public class Out {
 			String prefix1 = "&6[&dSS&6] ";
 
 			String prefix2 = "&6[&dSS&6] ";	
-			message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+			message1 = ("&6Printing Skill Sheet for &9" + displayName + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
 
 			sendMessage(viewer, message1, prefix1);
 			

@@ -144,7 +144,7 @@ public class Command {
 		else { // playerinput was null
 			target = Dwarf.find(player);
 		}
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + target.player.getName());
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + playerInput[1]);
 		return Out.printSkillSheet(target, player, playerInput[1]);
 	}
 

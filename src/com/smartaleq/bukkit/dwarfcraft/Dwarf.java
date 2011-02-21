@@ -42,6 +42,7 @@ public class Dwarf {
 
 	public static Dwarf find(String name) {
 		Dwarf dwarf = new Dwarf(null);
+		dwarf.initializeNew();
 		try {
 			String sanitizedName;			
 			sanitizedName = name;
