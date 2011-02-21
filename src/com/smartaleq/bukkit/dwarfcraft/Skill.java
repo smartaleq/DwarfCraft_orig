@@ -39,7 +39,7 @@ public class Skill {
 	}
 
 	public double baseTrainingMultiplier() {
-		double multiplier = Math.ceil(Math.max(((double)level + 1), 5) * noviceIncrement);
+		double multiplier = Math.ceil(Math.min(((double)level + 1), 5) * noviceIncrement);
 		if (level >= 5){
 			multiplier *= Math.pow(masterMultiplier, level-5);
 		}

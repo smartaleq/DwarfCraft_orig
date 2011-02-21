@@ -23,13 +23,16 @@ public class DCEntityListener extends EntityListener {
 			event.getCause() == DamageCause.BLOCK_EXPLOSION ||
 			event.getCause() == DamageCause.ENTITY_EXPLOSION || 
 			event.getCause() == DamageCause.FALL || 
+			event.getCause() == DamageCause.SUFFOCATION || 
 			event.getCause() == DamageCause.FIRE || 
 			event.getCause() == DamageCause.FIRE_TICK){
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Entity Environment damage cause");
 			onEntityDamagedByEnvirons(event);
 		}
 		else if (event.getCause() == DamageCause.ENTITY_ATTACK){
-			if(event instanceof EntityDamageByProjectileEvent)
-			EntityAttack((EntityDamageByEntityEvent) event);
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: ENTITY ATTACK damage cause");
+			if(event instanceof EntityDamageByProjectileEvent) onEntityDamageByProjectile((EntityDamageByProjectileEvent) event);
+			else onEntityAttack((EntityDamageByEntityEvent) event);
 		}
 		else return;
 	}
@@ -52,6 +55,7 @@ public class DCEntityListener extends EntityListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(	(e.effectType == EffectType.FALLDAMAGE && event.getCause() == DamageCause.FALL) ||
+    				(e.effectType == EffectType.FALLDAMAGE && event.getCause() == DamageCause.SUFFOCATION) ||
 					(e.effectType == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE) ||
 					(e.effectType == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE_TICK) ||
 					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.ENTITY_EXPLOSION) ||
@@ -67,7 +71,7 @@ public class DCEntityListener extends EntityListener {
        	}  	
     }
 
-    public void EntityAttack(EntityDamageByEntityEvent event) {
+    public void onEntityAttack(EntityDamageByEntityEvent event) {
     	if (DwarfCraft.disableEffects) return;
     	Entity damager = event.getDamager();
     	LivingEntity victim;
@@ -131,7 +135,7 @@ public class DCEntityListener extends EntityListener {
     	}    	
     }
 
-    public void EntityDamageByProjectile(EntityDamageByProjectileEvent event) {
+    public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
     	if(!(event.getDamager() instanceof Player)) return;
     	Dwarf dwarf = Dwarf.find((Player) event.getDamager());
     	LivingEntity hitThing = ((LivingEntity) event.getEntity());

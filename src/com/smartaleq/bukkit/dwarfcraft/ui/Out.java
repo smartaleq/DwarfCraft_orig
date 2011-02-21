@@ -91,10 +91,14 @@ public class Out {
 				Out.sendMessage(player, effect.describeLevel(skill.level), "&6[&5"+effect.id+"&6] ");
 		}
 		//training lines	
-		Out.sendMessage(player, "&6---Train costs for level &3"+skill.level+1+"&6 at a &1" + skill.school.toString() + " school&6---");
+		if (skill.level == 30) {
+			Out.sendMessage(player, "&6---This skill is maximum level, no training available---");
+			return true;
+		}
+		Out.sendMessage(player, "&6---Train costs for level &3"+(skill.level+1)+"&6 at a &1" + skill.school.toString() + " school&6---");
 		ItemStack[] costs = (Dwarf.find(player)).calculateTrainingCost(skill);
 		for(ItemStack item:costs){
-			if (item != null) Out.sendMessage(player, " &2" + item.toString() + "&6  --" , " &6-- ");
+			if (item != null) Out.sendMessage(player, " &2" +item.getAmount() + " " + item.getType()+ "&6  --" , " &6-- ");
 		}
 		return true;
 	}
@@ -104,8 +108,10 @@ public class Out {
 			String message1;
 			String message2 = "";
 			String prefix1 = "&6[&dSS&6] ";
-			String prefix2 = "&6[&dDC&6] ";	
-			message1 = ("&6Printing Skill Sheet for &9" + displayName + prefix1 + "Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+
+			String prefix2 = "&6[&dSS&6] ";	
+			message1 = ("&6Printing Skill Sheet for &9" + dwarf.player.getDisplayName() + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+
 			sendMessage(viewer, message1, prefix1);
 			
 			if(dwarf.isElf){
@@ -373,10 +379,12 @@ public class Out {
 	}
 
 	public static boolean here(Player player, List<TrainingZone> list) {
+		boolean foundSome = false;
 		for (TrainingZone tz:list){
 			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone]");
+			foundSome = true;
 		}
-		return false;
+		return foundSome;
 	}
 
 

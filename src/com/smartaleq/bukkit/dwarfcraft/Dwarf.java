@@ -100,17 +100,6 @@ public class Dwarf {
 		return 0;	
 	}
 	
-	void trainSkill(Skill skill){
-		calculateTrainingCost(skill);
-		//check inventory, location, level, elfishness, 
-		
-		//if successful, remove inventory, increase skill level
-		skill.level++;
-		
-		
-		//print new skillinfo
-	}
-	
 	public ItemStack[] calculateTrainingCost(Skill skill) {
 		int highSkills = countHighSkills();
 		int dwarfLevel = getDwarfLevel();
@@ -121,6 +110,7 @@ public class Dwarf {
 		int i = 0;
 		
 		//Creates an ordered list of skill levels and finds where in that list the skill is (what quartile)
+		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skill ordering for quartiles");
 		for (Skill s:skills){
 			if(s==null)continue;
 			if (s.level > 5){
@@ -143,6 +133,7 @@ public class Dwarf {
 		for(ItemStack item:skill.trainingCost){
 			if (item.getAmount() != 0){
 				trainingStack[i] = new ItemStack(item.getTypeId(), (int) Math.floor(item.getAmount()*multiplier));
+				if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: new training item stack ID: "+trainingStack[i].getTypeId()+" amount: " + trainingStack[i].getAmount());
 				i++;
 			}
 		}
@@ -228,9 +219,9 @@ public class Dwarf {
 	public int countItem(int itemId) {
 		int itemCount = 0;
 		ItemStack[] items = player.getInventory().getContents();
-		for(int i=0; i < 100; i++){
-			if(items[i].getTypeId() == itemId){
-				itemCount += items[i].getAmount();
+		for(ItemStack item: items){
+			if(item.getTypeId() == itemId){
+				itemCount += item.getAmount();
 			}
 		}
 		return itemCount;
@@ -277,7 +268,7 @@ public class Dwarf {
 //		inventory.setContents(items);
 	}
 
-	public boolean isInZone(School school){
+	public boolean isInSchoolZone(School school){
 		World world = player.getWorld();
 		int playerX = (int) player.getLocation().getX();
 		int playerY = (int) player.getLocation().getY();
@@ -290,7 +281,7 @@ public class Dwarf {
 		return false;
 	}
 	
-	public List<TrainingZone> listZones(){
+	public List<TrainingZone> listAllZones(){
 		World world = player.getWorld();
 		int playerX = (int) player.getLocation().getX();
 		int playerY = (int) player.getLocation().getY();
