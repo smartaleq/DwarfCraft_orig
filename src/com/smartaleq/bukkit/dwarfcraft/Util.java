@@ -71,10 +71,10 @@ public class Util {
 			int damage = item.getDurability();
 			int maxDamage = item.getType().getMaxDurability();
 			if (damage>maxDamage) {
-				inv.remove(item);
+				inv.removeItem(item);
 				removedSomething = true;
 			}
-		}
+		} 
 		return removedSomething;
 	}
 

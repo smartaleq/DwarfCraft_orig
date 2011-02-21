@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerItemEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
+// import org.bukkit.block.Block;
+// import net.minecraft.server.Block;
 
 import com.smartaleq.bukkit.dwarfcraft.ui.Command;
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
@@ -20,8 +23,7 @@ public class DCPlayerListener extends PlayerListener {
 	public DCPlayerListener(final DwarfCraft instance) {
 		plugin = instance;
 	}
-   
-
+   	
 /**
  * Reads player input and checks for a /dc command
  * this functionality may soon be obsolete and use the Command class from bukkit
@@ -100,5 +102,12 @@ public class DCPlayerListener extends PlayerListener {
 				}
 			}
 		}
+    }
+    
+    public void onPlayerMove(PlayerMoveEvent event){
+ //   	Block block = (Block)(event.getPlayer().getLocation().getBlock());
+
+//    	block.
+    	return;
     }
 }

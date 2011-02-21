@@ -87,6 +87,7 @@ public class DataManager {
 	
 	public static void createDwarfData(Dwarf dwarf) {
 	    try{
+	    	System.out.println("IN CREATEDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
 	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
@@ -112,6 +113,7 @@ public class DataManager {
 	
 	public static boolean saveDwarfData(Dwarf dwarf){
 		try{
+			System.out.println("IN SAVEDWARFDATA");
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
@@ -120,7 +122,8 @@ public class DataManager {
 	    	for (Skill skill: dwarf.skills) 
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
-	    		+ " WHERE playername = '" + dwarf.player.getName()+ "'";
+	    		+ " WHERE playername = '" + dwarf.player.getName()+ "';";
+	    	System.out.println(sqlsend);
 	    	statement.execute(sqlsend);
 	    	conn.close();
 			return true;
@@ -133,6 +136,7 @@ public class DataManager {
 	
 	public static boolean getDwarfData(Dwarf dwarf){
 	    try{
+	    	System.out.println("IN GETDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
