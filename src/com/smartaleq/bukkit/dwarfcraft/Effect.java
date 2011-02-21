@@ -269,7 +269,7 @@ public class Effect {
 				effectAmount );
 		}
 		else if (effectType.equals(EffectType.VEHICLEDROP)){
-			description = String.format("&6When you break a boat &6approx. %s%.2f &2%s&6 are created",
+			description = String.format("&6When you break a boat &6approx. %s%s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
 				effectAmount,

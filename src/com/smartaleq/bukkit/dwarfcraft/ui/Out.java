@@ -19,7 +19,7 @@ public class Out {
  * Messaging Statics	
  */
 	static final int lineLength = 68;
-	static final int maxLines = 18;
+	static final int maxLines = 12;
 	
 /*
  *     Color Schema: 
@@ -117,7 +117,7 @@ public class Out {
 			for (Skill s:dwarf.skills){	
 				if(s == null) continue;
 				odd = !odd;
-				String interim = String.format("&b%s  &6[&3%2d&6]  ", s.displayName, s.level);
+				String interim = String.format("&b%s  &6[&3%d&6]  ", s.displayName, s.level);
 				message2 = message2.concat(interim);
 				if (odd)
 					message2 = message2.concat("\n");
