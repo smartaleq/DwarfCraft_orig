@@ -1,6 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class Util {
@@ -28,4 +30,19 @@ public class Util {
 		else loc.getWorld().dropItem(loc, item);
 		if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug: dropped " + item.toString());	
 	}
+	
+	public static boolean toolChecker(Player player){
+		Inventory inv = player.getInventory();
+		boolean removedSomething = false;
+		for (ItemStack item:inv.getContents()){
+			int damage = item.getDurability();
+			int maxDamage = item.getType().getMaxDurability();
+			if (damage>maxDamage) {
+				inv.remove(item);
+				removedSomething = true;
+			}
+		}
+		return removedSomething;
+	}
+
 }

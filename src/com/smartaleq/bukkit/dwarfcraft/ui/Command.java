@@ -205,7 +205,7 @@ public class Command {
 	 */
 	private boolean train() {
 		try{
-			
+			boolean soFarSoGood = true;
 			if ( playerInput[1] == null || playerInput[2] != null ) {
 				Out.sendMessage(player, "Usage: /dc train &b<skill>");
 				return true;
@@ -241,12 +241,17 @@ public class Command {
 					return true;
 				}
 			}
-			
-			skill.level++;
-			for (ItemStack itemStack: trainingCosts)
-				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
-			Out.sendMessage(dwarf,"&6Training Successful");
-			return true;
+			if(soFarSoGood){
+				skill.level++;
+				for (ItemStack itemStack: trainingCosts)
+					dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
+				Out.sendMessage(dwarf,"&6Training Successful");
+				return true;
+			}
+			else{
+				return true; //something else goes here
+			}
+			return false;
 		}
 		
 		catch (Exception e){
