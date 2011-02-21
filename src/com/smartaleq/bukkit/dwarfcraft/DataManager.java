@@ -19,6 +19,7 @@ import org.bukkit.World;
 public class DataManager {
 
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
+	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
 	
 	public static void dbInitialize() {
 	    try{
@@ -161,8 +162,7 @@ public class DataManager {
 		
 	}
 
-	@SuppressWarnings("unused")
-	public static TrainingZone[] getSchoolZones(World world) {
+	public static List<TrainingZone> getSchoolZones(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
@@ -171,12 +171,8 @@ public class DataManager {
 		    String query = "select * from schoolzones Where world="+world.getName()+");";
 			ResultSet rs = statement.executeQuery(query);
 			if (rs == null) return null;
-			rs.last();
-			TrainingZone[] zoneList = new TrainingZone[rs.getRow()];
-			rs = statement.executeQuery(query);
-			rs.next();
-			for(TrainingZone newzone:zoneList){
-				newzone = new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name"));
+			while(rs.next()){
+				zoneList.add(new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name")));
 				rs.next();
 			}
 			rs.close();

@@ -1,5 +1,7 @@
 package com.smartaleq.bukkit.dwarfcraft.ui;
 
+import java.util.List;
+
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -368,11 +370,9 @@ public class Out {
 		sendMessage(player, message, "&6[&1"+school.name()+"&6] ");
 	}
 
-	public static boolean here(Player player, TrainingZone[] listZones) {
-		for (TrainingZone tz:listZones){
-			if (tz!=null){
-				sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone]");
-			}
+	public static boolean here(Player player, List<TrainingZone> list) {
+		for (TrainingZone tz:list){
+			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone]");
 		}
 		return false;
 	}

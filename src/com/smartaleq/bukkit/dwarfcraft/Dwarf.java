@@ -1,5 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -242,32 +243,27 @@ public class Dwarf {
 		int playerY = (int) player.getLocation().getY();
 		int playerZ = (int) player.getLocation().getY();
 		Vector victor = new Vector(playerX, playerY, playerZ);
-		TrainingZone[] schoolZones = DataManager.getSchoolZones(world);
+		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
 		for(TrainingZone zone: schoolZones){
 			if (victor.isInAABB(zone.corner1, zone.corner2) && zone.school == school && world == zone.world) return true;
 		}
 		return false;
 	}
 	
-	public TrainingZone[] listZones(){
+	public List<TrainingZone> listZones(){
 		World world = player.getWorld();
 		int playerX = (int) player.getLocation().getX();
 		int playerY = (int) player.getLocation().getY();
 		int playerZ = (int) player.getLocation().getY();
 		Vector victor = new Vector(playerX, playerY, playerZ);
-		TrainingZone[] schoolZones = DataManager.getSchoolZones(world);
-		TrainingZone[] zoneList = new TrainingZone[schoolZones.length];
-		databaseloop: for(TrainingZone zone: schoolZones){
+		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
+		List <TrainingZone> zonesHere = new ArrayList <TrainingZone> ();
+		for(TrainingZone zone: schoolZones){
 			if (victor.isInAABB(zone.corner1, zone.corner2) && world == zone.world){
-				for(TrainingZone thiszone: zoneList){
-					if (thiszone == null) {
-						thiszone = zone;
-						continue databaseloop;
-					}
-				}
+				zonesHere.add(zone);
 			}
 		}
-		return zoneList;
+		return zonesHere;
 	}
 	
 	public int countSkills() {
