@@ -131,10 +131,13 @@ public class ConfigManager {
 		}
 	}
 
-	
-	@SuppressWarnings("unchecked")
 	public static List<Skill> getAllSkills() {
-		List<Skill> newSkillsArray = (List<Skill>) ((ArrayList<Skill>) skillsArray).clone();
+		// can't clone here! clone() is only making shallow copies of skillsArray, fucking up the world
+//		List<Skill> newSkillsArray = (List<Skill>) ((ArrayList<Skill>) skillsArray).clone();
+		List<Skill> newSkillsArray = new ArrayList<Skill>(skillsArray.size());
+		for ( Skill s : skillsArray ) {
+			newSkillsArray.add(new Skill(s));
+		}
 		return newSkillsArray;
 	}
 

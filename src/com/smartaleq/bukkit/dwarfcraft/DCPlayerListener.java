@@ -34,7 +34,7 @@ public class DCPlayerListener extends PlayerListener {
 		if (fullPlayerInput.length >= 1) {
 			if (fullPlayerInput[0].equalsIgnoreCase("/dc")){
 
-				String[] playerInput = new String[(fullPlayerInput.length-1)];
+				String[] playerInput = new String[(fullPlayerInput.length)];
 				for(int i=1; i < fullPlayerInput.length; i++){
 					playerInput[i-1] = fullPlayerInput[i];
 				}

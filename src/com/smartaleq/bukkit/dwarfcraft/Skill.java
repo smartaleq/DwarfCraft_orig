@@ -34,6 +34,17 @@ public class Skill {
 		this.masterMultiplier = masterMultiplier;
 	}
 	
+	public Skill(Skill skill) { 
+		this.id = 					skill.id;
+		this.displayName = 			skill.displayName;
+		this.school = 				skill.school;
+		this.level = 				skill.level;
+		this.effects = 				skill.effects;
+		this.trainingCost = 		skill.trainingCost;
+		this.noviceIncrement = 		skill.noviceIncrement;
+		this.masterMultiplier = 	skill.masterMultiplier;
+	}
+	
 	public String toString(){
 		return displayName.toUpperCase().replaceAll(" ", "_");
 	}
