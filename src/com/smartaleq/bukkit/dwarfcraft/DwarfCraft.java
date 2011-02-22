@@ -51,7 +51,13 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, vehicleListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Lowest, this);
 		
-		if(ConfigManager.setUpSkillsArray()) ConfigManager.setUpEffectsArrays();
+		ConfigManager cm = new ConfigManager("./DwarfCraft/", "DwarfCraft.config");
+		cm.readConfigFile();
+		if(!cm.readSkillsFile() || !cm.readEffectsFile()){
+			System.out.println("Failed to Enable DwarfCraft Skills and Effects)");
+			pm.disablePlugin(this); //TODO failed to init skills
+		
+		}
 		DataManager.dbInitialize();
 		
 				

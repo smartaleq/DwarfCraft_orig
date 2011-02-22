@@ -10,31 +10,69 @@ import org.bukkit.inventory.ItemStack;
 
 public class ConfigManager {
 
-	static final String configDirectory = "./DwarfCraft/";
-	static final String configSkillsFileName = "skills.config";
-	static final String configEffectsFileName = "effects.config";
-	static final String configParamsFileName = "DwarfCraft.config";	
+	public ConfigManager(String directory, String paramsFileName){
+		configDirectory = directory;
+		configParamsFileName = paramsFileName;
+	}
+	private String configDirectory;
+	private String configParamsFileName;
 	
-	static final String dbname = configDirectory + "DwarfCraft.db";
+	private String configSkillsFileName;
+	public static int configSkillsVersion;
+	private String configEffectsFileName;
+	public static int configEffectsVersion;
+	private String configMessagesFileName;	
+	static String dbpath;
+	
+	private static List<Skill> skillsArray = new ArrayList<Skill>();
+	
+	private void getDefaultValues() {
+		if (configSkillsVersion == 0) configSkillsVersion = 100;
+		if (configEffectsVersion == 0) configEffectsVersion = 100;
+		if (configSkillsFileName == null) configSkillsFileName = "skills.config";
+		if (configEffectsFileName == null) configEffectsFileName = "effects.config";;
+		if (configMessagesFileName == null) configMessagesFileName = "messages.config";
+		if (dbpath == null) dbpath = "./DwarfCraft/dwarfcraft.db";
+	}
 	
 	
-	static final int maximumSkillCount = 100;
-	static final int maximumEffectCount = 1000;	
+	public boolean readConfigFile(){
+		try {
+			getDefaultValues();
+			FileReader fr = new FileReader(configDirectory + configParamsFileName);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			while (line!= null) {
+				if(line.charAt(0) == '#') continue;
+				String[] theline = line.split(":");
+				if (theline.length > 2)	continue;
+				line = br.readLine();
+				if (theline[0].equalsIgnoreCase("Skills File Name")) configSkillsFileName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Effects File Name")) configEffectsFileName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Messages File Name")) configMessagesFileName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Database File Name")) dbpath = configDirectory + theline[1].trim();
+			}
+			
+		}
+		catch(FileNotFoundException fN) {
+			fN.printStackTrace();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return true;
+	}
 	
-	static List<Skill> skillsArray = new ArrayList<Skill>();
-	
-	public static boolean setUpSkillsArray(){
+	public boolean readSkillsFile(){
 		String line = "";
 		try {
 			FileReader fr = new FileReader(configDirectory + configSkillsFileName);
 			BufferedReader br = new BufferedReader(fr);
-			for(int row = 0; row < maximumSkillCount; row++) {
+			while (line!= null) {
 				line = br.readLine();
 				if(line == null) continue;
-				if(line.charAt(0) == '#') {
-					row--;
-					continue;
-				}
+				if(line.charAt(0) == '#') continue;
+				if(line.charAt(0) == '^') configSkillsVersion = Integer.parseInt(line.substring(2));
 				String[] theline = line.split(",");
 				if (theline.length < 11){ 
 					continue;
@@ -46,16 +84,15 @@ public class ConfigManager {
 				//New skill initialized with level 0
 				int level = 0;
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
-				ItemStack[] trainingCost = {
-						new ItemStack(Integer.parseInt(theline[3]), Integer.parseInt(theline[4])),
-						new ItemStack(Integer.parseInt(theline[5]), Integer.parseInt(theline[6])),
-						new ItemStack(Integer.parseInt(theline[7]), Integer.parseInt(theline[8]))};
+				List <ItemStack> trainingCost = new ArrayList <ItemStack>();
+				if (theline[3] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[3]), Integer.parseInt(theline[4])));
+				if (theline[5] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[5]), Integer.parseInt(theline[6])));
+				if (theline[7] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[7]), Integer.parseInt(theline[8])));
 				//training multipliers taken from file
 				double noviceIncrement = Double.parseDouble(theline[9]);
 				double masterMultiplier = Double.parseDouble(theline[10]);
 				//Effects generated from effects file
-				Effect[] effects;
-				effects = new Effect[10];
+				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
 				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
 			}
@@ -70,24 +107,20 @@ public class ConfigManager {
 		return false;
 	}
 
-	public static boolean setUpEffectsArrays(){
+	public boolean readEffectsFile(){
 		String line = "";
 		try {
 			FileReader fr = new FileReader(configDirectory + configEffectsFileName);
 			BufferedReader br = new BufferedReader(fr);
 			
 			effectplacingloop: 
-			for(int row = 0; row < maximumEffectCount; row++) {
-				line = br.readLine();
-				if(line == null) continue;
-				if(line.charAt(0) == '#') {
-					row--;
-					continue;
-				}
+				while (line!= null) {
+					line = br.readLine();
+					if(line == null) continue;
+				if(line.charAt(0) == '#') continue;
+				if(line.charAt(0) == '^') configEffectsVersion = Integer.parseInt(line.substring(2));
 				String[] theline = line.split(",");
-				if (theline.length < 20){ 
-					continue;
-					}
+				if (theline.length < 20) continue;
 				
 				int			effectId 				= Integer.parseInt(theline[0]); 
 				double 		baseValue 				= Double.parseDouble(theline[1]);
@@ -115,12 +148,8 @@ public class ConfigManager {
 
 				for(Skill skill:skillsArray){
 					if(effectId / 10 == skill.id){
-						for(int j=0;j<10;j++){
-							if(skill.effects[j] == null){
-								skill.effects[j] = new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable);
-								continue effectplacingloop;
-							}
-						}
+						skill.effects.add(new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable));
+						continue effectplacingloop;		
 					}
 				}
 				
@@ -145,7 +174,7 @@ public class ConfigManager {
 		return newSkillsArray;
 	}
 
-	public static int countSkills() {
+	public int countSkills() {
 		int count = 0;
 		for (Skill s: skillsArray){
 			if (s != null) count++;

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.bukkit.World;
 
@@ -21,30 +20,32 @@ public class DataManager {
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
 	
+	
+	
 	public static void dbInitialize() {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 		    Statement statement = conn.createStatement();
-		    ResultSet rs = statement.executeQuery("select * from dwarfs;");
-	    	if(rs != null) {
-	    		rs.close();
-	    		return;
-	    	}
-	    	//TODO if different skill columns, transfer to new table with 0's for new skills
+		    ResultSet rs;
+		   	rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+ConfigManager.configSkillsVersion+"';");
+			rs.next();
+			if (rs.isClosed()) { //if current version table doesn't exist
+				for(int versionNumber=ConfigManager.configSkillsVersion-1;versionNumber>=100;versionNumber--){ // a is number of past versions to look for
+					rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+versionNumber+"';");
+					rs.next();
+					if (!rs.isClosed()){ //if there is a recent past table, use it to build the new table
+						buildDB(ConfigManager.configSkillsVersion-versionNumber);
+						return;
+					}
+				} 
+				buildDB(0); //if there are no recent past tables, build a new db from scratch
+			}
+		    
 	    }
 	    catch (SQLException e) {
-	    	if(e.getMessage().equalsIgnoreCase("no such table: dwarfs")){
-		    	try{
-				    createDB();
-			    	System.out.println("DB created successfully");
-		    	}
-		    	catch (Exception f){
-		    		f.printStackTrace();
-		    		//total failure
-		    	}
-	    	}
+	    	e.printStackTrace();
 	    }
 	    catch (Exception e){
 	    	e.printStackTrace();
@@ -52,26 +53,33 @@ public class DataManager {
 	    }
 	}
 		 
-	public static void createDB() {
+	public static void buildDB(int oldVersion) {
     	try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 			Statement statement = conn.createStatement();
+			
+			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
 			for (Skill skill:ConfigManager.getAllSkills()){
 				if (skill != null) skillTableCreater = skillTableCreater.concat("," + skill.toString() );
 			}
-			String sqlLine = "create table dwarfs (playername,iself" + skillTableCreater + ");";
+			String sqlLine = "create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");";
 			statement.executeUpdate(sqlLine);
 			System.out.println(sqlLine);
 			sqlLine = "create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);";
 			statement.executeUpdate(sqlLine);
 			System.out.println(sqlLine);
+			
+			//Update this new table with old data if old data exists
+			if(oldVersion == 0){conn.close();return;}
+			
+			
 			conn.close();
 		} 
 		catch (SQLException e) {
-	    	System.out.println("DB not created successfully");
+	    	System.out.println("DB not built successfully");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -90,9 +98,9 @@ public class DataManager {
 	    	System.out.println("IN CREATEDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 	    	Statement statement = conn.createStatement();
-	    	String sql = "insert into dwarfs (playername, iself";
+	    	String sql = "insert into dwarfs"+ConfigManager.configSkillsVersion+" (playername, iself";
 	    	List<Skill> allSkills = ConfigManager.getAllSkills();
 	    	for (Skill skill: allSkills){
 				if (skill != null) sql = sql.concat("," + skill.toString());
@@ -116,9 +124,9 @@ public class DataManager {
 			System.out.println("IN SAVEDWARFDATA");
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 		    Statement statement = conn.createStatement();
-	    	String sqlsend = "UPDATE dwarfs "+ "SET iself='" + dwarf.isElf + "', "; 
+	    	String sqlsend = "UPDATE dwarfs"+ConfigManager.configSkillsVersion+" SET iself='" + dwarf.isElf + "', "; 
 	    	for (Skill skill: dwarf.skills) 
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
@@ -139,10 +147,10 @@ public class DataManager {
 	    	System.out.println("IN GETDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 		    Statement statement = conn.createStatement();
 		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
-		    String query = "select * from dwarfs WHERE playername = '" + dwarf.player.getName() + "';";
+		    String query = "select * from dwarfs"+ConfigManager.configSkillsVersion+" WHERE playername = '" + dwarf.player.getName() + "';";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
@@ -161,6 +169,42 @@ public class DataManager {
 		}
 	}
 
+	/**
+	 * Used for creating and populating a dwarf with a null(offline) player
+	 * @param dwarf
+	 * @param name
+	 */
+	public static boolean getDwarfData(Dwarf dwarf, String name){
+		try {
+			String sanitizedName;			
+			sanitizedName = Util.sanitize(name);
+			Class.forName("org.sqlite.JDBC");
+			Connection conn =
+			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+			Statement statement = conn.createStatement();
+			ResultSet rs = statement.executeQuery("select * from dwarfs"+ConfigManager.configSkillsVersion+" where playername='" + sanitizedName + "';");
+		    if(rs == null) {
+		    	conn.close();
+		    	return false;
+		    }    
+			rs.next();
+			if (rs.isClosed()) {
+				conn.close();
+				return false;
+			}
+			dwarf.isElf = rs.getBoolean("iself");
+			for (Skill skill: dwarf.skills) {
+				if (skill!=null) skill.level = rs.getInt(skill.toString());
+			}
+			rs.close();
+	    	conn.close();
+	    	return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	public static void removeDwarf(Dwarf dwarf) {
 		// TODO removedwarf
 		
@@ -169,7 +213,7 @@ public class DataManager {
 	public static List<TrainingZone> getSchoolZones(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
-		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 		    Statement statement = conn.createStatement();
 		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
@@ -193,7 +237,7 @@ public class DataManager {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 	    	PreparedStatement prep = conn.prepareStatement("insert into schoolzones values (?,?,?,?,?,?,?,?,?);");
 	    	prep.setString(1, Util.sanitize(school.name()));
 	    	prep.setDouble(2, vector1.getX());
@@ -218,14 +262,14 @@ public class DataManager {
 	    }	    
 	}
 	
-	public static boolean removeSchoolZone(String name){
+	public static boolean removeSchoolZone(String schoolName){
 		 try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 	    	Statement statement = conn.createStatement();
-	    	String schoolname = Util.sanitize(name);
-	    	String query = "delete from schoolzones where name = '"+schoolname+"'";
+	    	String sanitizedSchoolName = Util.sanitize(schoolName);
+	    	String query = "delete from schoolzones where name = '"+sanitizedSchoolName+"'";
 	    	statement.executeUpdate(query);
 	    	conn.close();
 	    	return true;
@@ -240,9 +284,5 @@ public class DataManager {
 		return dwarves;
 	}
 	
-	public static Dwarf createDwarf(Player player){
-		Dwarf newDwarf = new Dwarf(player);
-		dwarves.add(newDwarf);
-		return newDwarf;
-	}
+
 }

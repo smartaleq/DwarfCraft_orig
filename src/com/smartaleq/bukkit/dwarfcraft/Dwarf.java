@@ -1,9 +1,5 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,50 +37,23 @@ public class Dwarf {
 	}
 
 	public static Dwarf find(String name) {
-		Dwarf dwarf = new Dwarf(null);
-		dwarf.initializeNew();
-		try {
-			String sanitizedName;			
-			sanitizedName = name;
-			
-			Class.forName("org.sqlite.JDBC");
-			Connection conn =
-			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
-			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("select * from dwarfs where playername='" + sanitizedName + "';");
-		    if(rs == null) {
-		    	conn.close();
-		    	return null;
-		    }    
-			rs.next();
-			if (rs.isClosed()) {
-				conn.close();
-				return null;
-			}
-			dwarf.isElf = rs.getBoolean("iself");
-			for (Skill skill: dwarf.skills) {
-				if (skill!=null) skill.level = rs.getInt(skill.toString());
-			}
-			rs.close();
-	    	conn.close();
+		Dwarf dwarf = createDwarf(null);
+		if(DataManager.getDwarfData(dwarf, name)) return dwarf;
+		else{
+			//No dwarf or data found
+			return null;
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		    	//total failure
-		}
-		return dwarf;
 	}
 
-	
-	/**
-	 * Makes a dwarf have 0-level skills
-	 */
-	void initializeNew(){
-		this.isElf = false;
-		skills = ConfigManager.getAllSkills();
-		for (Skill skill:skills) if(skill != null) skill.level = 0;
+	public static Dwarf createDwarf(Player player){
+		Dwarf newDwarf = new Dwarf(player);
+		newDwarf.isElf = false;
+		newDwarf.skills = ConfigManager.getAllSkills();
+		for (Skill skill:newDwarf.skills) if(skill != null) skill.level = 0;
+		if(player!=null) DataManager.dwarves.add(newDwarf);
+		return newDwarf;
 	}
-	
+
 	/** 
 	 * Removes a Dwarf from the database. Only used for debugging/banning.
 	 */
@@ -147,6 +116,9 @@ public class Dwarf {
 		return trainingStack;
 	}
 
+	/**
+	 * Counts skills greater than level 5, used for training costs
+	 */
 	private int countHighSkills() {
 		int highCount = 0;
 		for (Skill s:skills) {
@@ -170,7 +142,7 @@ public class Dwarf {
 	/**
 	 * Makes an elf into a dwarf
 	 */
-	public boolean makeDwarf(){
+	public boolean makeElfIntoDwarf(){
 		isElf = false;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
 		DataManager.saveDwarfData(this);

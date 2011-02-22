@@ -356,10 +356,10 @@ public class Command {
 
 	private boolean makeMeADwarf(boolean confirmed) {
 		Dwarf dwarf = Dwarf.find(player);
-		if (dwarf.isElf) return dwarf.makeDwarf(); 
+		if (dwarf.isElf) return dwarf.makeElfIntoDwarf(); 
 		else if (confirmed) {
 			Out.becameADwarf(player);
-			return dwarf.makeDwarf();
+			return dwarf.makeElfIntoDwarf();
 		}
 		else {
 			Out.confirmBecomingDwarf(player);

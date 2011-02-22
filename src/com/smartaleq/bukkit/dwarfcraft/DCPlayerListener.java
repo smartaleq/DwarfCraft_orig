@@ -63,8 +63,7 @@ public class DCPlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		Dwarf dwarf = Dwarf.find(player);
 		if (dwarf == null) {
-			dwarf = DataManager.createDwarf(player);
-			dwarf.initializeNew();
+			dwarf = Dwarf.createDwarf(player);
 		}
 		if (!DataManager.getDwarfData(dwarf)) {
 			DataManager.createDwarfData(dwarf);

@@ -1,5 +1,7 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import java.util.List;
+
 import org.bukkit.inventory.ItemStack;
 
 public class Skill implements Cloneable{
@@ -8,8 +10,8 @@ public class Skill implements Cloneable{
 	public final String displayName;
 	public final School school;
 	public int level;
-	public final Effect[] effects;
-	public final ItemStack[] trainingCost;
+	public final List <Effect> effects;
+	public final List <ItemStack> trainingCost;
 	public final double noviceIncrement;
 	public final double masterMultiplier;
 		
@@ -18,8 +20,8 @@ public class Skill implements Cloneable{
 			String displayName, 
 			School school,
 			int level,
-			Effect[] effects,
-			ItemStack[] trainingCost,
+			List <Effect> effects,
+			List <ItemStack> trainingCost,
 			double noviceIncrement,
 			double masterMultiplier
 				) 

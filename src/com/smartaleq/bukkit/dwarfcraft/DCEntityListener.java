@@ -153,7 +153,7 @@ public class DCEntityListener extends EntityListener {
     			if(e.effectType == EffectType.BOWATTACK){
     				damage = event.getDamage()* e.getEffectAmount(dwarf);
     				if(hp <= 0) {event.setCancelled(true); return;}
-    				damage = (int) Util.randomAmount((e.getEffectAmount(dwarf)) * damage);
+    				damage = (int) Util.randomAmount((e.getEffectAmount(dwarf)));
     				if(damage > hp) hitThing.setHealth(event.getDamage());
     				else hitThing.setHealth((int) (hp-damage+event.getDamage()));
     				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+dwarf.player.getName()+" shot " + hitThing.getClass().getSimpleName() +" for " + damage + " of "+ hp + " eventdmg:" + event.getDamage() );
