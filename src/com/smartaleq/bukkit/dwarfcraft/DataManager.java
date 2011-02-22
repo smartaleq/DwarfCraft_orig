@@ -137,8 +137,8 @@ public class DataManager {
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 		    Statement statement = conn.createStatement();
+		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
 		    String query = "select * from dwarfs WHERE playername = '" + dwarf.player.getName() + "';";
-//		    String query = "select * from dwarfs;";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
@@ -191,7 +191,7 @@ public class DataManager {
 	    	Connection conn =
 	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 	    	PreparedStatement prep = conn.prepareStatement("insert into schoolzones values (?,?,?,?,?,?,?,?,?);");
-	    	prep.setString(1, school.name());
+	    	prep.setString(1, Util.sanitize(school.name()));
 	    	prep.setDouble(2, vector1.getX());
 	    	prep.setDouble(3, vector1.getY());
 	    	prep.setDouble(4, vector1.getZ());
@@ -220,7 +220,8 @@ public class DataManager {
 	    	Connection conn =
 	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 	    	Statement statement = conn.createStatement();
-	    	String query = "delete * from schoolzones where name = '"+name+"'";
+	    	String schoolname = Util.sanitize(name);
+	    	String query = "delete * from schoolzones where name = '"+schoolname+"'";
 	    	statement.executeUpdate(query);
 	    	conn.close();
 	    	return true;
@@ -238,37 +239,6 @@ public class DataManager {
 	public static Dwarf createDwarf(Player player){
 		Dwarf newDwarf = new Dwarf(player);
 		dwarves.add(newDwarf);
-//		for (Dwarf d:dwarves) if (d==null){
-//			d = new Dwarf(player);
-//			if (DwarfCraft.debugging) System.out.println("Debug Message: added dwarf to dwarves array");
-//			for (int i = 0; i<4; i++)
-//				if (dwarves[i]==null) if (DwarfCraft.debugging) System.out.println("Debug Message: dwarves["+i+"] is null");
-//			return d;
-//		}
-//		
 		return newDwarf;
 	}
 }
-
-
-
-//statement.executeUpdate("create table people (name, occupation);");
-//PreparedStatement prep = conn.prepareStatement(
-//  "insert into dwarfs values (?, ?);");
-//
-//prep.setString(1, "Gandhi");
-//prep.setString(2, "politics");
-//prep.addBatch();
-//
-//conn.setAutoCommit(false);
-//prep.executeBatch();
-//conn.setAutoCommit(true);
-//
-//ResultSet rs = statement.executeQuery("select * from people;");
-//while (rs.next()) {
-//  System.out.println("name = " + rs.getString("name"));
-//  System.out.println("job = " + rs.getString("occupation"));
-//}
-//rs.close();
-//conn.close();
-//}

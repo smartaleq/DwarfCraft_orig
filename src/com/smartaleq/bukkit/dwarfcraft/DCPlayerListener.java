@@ -94,7 +94,7 @@ public class DCPlayerListener extends PlayerListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(e.effectType == EffectType.EAT && e.initiatorId==itemId){
-    				player.setHealth((int) (player.getHealth()+e.getEffectAmount(s.level)));
+    				player.setHealth((int) (player.getHealth()+e.getEffectAmount(dwarf)));
     				item.setAmount(item.getAmount()-1);
     				
 				}

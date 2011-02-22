@@ -67,7 +67,7 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("effectinfo")) 			return effectInfo();
 		
 		if (playerInput[0].equalsIgnoreCase("train")) 				return train();
-		if (playerInput[0].equalsIgnoreCase("setskill")) 			return setSkill();
+		if (playerInput[0].equalsIgnoreCase("setskill")) 			return (player.isOp() ? setSkill(): notAnOpError());
 		
 		if (playerInput[0].equalsIgnoreCase("MAKEMEADWARF")) 		return makeMeADwarf(false);
 		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEADWARF"))	return makeMeADwarf(true);
@@ -77,11 +77,22 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) 			return schoolList();
 		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) 			return schoolInfo();
 		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
-		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return createSchool();
-				
+		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return (player.isOp() ? createSchool(): notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());		
 		return false;
 	}
 	
+	private boolean removeSchool() {
+		if (playerInput[1]== null) {
+			Out.sendMessage(player, "&cYou need to enter the exact school name.");
+		}
+		if(!DataManager.removeSchoolZone(playerInput[1])){
+			Out.sendMessage(player, "&cYou need to enter the exact school name.");
+		}
+		else return true;
+		return false;
+	}
+
 	/**
 	 * Changes the level of debug reporting in console
 	 */
@@ -403,6 +414,8 @@ public class Command {
 		} 		
 	}
 
-
-
+	private boolean notAnOpError(){
+		Out.sendMessage(player, "You are not authorized to use that command");
+	return true;
+	}
 }

@@ -50,7 +50,7 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.VEHICLE_DAMAGE, vehicleListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.VEHICLE_MOVE, vehicleListener, Priority.Lowest, this);
 		
-		if(ConfigManager.setUpSkillsArray()) ConfigManager.setUpEffects();
+		if(ConfigManager.setUpSkillsArray()) ConfigManager.setUpEffectsArrays();
 		DataManager.dbInitialize();
 		
 				

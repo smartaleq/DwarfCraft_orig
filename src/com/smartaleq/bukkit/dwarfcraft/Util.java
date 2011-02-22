@@ -33,16 +33,24 @@ public class Util {
 	
 	public static boolean toolChecker(Player player){
 		Inventory inv = player.getInventory();
+		ItemStack[] contents = inv.getContents();
 		boolean removedSomething = false;
-		for (ItemStack item:inv.getContents()){
+		for (ItemStack item:contents){
 			int damage = item.getDurability();
 			int maxDamage = item.getType().getMaxDurability();
 			if (damage>maxDamage) {
-				inv.remove(item);
+				item.setAmount(0);
 				removedSomething = true;
 			}
 		}
+		inv.setContents(contents);
 		return removedSomething;
+	}
+
+	public static String sanitize(String name) {
+		//this is shitty sanitation, i know i should use prepared statements and other things but i can't be arsed to care about someone doing sql injection into a simple game plugin database, honestly.
+		String newname = name.replaceAll("[^\\w]", "");
+		return newname;
 	}
 
 }
