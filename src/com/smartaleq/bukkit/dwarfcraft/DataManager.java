@@ -53,29 +53,59 @@ public class DataManager {
 	    }
 	}
 		 
+	/**
+	 * this is untested and quite a lot of new code, it will probably fail several times. no way to bugfix currently.
+	 * Just praying it works - joey
+	 * @param oldVersion
+	 */
 	public static void buildDB(int oldVersion) {
     	try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
 			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 			Statement statement = conn.createStatement();
+			ResultSet rs;
 			
+			//if no school table, create it
+			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones'");
+			rs.next();
+			if (rs.isClosed()) statement.executeQuery("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
+				
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
-			for (Skill skill:ConfigManager.getAllSkills()){
-				if (skill != null) skillTableCreater = skillTableCreater.concat("," + skill.toString() );
-			}
-			String sqlLine = "create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");";
-			statement.executeUpdate(sqlLine);
-			System.out.println(sqlLine);
-			sqlLine = "create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);";
-			statement.executeUpdate(sqlLine);
-			System.out.println(sqlLine);
-			
+			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
+			statement.executeQuery("create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");");
+									
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}
+			String schema = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+oldVersion+"'").getString("sql");
+			rs = statement.executeQuery("select * from dwarfs"+oldVersion);
 			
-			
+			String sqlLine1 = "insert into dwarfs"+ConfigManager.configSkillsVersion+" (playername, iself";
+			String sqlLine2=") values (?,?";
+	    	
+			List<Skill> tempSkills = ConfigManager.getAllSkills();
+			for (Skill s: tempSkills ){
+				if (schema.contains(s.toString())){
+					s.level = 1;
+				}
+				sqlLine1 = sqlLine1.concat(","+s.toString());
+				sqlLine2 = sqlLine2.concat(",?");
+			}
+			sqlLine2 = sqlLine2.concat(");");
+			PreparedStatement prep = conn.prepareStatement(sqlLine1+sqlLine2);
+			while(rs.next()){
+				prep.setString(1,rs.getString("playername"));
+				prep.setString(2,rs.getString("iself"));
+				int i=3;
+				for (Skill s: tempSkills ){
+					if (s.level==1)	prep.setInt(i, Integer.parseInt(rs.getString(s.toString())));
+					else prep.setInt(i, 0);
+					i++;
+				}
+				prep.addBatch();
+			}
+			prep.executeBatch();
 			conn.close();
 		} 
 		catch (SQLException e) {
