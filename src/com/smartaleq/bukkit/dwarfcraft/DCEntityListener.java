@@ -27,7 +27,7 @@ public class DCEntityListener extends EntityListener {
 			event.getCause() == DamageCause.SUFFOCATION || 
 			event.getCause() == DamageCause.FIRE || 
 			event.getCause() == DamageCause.FIRE_TICK){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Damage Event: environment");
+			if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: Damage Event: environment");
 			onEntityDamagedByEnvirons(event);
 				
 		}

@@ -49,7 +49,7 @@ public class Dwarf {
 			
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 			Statement statement = conn.createStatement();
 			ResultSet rs = statement.executeQuery("select * from dwarfs where playername='" + sanitizedName + "';");
 		    if(rs == null) {

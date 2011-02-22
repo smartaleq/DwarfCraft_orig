@@ -25,7 +25,7 @@ public class DataManager {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 		    Statement statement = conn.createStatement();
 		    ResultSet rs = statement.executeQuery("select * from dwarfs;");
 	    	if(rs != null) {
@@ -56,7 +56,7 @@ public class DataManager {
     	try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			  DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 			Statement statement = conn.createStatement();
 			String skillTableCreater = "";
 			for (Skill skill:ConfigManager.getAllSkills()){
@@ -90,7 +90,7 @@ public class DataManager {
 	    	System.out.println("IN CREATEDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 	    	Statement statement = conn.createStatement();
 	    	String sql = "insert into dwarfs (playername, iself";
 	    	List<Skill> allSkills = ConfigManager.getAllSkills();
@@ -98,7 +98,7 @@ public class DataManager {
 				if (skill != null) sql = sql.concat("," + skill.toString());
 			}
 	    	sql = sql.concat(") values (");
-	    	sql = sql.concat("'"+dwarf.player.getName()+"'," + dwarf.isElf());
+	    	sql = sql.concat("'"+dwarf.player.getName()+"'," + "'"+dwarf.isElf()+"'");
 	    	for (Skill skill: allSkills){
 				if (skill != null) sql = sql.concat("," + skill.level);
 			}
@@ -116,7 +116,7 @@ public class DataManager {
 			System.out.println("IN SAVEDWARFDATA");
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 		    Statement statement = conn.createStatement();
 	    	String sqlsend = "UPDATE dwarfs "+ "SET iself='" + dwarf.isElf + "', "; 
 	    	for (Skill skill: dwarf.skills) 
@@ -139,7 +139,7 @@ public class DataManager {
 	    	System.out.println("IN GETDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 		    Statement statement = conn.createStatement();
 		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
 		    String query = "select * from dwarfs WHERE playername = '" + dwarf.player.getName() + "';";
@@ -169,7 +169,7 @@ public class DataManager {
 	public static List<TrainingZone> getSchoolZones(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
-		    Connection conn = DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 		    Statement statement = conn.createStatement();
 		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
@@ -193,7 +193,7 @@ public class DataManager {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 	    	PreparedStatement prep = conn.prepareStatement("insert into schoolzones values (?,?,?,?,?,?,?,?,?);");
 	    	prep.setString(1, Util.sanitize(school.name()));
 	    	prep.setDouble(2, vector1.getX());
@@ -222,10 +222,10 @@ public class DataManager {
 		 try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbname);
 	    	Statement statement = conn.createStatement();
 	    	String schoolname = Util.sanitize(name);
-	    	String query = "delete * from schoolzones where name = '"+schoolname+"'";
+	    	String query = "delete from schoolzones where name = '"+schoolname+"'";
 	    	statement.executeUpdate(query);
 	    	conn.close();
 	    	return true;

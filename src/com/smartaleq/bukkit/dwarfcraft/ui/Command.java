@@ -78,10 +78,16 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) 			return schoolInfo();
 		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
 		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return (player.isOp() ? createSchool(): notAnOpError());
-		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());		
+		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
+		if (playerInput[0].equalsIgnoreCase("allschools")) 			return (player.isOp() ? listAllSchools(): notAnOpError());		
 		return false;
 	}
 	
+	private boolean listAllSchools() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	private boolean removeSchool() {
 		if (playerInput[1]== null) {
 			Out.sendMessage(player, "&cYou need to enter the exact school name.");

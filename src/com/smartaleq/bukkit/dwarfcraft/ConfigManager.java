@@ -15,6 +15,9 @@ public class ConfigManager {
 	static final String configEffectsFileName = "effects.config";
 	static final String configParamsFileName = "DwarfCraft.config";	
 	
+	static final String dbname = configDirectory + "DwarfCraft.db";
+	
+	
 	static final int maximumSkillCount = 100;
 	static final int maximumEffectCount = 1000;	
 	
