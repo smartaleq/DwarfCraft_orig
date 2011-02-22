@@ -141,8 +141,8 @@ public class DataManager {
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 		    Statement statement = conn.createStatement();
+		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
 		    String query = "select * from dwarfs WHERE playername = '" + dwarf.player.getName() + "';";
-//		    String query = "select * from dwarfs;";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
@@ -174,6 +174,7 @@ public class DataManager {
 		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
 			if (rs == null) return null;
+			zoneList.clear();
 			while(rs.next()){
 				zoneList.add(new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name")));
 				rs.next();
@@ -194,7 +195,7 @@ public class DataManager {
 	    	Connection conn =
 	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
 	    	PreparedStatement prep = conn.prepareStatement("insert into schoolzones values (?,?,?,?,?,?,?,?,?);");
-	    	prep.setString(1, school.name());
+	    	prep.setString(1, Util.sanitize(school.name()));
 	    	prep.setDouble(2, vector1.getX());
 	    	prep.setDouble(3, vector1.getY());
 	    	prep.setDouble(4, vector1.getZ());
@@ -216,6 +217,24 @@ public class DataManager {
 	    	return false;
 	    }	    
 	}
+	
+	public static boolean removeSchoolZone(String name){
+		 try{
+	    	Class.forName("org.sqlite.JDBC");
+	    	Connection conn =
+	    		DriverManager.getConnection("jdbc:sqlite:DwarfCraft.db");
+	    	Statement statement = conn.createStatement();
+	    	String schoolname = Util.sanitize(name);
+	    	String query = "delete * from schoolzones where name = '"+schoolname+"'";
+	    	statement.executeUpdate(query);
+	    	conn.close();
+	    	return true;
+		    }
+		    catch (Exception e){
+		    	e.printStackTrace();
+		    	return false;
+		    }	    
+	}
 
 	public static List<Dwarf> getDwarves() {
 		return dwarves;
@@ -224,37 +243,6 @@ public class DataManager {
 	public static Dwarf createDwarf(Player player){
 		Dwarf newDwarf = new Dwarf(player);
 		dwarves.add(newDwarf);
-//		for (Dwarf d:dwarves) if (d==null){
-//			d = new Dwarf(player);
-//			if (DwarfCraft.debugging) System.out.println("Debug Message: added dwarf to dwarves array");
-//			for (int i = 0; i<4; i++)
-//				if (dwarves[i]==null) if (DwarfCraft.debugging) System.out.println("Debug Message: dwarves["+i+"] is null");
-//			return d;
-//		}
-//		
 		return newDwarf;
 	}
 }
-
-
-
-//statement.executeUpdate("create table people (name, occupation);");
-//PreparedStatement prep = conn.prepareStatement(
-//  "insert into dwarfs values (?, ?);");
-//
-//prep.setString(1, "Gandhi");
-//prep.setString(2, "politics");
-//prep.addBatch();
-//
-//conn.setAutoCommit(false);
-//prep.executeBatch();
-//conn.setAutoCommit(true);
-//
-//ResultSet rs = statement.executeQuery("select * from people;");
-//while (rs.next()) {
-//  System.out.println("name = " + rs.getString("name"));
-//  System.out.println("job = " + rs.getString("occupation"));
-//}
-//rs.close();
-//conn.close();
-//}

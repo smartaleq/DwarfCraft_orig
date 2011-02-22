@@ -18,7 +18,8 @@ public class DCEntityListener extends EntityListener {
 	public DCEntityListener(final DwarfCraft plugin) {
 	}
 
-	public void onEntityDamaged(EntityDamageEvent event){
+	public void onEntityDamage(EntityDamageEvent event){
+		if(event.isCancelled()) return;
 		if(
 			event.getCause() == DamageCause.BLOCK_EXPLOSION ||
 			event.getCause() == DamageCause.ENTITY_EXPLOSION || 
@@ -26,13 +27,19 @@ public class DCEntityListener extends EntityListener {
 			event.getCause() == DamageCause.SUFFOCATION || 
 			event.getCause() == DamageCause.FIRE || 
 			event.getCause() == DamageCause.FIRE_TICK){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Entity Environment damage cause");
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Damage Event: environment");
 			onEntityDamagedByEnvirons(event);
+				
 		}
-		else if (event.getCause() == DamageCause.ENTITY_ATTACK){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: ENTITY ATTACK damage cause");
-			if(event instanceof EntityDamageByProjectileEvent) onEntityDamageByProjectile((EntityDamageByProjectileEvent) event);
-			else onEntityAttack((EntityDamageByEntityEvent) event);
+		else if (event instanceof EntityDamageByProjectileEvent){
+			EntityDamageByProjectileEvent sub = (EntityDamageByProjectileEvent) event;
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Damage Event: projectile");
+			onEntityDamageByProjectile(sub);
+		}
+		else if (event instanceof EntityDamageByEntityEvent){
+			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: Damage Event: entity by entity");
+			onEntityAttack(sub);
 		}
 		else return;
 	}
@@ -45,9 +52,8 @@ public class DCEntityListener extends EntityListener {
        	Dwarf dwarf = Dwarf.find(player);
        	List<Skill> skills = dwarf.skills;
        	
-       	int dmg = event.getDamage();
+       	int damage = event.getDamage();
        	int hp = player.getHealth();
-       	int chgDmg = 0;
        	
       	//Effect Specific information
        	for(Skill s: skills){
@@ -60,13 +66,11 @@ public class DCEntityListener extends EntityListener {
 					(e.effectType == EffectType.FIREDAMAGE && event.getCause() == DamageCause.FIRE_TICK) ||
 					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.ENTITY_EXPLOSION) ||
 					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.BLOCK_EXPLOSION)){
-    				if(hp <= 0) {event.setCancelled(true); return;}
-    				chgDmg = (int) Math.floor((e.getEffectAmount(s.level)) * dmg) - dmg;
+    				damage = (int) Math.floor((e.getEffectAmount(dwarf) * damage));
     				if (DwarfCraft.debugMessagesThreshold < 8) System.out.println("Debug Message: environment damage type:" + event.getCause() +
-    						" base damage:"+event.getDamage()+ " change to damage:" + chgDmg+ " player HP before:" + hp);
-    				if(chgDmg > hp) player.setHealth(hp);
-    				else player.setHealth(hp-chgDmg);
-    				}
+    						" base damage:"+event.getDamage()+ " new damage:" + damage+ " player HP before:" + hp);
+    				event.setDamage(damage);
+    			}
     		}
        	}  	
     }
@@ -109,7 +113,7 @@ public class DCEntityListener extends EntityListener {
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
 		    				sword=true;
-		    				double effectAmount = e.getEffectAmount(s.level);
+		    				double effectAmount = e.getEffectAmount(attacker);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - new:"+tool.getDurability());
@@ -119,23 +123,24 @@ public class DCEntityListener extends EntityListener {
     			}
     			if(e.effectType == EffectType.PVEDAMAGE && !isPVP && sword){
     				if(hp <= 0) {event.setCancelled(true); return;}
-    				damage = (int) Util.randomAmount((e.getEffectAmount(s.level)) * damage);
+    				damage = (int) Util.randomAmount((e.getEffectAmount(attacker)) * damage);
     				if(damage >= hp){
     					deadThingDrop(victim, attacker);
     				}
     				event.setDamage(damage);
-    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(s.level)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
+    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
     			}
     			if(e.effectType == EffectType.PVPDAMAGE && isPVP && sword){
-    				damage = (int) Util.randomAmount((e.getEffectAmount(s.level)) * damage);
+    				damage = (int) Util.randomAmount((e.getEffectAmount(attacker)) * damage);
     				event.setDamage(damage);
-       				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(s.level)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
+       				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
        			}
     		}
     	}    	
     }
 
     public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
+    	if (DwarfCraft.disableEffects) return;
     	if(!(event.getDamager() instanceof Player)) return;
     	Dwarf dwarf = Dwarf.find((Player) event.getDamager());
     	LivingEntity hitThing = ((LivingEntity) event.getEntity());
@@ -146,9 +151,9 @@ public class DCEntityListener extends EntityListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(e.effectType == EffectType.BOWATTACK){
-    				damage = event.getDamage()* e.getEffectAmount(s.level);
+    				damage = event.getDamage()* e.getEffectAmount(dwarf);
     				if(hp <= 0) {event.setCancelled(true); return;}
-    				damage = (int) Util.randomAmount((e.getEffectAmount(s.level)) * damage);
+    				damage = (int) Util.randomAmount((e.getEffectAmount(dwarf)) * damage);
     				if(damage > hp) hitThing.setHealth(event.getDamage());
     				else hitThing.setHealth((int) (hp-damage+event.getDamage()));
     				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+dwarf.player.getName()+" shot " + hitThing.getClass().getSimpleName() +" for " + damage + " of "+ hp + " eventdmg:" + event.getDamage() );
@@ -158,7 +163,14 @@ public class DCEntityListener extends EntityListener {
     	}
     }
 
+    /**
+     * Mobs that die from any means but sword/arrow attack drop _nothing_
+     * this prevents monster farmers and makes hunter a more valuable skill
+     * 
+     * Drops in general are increased to balance this major nerf.
+     */
     public void onEntityDeath(EntityDeathEvent event) {
+    	if (DwarfCraft.disableEffects) return;
     	if (event.getEntity() instanceof Player) return;
     	List<ItemStack> items = event.getDrops();
     	int numbItems = items.size();
@@ -174,27 +186,20 @@ public class DCEntityListener extends EntityListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(e.effectType == EffectType.MOBDROP){
-    				if(e.id == 810 && (deadThing instanceof CraftPig ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 811 && (deadThing instanceof CraftCow ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 812 && (deadThing instanceof CraftSheep ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 820 && (deadThing instanceof CraftCreeper ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 821 && (deadThing instanceof CraftSkeleton ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 822 && (deadThing instanceof CraftSkeleton ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 850 && (deadThing instanceof CraftZombie ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 851 && (deadThing instanceof CraftZombie ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    				else if (e.id == 852 && (deadThing instanceof CraftChicken ))
-    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(s.level), false);
-    			
-				}
-    		}
-    	}
-    }
+    				if(
+    					(e.id == 810 && (deadThing instanceof CraftPig )) ||
+	    				(e.id == 811 && (deadThing instanceof CraftCow )) ||
+	    				(e.id == 812 && (deadThing instanceof CraftSheep )) ||
+	    				(e.id == 820 && (deadThing instanceof CraftCreeper )) ||
+	    				(e.id == 821 && (deadThing instanceof CraftSkeleton )) ||
+	    				(e.id == 822 && (deadThing instanceof CraftSkeleton )) ||
+	    				(e.id == 850 && (deadThing instanceof CraftZombie )) ||
+	    				(e.id == 851 && (deadThing instanceof CraftZombie )) ||
+		    				(e.id == 852 && (deadThing instanceof CraftChicken ))){
+	    			Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false);
+					}
+	    		}
+	    	}
+	    }
+	}
 }

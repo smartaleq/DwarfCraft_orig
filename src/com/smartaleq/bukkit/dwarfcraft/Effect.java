@@ -8,23 +8,23 @@ public class Effect {
 	public int id;
 	
 	//effect value descriptors
-	double baseValue;
-	double levelUpMultiplier;
-	double noviceLevelUpMultiplier;
-	double minValue;
-	double maxValue;
-	boolean floorResult;
-	boolean hasException;
-	double exceptionLow;
-	double exceptionHigh;
-	double exceptionValue;
+	final double baseValue;
+	final double levelUpMultiplier;
+	final double noviceLevelUpMultiplier;
+	final double minValue;
+	final double maxValue;
+	final boolean floorResult;
+	final boolean hasException;
+	final double exceptionLow;
+	final double exceptionHigh;
+	final double exceptionValue;
 
-	public int elfEffectLevel;
-	public EffectType effectType;
-	public int initiatorId;
-	public int outputId;
-	public boolean allowFist;
-	public int[] tools;
+	final public int elfEffectLevel;
+	final public EffectType effectType;
+	final public int initiatorId;
+	final public int outputId;
+	final public boolean toolRequired;
+	final public int[] tools;
 		
 	public Effect(
 			int id,
@@ -42,7 +42,7 @@ public class Effect {
 			EffectType effectType,
 			int initiatorId,
 			int outputId,
-			boolean allowFist,
+			boolean toolRequired,
 			int[] tools
 			) 
 	{
@@ -61,7 +61,7 @@ public class Effect {
 		this.effectType = effectType;
 		this.initiatorId = initiatorId;
 		this.outputId = outputId;
-		this.allowFist = allowFist;
+		this.toolRequired = toolRequired;
 		this.tools = tools;
 	}
 	
@@ -69,8 +69,17 @@ public class Effect {
 		return Integer.toString(id);
 	}
 	
-	public double getEffectAmount(int skillLevel){
+	/**
+	 * Returns an effect Amount for a particular Dwarf
+	 * @param dwarf
+	 * @return
+	 */
+	public double getEffectAmount(Dwarf dwarf){
 		double effectAmount = baseValue;
+		int skillLevel;
+		if (dwarf.isElf) skillLevel = this.elfEffectLevel;
+		else skillLevel = dwarf.skillLevel(this.id%10);
+		
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
 		if (floorResult) effectAmount = Math.floor(effectAmount);
@@ -131,30 +140,55 @@ public class Effect {
 			"Effect Block Trigger: %s Block Output: %s . " +
 			"Effect value ranges from %.2f - %.2f for levels 0 to 30. " +
 			"Elves have the effect %.2f , as if they were level %d . " +
-			"Tools affected: %s. No tool needed: %b", 
+			"Tools affected: %s. " + (toolRequired ? "Tool needed." : "Tool not needed."), 
 			initiator, output,
 			effectAmountLow, effectAmountHigh,
 			elfAmount, elfEffectLevel,
-			toolType, allowFist);
+			toolType);
 		
 		return description;
 	}
 	
+/**
+ * Used for getting the effect amount at a particular skill level.
+ * Where possible use getEffectAmount(Dwarf), which checks for Dwarf vs. Elf.
+ */
+	private double getEffectAmount(int skillLevel) {
+		double effectAmount = baseValue;		
+		effectAmount += skillLevel * levelUpMultiplier;
+		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
+		if (floorResult) effectAmount = Math.floor(effectAmount);
+		effectAmount = Math.min(effectAmount, maxValue);
+		effectAmount = Math.max(effectAmount, minValue);
+		if (hasException && skillLevel <= exceptionHigh && skillLevel >= exceptionLow) effectAmount = exceptionValue;
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: GetEffectAmount Id: " + id +
+				" base: " + baseValue +
+				" LevelUp multi:  " + levelUpMultiplier+ 
+				" Novice:  " + noviceLevelUpMultiplier+ 
+				" Max:  " + maxValue+ 
+				" Min: " + minValue+ 
+				" Exception: " +hasException + 
+				" ExcLow: " + exceptionLow+ 
+				" ExcHigh: " + exceptionHigh+ 
+				" Excvalue:  " + exceptionValue);
+		return effectAmount;
+	}
 
 	/**
 	 * Description of a skills effect at a given level
-	 * @param skillLevel
+	 * @param dwarf
 	 * @return
 	 */
-	public String describeLevel(int skillLevel){
+	public String describeLevel(Dwarf dwarf){
+		if (dwarf == null) return "Failed"; //TODO add failure code
 		String description = "no skill description";
 		// Variables used in skill descriptions
 		String initiator = Material.getMaterial(initiatorId).toString();
 		String output = Material.getMaterial(outputId).toString();
-		double effectAmount = getEffectAmount(skillLevel);
+		double effectAmount = getEffectAmount(dwarf);
 		double elfAmount = getEffectAmount(elfEffectLevel);
 		boolean moreThanOne = (effectAmount > 1);
-		String effectLevelColor = effectLevelColor(skillLevel);
+		String effectLevelColor = effectLevelColor(dwarf.getSkill(this).level);
 		String toolType = toolType();
 		
 		if (effectType.equals(EffectType.ARMORHIT)){
@@ -296,5 +330,6 @@ public class Effect {
 		
 		return description;
 	}
+
 	
 }

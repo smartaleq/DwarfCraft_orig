@@ -80,7 +80,7 @@ public class DCBlockListener extends BlockListener {
     			if(e.effectType == EffectType.PLOWDURABILITY){
     				for(int id:e.tools){
     					if(id == toolId && (materialId == 3 || materialId == 2)) {
-		    				double effectAmount = e.getEffectAmount(s.level);
+		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - new:"+tool.getDurability());
@@ -93,7 +93,7 @@ public class DCBlockListener extends BlockListener {
 				if(e.effectType == EffectType.PLOW){
 					for(int id:e.tools){
 						if(id == toolId && materialId == 3){
-		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(s.level), true);
+		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true);
 			    			blockDropChange = true;
 						}
 					}
@@ -131,6 +131,7 @@ public class DCBlockListener extends BlockListener {
     	Block block = event.getBlock();
     	Location loc = block.getLocation();
     	int materialId = event.getBlock().getTypeId();
+    	byte meta = block.getData();
     	
     //Logic vars, would be better with methods, but kept ugly for code simplicity
     	boolean durabilityChange = false;
@@ -145,7 +146,7 @@ public class DCBlockListener extends BlockListener {
     			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
-		    				double effectAmount = e.getEffectAmount(s.level);
+		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
@@ -158,9 +159,11 @@ public class DCBlockListener extends BlockListener {
     			if(e.effectType == EffectType.BLOCKDROP && e.initiatorId == materialId){
     				correctTool = false;
 	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
-		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("Debug Message: Effect:" +e.id + " tool: " + toolId+" and allowFist?:"+e.allowFist );
-		    		if(correctTool || e.allowFist){
-		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(s.level), true);
+	    			//Crops special line:
+	    			if (e.initiatorId == 59) if(meta != 7) continue;
+		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("Debug Message: Effect:" +e.id + " tool: " + toolId+" and toolRequired:"+e.toolRequired );
+		    		if(correctTool || !e.toolRequired){
+		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true);
 		    			blockDropChange = true;
 	    			}
 	   			}

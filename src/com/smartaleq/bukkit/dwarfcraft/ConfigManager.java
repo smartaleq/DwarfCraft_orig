@@ -13,7 +13,7 @@ public class ConfigManager {
 	static final String configDirectory = "./DwarfCraft/";
 	static final String configSkillsFileName = "skills.config";
 	static final String configEffectsFileName = "effects.config";
-		
+	static final String configParamsFileName = "DwarfCraft.config";	
 	
 	static final int maximumSkillCount = 100;
 	static final int maximumEffectCount = 1000;	
@@ -22,7 +22,6 @@ public class ConfigManager {
 	
 	public static boolean setUpSkillsArray(){
 		String line = "";
-		
 		try {
 			FileReader fr = new FileReader(configDirectory + configSkillsFileName);
 			BufferedReader br = new BufferedReader(fr);
@@ -68,7 +67,7 @@ public class ConfigManager {
 		return false;
 	}
 
-	public static boolean setUpEffects(){
+	public static boolean setUpEffectsArrays(){
 		String line = "";
 		try {
 			FileReader fr = new FileReader(configDirectory + configEffectsFileName);
@@ -93,8 +92,8 @@ public class ConfigManager {
 				double 		noviceLevelUpMultiplier = Double.parseDouble(theline[3]);
 				double 		minValue 				= Double.parseDouble(theline[4]);
 				double 		maxValue 				= Double.parseDouble(theline[5]);
-				boolean 	floorResult 			= (theline[6].equalsIgnoreCase("1")); 
-				boolean 	hasException 			= (theline[7].equalsIgnoreCase("1")); 
+				boolean 	floorResult 			= (theline[6].equalsIgnoreCase("TRUE")); 
+				boolean 	hasException 			= (theline[7].equalsIgnoreCase("TRUE")); 
 				int 		exceptionLow 			= Integer.parseInt(theline[8]); 
 				int 		exceptionHigh 			= Integer.parseInt(theline[9]); 
 				double 		exceptionValue 			= Double.parseDouble(theline[10]);
@@ -102,7 +101,7 @@ public class ConfigManager {
 				EffectType 	effectType 				= EffectType.getEffectType(theline[12]);
 				int 		initiator 				= Integer.parseInt(theline[13]); 
 				int 		output 					= Integer.parseInt(theline[14]); 
-				boolean 	allowFist 				= (theline[15].equalsIgnoreCase("TRUE"));
+				boolean 	toolRequired 			= (theline[15].equalsIgnoreCase("TRUE"));
 
 				int[] tooltable = 
 					{	Integer.parseInt(theline[16]),
@@ -115,7 +114,7 @@ public class ConfigManager {
 					if(effectId / 10 == skill.id){
 						for(int j=0;j<10;j++){
 							if(skill.effects[j] == null){
-								skill.effects[j] = new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, allowFist, tooltable);
+								skill.effects[j] = new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable);
 								continue effectplacingloop;
 							}
 						}
@@ -125,18 +124,20 @@ public class ConfigManager {
 			}
 			return true;
 		}
+		catch(FileNotFoundException fN) {
+			fN.printStackTrace();
+			return false;
+		}
 		catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	public static List<Skill> getAllSkills() {
-		// can't clone here! clone() is only making shallow copies of skillsArray, fucking up the world
-//		List<Skill> newSkillsArray = (List<Skill>) ((ArrayList<Skill>) skillsArray).clone();
-		List<Skill> newSkillsArray = new ArrayList<Skill>(skillsArray.size());
-		for ( Skill s : skillsArray ) {
-			newSkillsArray.add(new Skill(s));
+		List<Skill> newSkillsArray = new ArrayList<Skill>();
+		for (Skill s: skillsArray){
+			newSkillsArray.add(s.clone());
 		}
 		return newSkillsArray;
 	}

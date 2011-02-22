@@ -89,7 +89,7 @@ public class Out {
 		Out.sendMessage(player, "&6[&5EffectID&6]&f------&6[Effect]&f------" );
 		for(Effect effect:skill.effects){
 			if (effect != null)
-				Out.sendMessage(player, effect.describeLevel(skill.level), "&6[&5"+effect.id+"&6] ");
+				Out.sendMessage(player, effect.describeLevel(Dwarf.find(player)), "&6[&5"+effect.id+"&6] ");
 		}
 		//training lines	
 		if (skill.level == 30) {
@@ -165,7 +165,7 @@ public class Out {
 	}	
 		
 	public static boolean effectInfo(Player player, Effect effect) {
-		Out.sendMessage(player, effect.describeLevel((Dwarf.find(player)).getSkill(effect).level), "&6[&5" +effect.id+"&6] ");
+		Out.sendMessage(player, effect.describeLevel((Dwarf.find(player))), "&6[&5" +effect.id+"&6] ");
 		Out.sendMessage(player, effect.describeGeneral(), "&6[&5" +effect.id+"&6] ");
 		return false;
 	}
@@ -280,7 +280,7 @@ public class Out {
 	 * Used to parse and send multiple line messages
 	 * Sends actual output commands
 	 */
-	static void messagePrinter(Player player, String message, String prefix){
+	private static void messagePrinter(Player player, String message, String prefix){
 		// if no message throw exception		
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started printer");
 		int messageSectionLength = lineLength - prefix.length();
@@ -408,7 +408,7 @@ public class Out {
 	public static boolean here(Player player, List<TrainingZone> list) {
 		boolean foundSome = false;
 		for (TrainingZone tz:list){
-			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone]");
+			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone&6]");
 			foundSome = true;
 		}
 		return foundSome;

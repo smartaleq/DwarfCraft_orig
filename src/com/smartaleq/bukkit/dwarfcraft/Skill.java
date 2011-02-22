@@ -2,16 +2,16 @@ package com.smartaleq.bukkit.dwarfcraft;
 
 import org.bukkit.inventory.ItemStack;
 
-public class Skill {
+public class Skill implements Cloneable{
 	
-	public int id;
-	public String displayName;
-	public School school;
+	public final int id;
+	public final String displayName;
+	public final School school;
 	public int level;
-	public Effect[] effects;
-	public ItemStack[] trainingCost;
-	public double noviceIncrement;
-	public double masterMultiplier;
+	public final Effect[] effects;
+	public final ItemStack[] trainingCost;
+	public final double noviceIncrement;
+	public final double masterMultiplier;
 		
 	public Skill(
 			int id, 
@@ -34,15 +34,14 @@ public class Skill {
 		this.masterMultiplier = masterMultiplier;
 	}
 	
-	public Skill(Skill skill) { 
-		this.id = 					skill.id;
-		this.displayName = 			skill.displayName;
-		this.school = 				skill.school;
-		this.level = 				skill.level;
-		this.effects = 				skill.effects;
-		this.trainingCost = 		skill.trainingCost;
-		this.noviceIncrement = 		skill.noviceIncrement;
-		this.masterMultiplier = 	skill.masterMultiplier;
+	/**
+	 * My attempt at making a cloneable class.
+	 * 
+	 * Known issue: it does not clone the effects table or itemStack table. This is not a problem because effects are 100% final, and ItemStack is never modified.
+	 */
+	public Skill clone(){
+		Skill newSkill = new Skill(this.id, this.displayName, this.school, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier);
+		return newSkill;
 	}
 	
 	public String toString(){
