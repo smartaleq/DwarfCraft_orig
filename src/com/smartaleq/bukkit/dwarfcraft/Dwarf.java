@@ -44,8 +44,7 @@ public class Dwarf {
 		Dwarf dwarf = new Dwarf(null);
 		dwarf.initializeNew();
 		try {
-			String sanitizedName;			
-			sanitizedName = name;
+			String sanitizedName = Util.sanitize(name);
 			
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
