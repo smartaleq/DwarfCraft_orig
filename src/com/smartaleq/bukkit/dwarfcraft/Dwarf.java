@@ -264,9 +264,9 @@ public class Dwarf {
 	
 	public List<TrainingZone> listAllZones(){
 		World world = player.getWorld();
-		int playerX = (int) player.getLocation().getX();
-		int playerY = (int) player.getLocation().getY();
-		int playerZ = (int) player.getLocation().getY();
+		double playerX =  player.getLocation().getX();
+		double playerY = player.getLocation().getY();
+		double playerZ =  player.getLocation().getY();
 		Vector victor = new Vector(playerX, playerY, playerZ);
 		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
 		List <TrainingZone> zonesHere = new ArrayList <TrainingZone> ();
