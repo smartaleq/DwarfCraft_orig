@@ -39,6 +39,7 @@ public class ConfigManager {
 	
 	public boolean readConfigFile(){
 		try {
+			System.out.println("Reading config file");
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configParamsFileName);
 			BufferedReader br = new BufferedReader(fr);
@@ -74,7 +75,7 @@ public class ConfigManager {
 			while (line!= null) {
 				if(line.length()==0) {line = br.readLine(); continue;}
 				if(line.charAt(0) == '#')  {line = br.readLine(); continue;}
-				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2)); continue;}
+				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2));line = br.readLine(); continue;}
 				String[] theline = line.split(",");
 				if (theline.length < 11){ 
 					continue;
@@ -118,10 +119,9 @@ public class ConfigManager {
 			line = br.readLine();
 			effectplacingloop: 
 				while (line!= null) {
-					
 					if(line.length()==0) {line = br.readLine(); continue;}
 					if(line.charAt(0) == '#') {line = br.readLine(); continue;}
-					if(line.charAt(0) == '^') {configEffectsVersion = Integer.parseInt(line.substring(2)); continue;}
+					if(line.charAt(0) == '^') {configEffectsVersion = Integer.parseInt(line.substring(2)); line = br.readLine(); continue;}
 					String[] theline = line.split(",");
 					if (theline.length < 20) continue;
 					
