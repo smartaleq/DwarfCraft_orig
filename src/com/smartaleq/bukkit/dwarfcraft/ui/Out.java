@@ -6,6 +6,7 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.smartaleq.bukkit.dwarfcraft.DataManager;
 import com.smartaleq.bukkit.dwarfcraft.Dwarf;
 import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 import com.smartaleq.bukkit.dwarfcraft.Effect;
@@ -45,7 +46,7 @@ public class Out {
 	
 	public static boolean generalHelp(Player player) {
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help6");
-		Out.sendMessage(player, "&d" + Messages.GENERALHELPMESSAGE.message, "&6[&d?&6] ");
+		Out.sendMessage(player, "&d" + Messages.GeneralHelp, "&6[&d?&6] ");
 		return true;
 	}
 		
@@ -56,28 +57,34 @@ public class Out {
 	}
 	
 	public static boolean info(Player player) {
-		Out.sendMessage(player, Messages.INFO.message, "&6[Info&6] ");
+		Out.sendMessage(player, Messages.Fixed.INFO.message, "&6[Info&6] ");
 		return true;
 	}
+	
+	public static boolean rules(Player player) {
+		Out.sendMessage(player, Messages.ServerRules, "&6[Info&6] ");
+		return false;
+	}
+
 
 	public static boolean commandList(Player player, int number) {
 		if (number == 1) {
-			Out.sendMessage(player, Messages.COMMANDLIST1.message,"&6[&d?&6] " );
+			Out.sendMessage(player, Messages.Fixed.COMMANDLIST1.message,"&6[&d?&6] " );
 			return true;
 		}
 		if (number == 2){
-			Out.sendMessage(player, Messages.COMMANDLIST2.message,"&6[&d?&6] " );
+			Out.sendMessage(player, Messages.Fixed.COMMANDLIST2.message,"&6[&d?&6] " );
 			return true;
 		}
 		return false;
 	}
 
 	public static boolean tutorial(Player player, int i) {
-		if (i == 1) Out.sendMessage(player, Messages.TUTORIAL1.message,"&6[&dDC&6] ");
-		else if (i == 2) Out.sendMessage(player, Messages.TUTORIAL2.message,"&6[&dDC&6] ");
-		else if (i == 3) Out.sendMessage(player, Messages.TUTORIAL3.message,"&6[&dDC&6] ");
-		else if (i == 4) Out.sendMessage(player, Messages.TUTORIAL4.message,"&6[&dDC&6] ");
-		else if (i == 5) Out.sendMessage(player, Messages.TUTORIAL5.message,"&6[&dDC&6] ");
+		if (i == 1) Out.sendMessage(player, Messages.Fixed.TUTORIAL1.message,"&6[&dDC&6] ");
+		else if (i == 2) Out.sendMessage(player, Messages.Fixed.TUTORIAL2.message,"&6[&dDC&6] ");
+		else if (i == 3) Out.sendMessage(player, Messages.Fixed.TUTORIAL3.message,"&6[&dDC&6] ");
+		else if (i == 4) Out.sendMessage(player, Messages.Fixed.TUTORIAL4.message,"&6[&dDC&6] ");
+		else if (i == 5) Out.sendMessage(player, Messages.Fixed.TUTORIAL5.message,"&6[&dDC&6] ");
 		else return false;
 		return true;
 	}
@@ -171,25 +178,25 @@ public class Out {
 	}
 		
 	public static void becameADwarf(Player player) {
-		sendMessage(player, Messages.DWARFSUCCESS.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.DWARFSUCCESS.message, "&6[DC] ");
 	}
 	public static void confirmBecomingDwarf(Player player) {
-		sendMessage(player, Messages.DWARFCONFIRM.message,"&6[DC] ");
+		sendMessage(player, Messages.Fixed.DWARFCONFIRM.message,"&6[DC] ");
 	}
 	public static void becameAnElf(Player player) {
-		sendMessage(player, Messages.ELFSUCCESS.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.ELFSUCCESS.message, "&6[DC] ");
 	}	
 	public static void alreadyAnElf(Player player) {
-		sendMessage(player, Messages.ELFALREADY.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.ELFALREADY.message, "&6[DC] ");
 	}
 	public static void confirmBecomingAnElf(Player player) {
-		sendMessage(player, Messages.ELFCONFIRM.message,"&6[DC] ");
+		sendMessage(player, Messages.Fixed.ELFCONFIRM.message,"&6[DC] ");
 	}
 
 	
-	public static boolean error(Player player, Messages error) {
-		if (error == Messages.ERRORBADINPUT){
-			Out.sendMessage(player, "&d" + Messages.ERRORBADINPUT.message, "&6[&d?&6] " );
+	public static boolean error(Player player, Messages.Fixed error) {
+		if (error == Messages.Fixed.ERRORBADINPUT){
+			Out.sendMessage(player, "&d" + Messages.Fixed.ERRORBADINPUT.message, "&6[&d?&6] " );
 			return true;}
 		
 		return false;
@@ -413,6 +420,16 @@ public class Out {
 		}
 		return foundSome;
 	}
+	
+	public static boolean listSchools(Player player){
+		boolean foundSome = false;
+		for (TrainingZone tz: DataManager.getSchoolZones(player.getWorld())){
+			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone&6]");
+			foundSome = true;
+		}
+		return foundSome;
+	}
+
 
 
 

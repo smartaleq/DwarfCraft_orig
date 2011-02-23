@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
 
+import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
+
 public class ConfigManager {
 
 	public ConfigManager(String directory, String paramsFileName){
@@ -35,7 +37,6 @@ public class ConfigManager {
 		if (dbpath == null) dbpath = "./DwarfCraft/dwarfcraft.db";
 	}
 	
-	
 	public boolean readConfigFile(){
 		try {
 			getDefaultValues();
@@ -43,14 +44,14 @@ public class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String line = br.readLine();
 			while (line!= null) {
-				if(line.charAt(0) == '#') continue;
+				if(line.charAt(0) == '#') {line = br.readLine(); continue;}
 				String[] theline = line.split(":");
-				if (theline.length > 2)	continue;
-				line = br.readLine();
+				if (theline.length > 2){line = br.readLine(); continue;}
 				if (theline[0].equalsIgnoreCase("Skills File Name")) configSkillsFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Effects File Name")) configEffectsFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Messages File Name")) configMessagesFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Database File Name")) dbpath = configDirectory + theline[1].trim();
+				line = br.readLine();
 			}
 			
 		}
@@ -72,7 +73,7 @@ public class ConfigManager {
 				line = br.readLine();
 				if(line == null) continue;
 				if(line.charAt(0) == '#') continue;
-				if(line.charAt(0) == '^') configSkillsVersion = Integer.parseInt(line.substring(2));
+				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2)); continue;}
 				String[] theline = line.split(",");
 				if (theline.length < 11){ 
 					continue;
@@ -118,7 +119,7 @@ public class ConfigManager {
 					line = br.readLine();
 					if(line == null) continue;
 				if(line.charAt(0) == '#') continue;
-				if(line.charAt(0) == '^') configEffectsVersion = Integer.parseInt(line.substring(2));
+				if(line.charAt(0) == '^') {configEffectsVersion = Integer.parseInt(line.substring(2)); continue;}
 				String[] theline = line.split(",");
 				if (theline.length < 20) continue;
 				
@@ -165,7 +166,39 @@ public class ConfigManager {
 			return false;
 		}
 	}
+	
+	public boolean readMessagesFile() {
+		try {
+			getDefaultValues();
+			FileReader fr = new FileReader(configDirectory + configMessagesFileName);
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
+			while (line!= null) {
+				if(line.charAt(0) == '#') {line = br.readLine(); continue;}
+				String[] theline = line.split(":");
+				if (theline.length > 2)	{line = br.readLine(); continue;}
+				
+				if (theline[0].equalsIgnoreCase("GeneralHelp")) Messages.GeneralHelp = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
+				
+				line = br.readLine();
+			}
 
+		}
+		catch(FileNotFoundException fN) {
+			fN.printStackTrace();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally {
+			//Default to enum values if not found
+			if (Messages.GeneralHelp ==null) Messages.GeneralHelp = Messages.Fixed.GENERALHELPMESSAGE.message;
+			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
+		}
+		return true;
+	}
+	
 	public static List<Skill> getAllSkills() {
 		List<Skill> newSkillsArray = new ArrayList<Skill>();
 		for (Skill s: skillsArray){
@@ -182,4 +215,6 @@ public class ConfigManager {
 		return count;
 	}
 
+	
+	
 }

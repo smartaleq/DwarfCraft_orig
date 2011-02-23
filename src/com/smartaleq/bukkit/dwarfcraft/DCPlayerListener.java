@@ -45,7 +45,7 @@ public class DCPlayerListener extends PlayerListener {
 					//successful command
 				}
 				else {
-					Out.error(player, Messages.ERRORBADINPUT);
+					Out.error(player, Messages.Fixed.ERRORBADINPUT);
 					return;
 					//failed command don't cancel in case it was someone else's
 				}

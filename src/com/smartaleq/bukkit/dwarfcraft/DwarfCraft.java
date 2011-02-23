@@ -53,7 +53,7 @@ public static boolean disableEffects = false;
 		
 		ConfigManager cm = new ConfigManager("./DwarfCraft/", "DwarfCraft.config");
 		cm.readConfigFile();
-		if(!cm.readSkillsFile() || !cm.readEffectsFile()){
+		if(!cm.readSkillsFile() || !cm.readEffectsFile() || !cm.readMessagesFile()){
 			System.out.println("Failed to Enable DwarfCraft Skills and Effects)");
 			pm.disablePlugin(this); //TODO failed to init skills
 		

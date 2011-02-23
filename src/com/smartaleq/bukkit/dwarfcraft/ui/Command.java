@@ -55,6 +55,7 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("help")) return help();
 		if (playerInput[0].equalsIgnoreCase("?")) return help();
 		if (playerInput[0].equalsIgnoreCase("info")) return info();
+		if (playerInput[0].equalsIgnoreCase("rules")) return rules();
 		if (playerInput[0].equalsIgnoreCase("commands")) return commands(1);
 		if (playerInput[0].equalsIgnoreCase("commands2")) return commands(2);
 		if (playerInput[0].equalsIgnoreCase("tutorial")) return tutorial(1);
@@ -74,18 +75,22 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("MAKEMEANELF")) 		return makeMeAnElf(false);
 		if (playerInput[0].equalsIgnoreCase("REALLYMAKEMEANELF")) 	return makeMeAnElf(true);
 		
-		if (playerInput[0].equalsIgnoreCase("SCHOOLLIST")) 			return schoolList();
+		if (playerInput[0].equalsIgnoreCase("schools")) 			return schoolList();
 		if (playerInput[0].equalsIgnoreCase("SCHOOLINFO")) 			return schoolInfo();
 		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
 		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return (player.isOp() ? createSchool(): notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
-		if (playerInput[0].equalsIgnoreCase("allschools")) 			return (player.isOp() ? listAllSchools(): notAnOpError());		
+		if (playerInput[0].equalsIgnoreCase("listschools")) 			return (player.isOp() ? listAllSchools(): notAnOpError());		
 		return false;
 	}
 	
+	private boolean rules() {
+		return Out.rules(player);
+	}
+
 	private boolean listAllSchools() {
-		// TODO Auto-generated method stub
-		return false;
+		if(!Out.listSchools(player)){Out.sendMessage(player, Messages.Fixed.ERRORNOZONES.message); return true;}
+		return true;
 	}
 
 	private boolean removeSchool() {
@@ -127,7 +132,7 @@ public class Command {
 			}
 		}
 		// this is not a command
-		Out.error(player, Messages.ERRORBADINPUT);
+		Out.error(player, Messages.Fixed.ERRORBADINPUT);
 		return false;
 	}
 	
