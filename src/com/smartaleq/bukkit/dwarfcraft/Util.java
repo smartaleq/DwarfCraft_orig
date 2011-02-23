@@ -79,10 +79,13 @@ public class Util {
 		return removedSomething;
 	}
 
-	public static String sanitize(String name) {
-		//this is shitty sanitation, i know i should use prepared statements and other things but i can't be arsed to care about someone doing sql injection into a simple game plugin database, honestly.
-		String newname = name.replaceAll("[^\\w]", "");
-		return newname;
+	public static String sanitize(String str) {
+		String retval = "";
+		for ( int i=0; i < str.length(); i++ ) {
+			if ("abcdefghijlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".indexOf(str.charAt(i)) != -1 )
+				retval = retval + str.charAt(i);
+		}
+		return retval;
 	}
 
 }

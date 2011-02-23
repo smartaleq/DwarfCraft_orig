@@ -9,8 +9,6 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
-// import org.bukkit.block.Block;
-// import net.minecraft.server.Block;
 
 import com.smartaleq.bukkit.dwarfcraft.ui.Command;
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;

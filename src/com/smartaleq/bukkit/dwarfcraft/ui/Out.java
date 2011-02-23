@@ -146,13 +146,13 @@ public class Out {
 					interimLen = 140 - interimLen - numSpaces*4;
 				// 	4 possible cases - need 4, 5, 6, or 7
 					if ( interimLen == 4 )
-						interim = interim.concat(".| ");
+						interim = interim.concat("&0.| &b");
 					else if ( interimLen == 5)
-						interim = interim.concat("'| ");
+						interim = interim.concat("&0'| &b");
 					else if ( interimLen == 6)
-						interim = interim.concat(" | ");
+						interim = interim.concat("&0 | &b");
 					else if ( interimLen == 7)
-						interim = interim.concat("'.| ");
+						interim = interim.concat("&0'.| &b");
 				}
 					
 				message2 = message2.concat(interim);
