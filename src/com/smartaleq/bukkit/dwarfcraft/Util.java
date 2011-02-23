@@ -53,14 +53,14 @@ public class Util {
      * @param effectAmount Double number of blocks to drop
      * @param drop item naturally or not
      */
-	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally) {
-		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount));
+	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally, byte data) {
+		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount), data);
 		if (item.getAmount() == 0){
 			if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("Debug: dropped " + item.toString());
 			return;
 		}
-		if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
-		else loc.getWorld().dropItem(loc, item);
+//		if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
+		loc.getWorld().dropItem(loc, item);
 		if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug: dropped " + item.toString());	
 	}
 	

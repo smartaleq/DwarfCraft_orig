@@ -1,0 +1,6 @@
+#this file holds custom messages for your server. Using the ':' colon character in your message will break things
+#Blank or missing settings will use the plugin default message
+
+GeneralHelp:
+
+ServerRules:

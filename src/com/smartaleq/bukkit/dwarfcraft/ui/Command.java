@@ -413,7 +413,6 @@ public class Command {
 	
 	private boolean createSchool() {
 		try {
-	//		if (!player.hasPermission()) return false;
 			World world = player.getWorld();
 			School school = School.getSchool(Integer.parseInt(playerInput[1]));
 			double x1 = Double.parseDouble(playerInput[2]); 
@@ -426,6 +425,7 @@ public class Command {
 			return DataManager.addSchoolZone(new Vector(x1,y1,z1), new Vector(x2,y2,z2), world, school, name);
 		} 
 		catch (NumberFormatException e) {
+			e.printStackTrace();
 			return false;
 		} 		
 	}

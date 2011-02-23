@@ -42,6 +42,7 @@ public class DataManager {
 				} 
 				buildDB(0); //if there are no recent past tables, build a new db from scratch
 			}
+			conn.close();
 		    
 	    }
 	    catch (SQLException e) {
@@ -69,12 +70,12 @@ public class DataManager {
 			//if no school table, create it
 			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones'");
 			rs.next();
-			if (rs.isClosed()) statement.executeQuery("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
+			if (rs.isClosed()) statement.executeUpdate("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
 				
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
 			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
-			statement.executeQuery("create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");");
+			statement.executeUpdate("create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");");
 									
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}

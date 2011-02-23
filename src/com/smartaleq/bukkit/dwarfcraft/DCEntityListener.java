@@ -196,7 +196,7 @@ public class DCEntityListener extends EntityListener {
 	    				(e.id == 850 && (deadThing instanceof CraftZombie )) ||
 	    				(e.id == 851 && (deadThing instanceof CraftZombie )) ||
 		    				(e.id == 852 && (deadThing instanceof CraftChicken ))){
-	    			Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false);
+	    			Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false, (byte) 0);
 					}
 	    		}
 	    	}

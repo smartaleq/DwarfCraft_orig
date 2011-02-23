@@ -175,6 +175,7 @@ public class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String line = br.readLine();
 			while (line!= null) {
+				if(line.length()==0) {line = br.readLine(); continue;}
 				if(line.charAt(0) == '#') {line = br.readLine(); continue;}
 				String[] theline = line.split(":");
 				if (theline.length > 2)	{line = br.readLine(); continue;}
