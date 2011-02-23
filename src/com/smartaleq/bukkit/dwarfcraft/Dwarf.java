@@ -284,15 +284,24 @@ public class Dwarf {
 		return count;
 	}
 
+	/**
+	 * Retrieves an effect from a player based on its effectId.
+	 * @param effectId
+	 * @return
+	 */
 	public Effect getEffect(int effectId) {
 		Skill skill = getSkill(effectId/10);
 		for(Effect effect:skill.effects){
-			if(effect == null) continue;
 			if(effect.id == effectId) return effect;
 		}
 		return null;
 	}
 
+	/**
+	 * Calculates the dwarf's total level for display/e-peening. Value is the total of all skill level above 5, or
+	 * the highest skill level when none are above 5.
+	 * @return
+	 */
 	public int getDwarfLevel() {
 		if(isElf) return 0;
 		int playerLevel = 5;
