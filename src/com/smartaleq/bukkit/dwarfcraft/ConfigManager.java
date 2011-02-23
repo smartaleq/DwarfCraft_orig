@@ -44,7 +44,7 @@ public class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String line = br.readLine();
 			while (line!= null) {
-				if(line.length()==0) continue;
+				if(line.length()==0) {line = br.readLine(); continue;}
 				if(line.charAt(0) == '#') {line = br.readLine(); continue;}
 				String[] theline = line.split(":");
 				if (theline.length > 2){line = br.readLine(); continue;}
@@ -70,10 +70,10 @@ public class ConfigManager {
 		try {
 			FileReader fr = new FileReader(configDirectory + configSkillsFileName);
 			BufferedReader br = new BufferedReader(fr);
+			line = br.readLine();
 			while (line!= null) {
-				line = br.readLine();
-				if(line.length()==0) continue;
-				if(line.charAt(0) == '#') continue;
+				if(line.length()==0) {line = br.readLine(); continue;}
+				if(line.charAt(0) == '#')  {line = br.readLine(); continue;}
 				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2)); continue;}
 				String[] theline = line.split(",");
 				if (theline.length < 11){ 
@@ -97,6 +97,7 @@ public class ConfigManager {
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
 				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
+				line = br.readLine();
 			}
 			return true;
 		}
@@ -114,12 +115,12 @@ public class ConfigManager {
 		try {
 			FileReader fr = new FileReader(configDirectory + configEffectsFileName);
 			BufferedReader br = new BufferedReader(fr);
-			
+			line = br.readLine();
 			effectplacingloop: 
 				while (line!= null) {
-					line = br.readLine();
-					if(line.length()==0) continue;
-					if(line.charAt(0) == '#') continue;
+					
+					if(line.length()==0) {line = br.readLine(); continue;}
+					if(line.charAt(0) == '#') {line = br.readLine(); continue;}
 					if(line.charAt(0) == '^') {configEffectsVersion = Integer.parseInt(line.substring(2)); continue;}
 					String[] theline = line.split(",");
 					if (theline.length < 20) continue;
@@ -154,6 +155,7 @@ public class ConfigManager {
 							continue effectplacingloop;		
 						}
 					}
+					line = br.readLine();
 				}
 				return true;
 		}
