@@ -53,6 +53,7 @@ public class ConfigManager {
 				if (theline[0].equalsIgnoreCase("Effects File Name")) configEffectsFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Messages File Name")) configMessagesFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Database File Name")) dbpath = configDirectory + theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Debug Level")) DwarfCraft.debugMessagesThreshold = Integer.parseInt(theline[1].trim());
 				line = br.readLine();
 			}
 			
@@ -68,6 +69,7 @@ public class ConfigManager {
 	
 	public boolean readSkillsFile(){
 		String line = "";
+		System.out.println("Reading skills file");
 		try {
 			FileReader fr = new FileReader(configDirectory + configSkillsFileName);
 			BufferedReader br = new BufferedReader(fr);
@@ -112,6 +114,7 @@ public class ConfigManager {
 	}
 
 	public boolean readEffectsFile(){
+		System.out.println("Reading effects file");
 		String line = "";
 		try {
 			FileReader fr = new FileReader(configDirectory + configEffectsFileName);
@@ -122,7 +125,7 @@ public class ConfigManager {
 				if(line.charAt(0) == '#') {line = br.readLine(); continue;}
 				if(line.charAt(0) == '^') {configEffectsVersion = Integer.parseInt(line.substring(2)); line = br.readLine(); continue;}
 				String[] theline = line.split(",");
-				if (theline.length < 20) continue;
+				if (theline.length < 20) {line = br.readLine();continue;}
 				
 				int			effectId 				= Integer.parseInt(theline[0]); 
 				double 		baseValue 				= Double.parseDouble(theline[1]);
@@ -169,6 +172,7 @@ public class ConfigManager {
 	}
 	
 	public boolean readMessagesFile() {
+		System.out.println("Reading messages file");
 		try {
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configMessagesFileName);
