@@ -1,6 +1,5 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,7 +9,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.bukkit.util.Vector;
 import org.bukkit.World;
 
@@ -19,7 +17,7 @@ public class DataManager {
 
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
-	
+	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
 	
 	
 	public static void dbInitialize() {

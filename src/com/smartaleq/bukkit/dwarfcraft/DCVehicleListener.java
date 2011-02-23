@@ -2,7 +2,12 @@ package com.smartaleq.bukkit.dwarfcraft;
 
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleListener;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.vehicle.VehicleExitEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+import org.bukkit.Location;
 
 public class DCVehicleListener extends VehicleListener{
 	
@@ -15,16 +20,56 @@ public class DCVehicleListener extends VehicleListener{
      * @param event
      */
     public void onVehicleDamage(VehicleDamageEvent event) {
+    	
+    	
     }
     
+    public void onVehicleEnter(VehicleEnterEvent event) {
+    	DataManager.vehicleList.add(new DwarfVehicle(event.getVehicle()));
+    	System.out.println("Added DwarfVehicle to vehicleList");
+    }
+       
+    public void onVehicleExit(VehicleExitEvent event) {
+    	for ( DwarfVehicle i : DataManager.vehicleList ) {
+    		if ( i.vehicle.equals(event.getVehicle())) {
+    			DataManager.vehicleList.remove(i);
+    			System.out.println("Removed DwarfVehicle from vehicleList");
+    		}
+    	}
+    }
     
     /**
-     * Called when an vehicle moves.
+     * Called when a vehicle moves.
      *
      * @param event
      */
-    public void onVehicleMove(VehicleMoveEvent event) {
+    public void onVehicleMove(VehicleMoveEvent event) { 	
+    	if ( event.getVehicle().getPassenger() == null ) return;
+    	
+    	Dwarf dwarf = Dwarf.find((Player)event.getVehicle().getPassenger()); // this will break when zombies ride boats.
+     	double effectAmount = 1.0;
+    	
+    	for(Skill s: dwarf.skills){
+    		if (s==null)continue;
+    		for(Effect e:s.effects){
+    			if (e==null) continue;
+    			if(e.effectType == EffectType.VEHICLEMOVE){
+    				effectAmount = e.getEffectAmount(dwarf);
+    			}
+    		}
+    	}
+    	
+    	for ( DwarfVehicle i : DataManager.vehicleList ) {
+    		if ( i.vehicle.equals(event.getVehicle())) {
+    			Location location = new Location(event.getVehicle().getWorld(), 
+    					event.getVehicle().getLocation().getX(),
+    					event.getVehicle().getLocation().getY(),
+    					event.getVehicle().getLocation().getZ());
+    			location.setX(location.getX()+event.getVehicle().getVelocity().getX()*2);
+    			location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*2);
+    			event.getVehicle().teleportTo(location);
+    		}
+    	}    	
     }
-
 }
 
