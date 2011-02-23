@@ -1,5 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -80,7 +83,7 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
 		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return (player.isOp() ? createSchool(): notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
-		if (playerInput[0].equalsIgnoreCase("listschools")) 			return (player.isOp() ? listAllSchools(): notAnOpError());		
+		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());		
 		return false;
 	}
 	
@@ -393,14 +396,12 @@ public class Command {
 	}
 	
 	private boolean schoolInfo() {
-		Skill[] skills = new Skill[10];
+		List<Skill> skills = new ArrayList<Skill>();
 		School school = School.getSchool(playerInput[1]);
-		int i=0;
 		for (Skill s: (Dwarf.find(player)).skills){
 			if (s==null) continue;
 			if(s.school == school) {
-				skills[i]= s;
-				i++;
+				skills.add(s);
 			}
 		}
 		Out.schoolInfo(player, school, skills);
@@ -413,7 +414,6 @@ public class Command {
 	
 	private boolean createSchool() {
 		try {
-	//		if (!player.hasPermission()) return false;
 			World world = player.getWorld();
 			School school = School.getSchool(Integer.parseInt(playerInput[1]));
 			double x1 = Double.parseDouble(playerInput[2]); 
@@ -426,6 +426,7 @@ public class Command {
 			return DataManager.addSchoolZone(new Vector(x1,y1,z1), new Vector(x2,y2,z2), world, school, name);
 		} 
 		catch (NumberFormatException e) {
+			e.printStackTrace();
 			return false;
 		} 		
 	}

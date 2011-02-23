@@ -404,7 +404,7 @@ public class Out {
 	 * @param school
 	 * @param skills is an array of skills in the specific school
 	 */
-	public static void schoolInfo(Player player, School school, Skill[] skills) {
+	public static void schoolInfo(Player player, School school, List<Skill> skills) {
 		String message = "";
 		for(Skill s:skills){
 			if (s!=null) message = message.concat("&b" + s.displayName + "&6(&b" +s.id+"&6) ");
@@ -424,7 +424,14 @@ public class Out {
 	public static boolean listSchools(Player player){
 		boolean foundSome = false;
 		for (TrainingZone tz: DataManager.getSchoolZones(player.getWorld())){
-			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone&6]");
+			sendMessage(player, "&8"+tz.name+"&6, a &1"+tz.school+"&6 training zone from ("+
+					tz.corner1.getBlockX()+","+
+					tz.corner1.getBlockY()+","+
+					tz.corner1.getBlockZ()+") to ("+
+					tz.corner2.getBlockX()+","+
+					tz.corner2.getBlockY()+","+
+					tz.corner2.getBlockZ()+")"
+					,"&6[&8Zone&6]");
 			foundSome = true;
 		}
 		return foundSome;

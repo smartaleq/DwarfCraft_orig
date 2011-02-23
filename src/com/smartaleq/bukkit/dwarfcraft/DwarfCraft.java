@@ -27,7 +27,7 @@ private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 
-public static int debugMessagesThreshold = 1;
+public static int debugMessagesThreshold = 9;
 public static boolean disableEffects = false;
 
 	/**	

@@ -34,12 +34,15 @@ public class DataManager {
 					rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+versionNumber+"';");
 					rs.next();
 					if (!rs.isClosed()){ //if there is a recent past table, use it to build the new table
+						conn.close();
 						buildDB(ConfigManager.configSkillsVersion-versionNumber);
 						return;
 					}
 				} 
+				conn.close();
 				buildDB(0); //if there are no recent past tables, build a new db from scratch
 			}
+			conn.close();
 		    
 	    }
 	    catch (SQLException e) {
@@ -62,22 +65,30 @@ public class DataManager {
 			Connection conn =
 			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 			Statement statement = conn.createStatement();
-			ResultSet rs;
-			
+			ResultSet rs1;
+			ResultSet rs2;
+			ResultSet rs3;
 			//if no school table, create it
-			rs = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones'");
-			rs.next();
-			if (rs.isClosed()) statement.executeQuery("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
+			rs1 = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones';");
+			rs1.next();
+			if (rs1.isClosed()) statement.executeUpdate("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
 				
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
 			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
-			statement.executeQuery("create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");");
-									
+			String tableCreateSQL = "create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");";
+			statement.executeUpdate(tableCreateSQL);
+			System.out.println(tableCreateSQL);
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}
-			String schema = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+oldVersion+"'").getString("sql");
-			rs = statement.executeQuery("select * from dwarfs"+oldVersion);
+			rs2 = statement.executeQuery("select * from sqlite_master WHERE type='table' AND name='dwarfs"+oldVersion+"';");
+			System.out.println("select * from sqlite_master WHERE type='table' AND name='dwarfs"+oldVersion+"';");
+			rs2.next();
+			String schema = rs2.getString("sql");
+			System.out.println(schema);
+			rs2.close();
+			
+			rs3 = statement.executeQuery("select * from dwarfs"+oldVersion);
 			
 			String sqlLine1 = "insert into dwarfs"+ConfigManager.configSkillsVersion+" (playername, iself";
 			String sqlLine2=") values (?,?";
@@ -85,24 +96,35 @@ public class DataManager {
 			List<Skill> tempSkills = ConfigManager.getAllSkills();
 			for (Skill s: tempSkills ){
 				if (schema.contains(s.toString())){
+					System.out.println(s.displayName+" is in schema");//
 					s.level = 1;
 				}
 				sqlLine1 = sqlLine1.concat(","+s.toString());
 				sqlLine2 = sqlLine2.concat(",?");
 			}
 			sqlLine2 = sqlLine2.concat(");");
-			PreparedStatement prep = conn.prepareStatement(sqlLine1+sqlLine2);
-			while(rs.next()){
-				prep.setString(1,rs.getString("playername"));
-				prep.setString(2,rs.getString("iself"));
+			
+			System.out.println(sqlLine1);//
+	    	System.out.println(sqlLine2);//
+			
+	    	PreparedStatement prep = conn.prepareStatement(sqlLine1+sqlLine2);
+			while(rs3.next()){
+				prep.setString(1,rs3.getString("playername"));
+				prep.setString(2,rs3.getString("iself"));
 				int i=3;
 				for (Skill s: tempSkills ){
-					if (s.level==1)	prep.setInt(i, Integer.parseInt(rs.getString(s.toString())));
+					if (s.level==1)	{
+						prep.setInt(i, Integer.parseInt(rs3.getString(s.toString())));
+						System.out.println("prep set "+i+ " to "+rs3.getString(s.toString()));//;
+					}
 					else prep.setInt(i, 0);
+					System.out.println("prep set "+i+ " to 0");//
 					i++;
 				}
+				System.out.println(prep.toString());//
 				prep.addBatch();
 			}
+			rs3.close();
 			prep.executeBatch();
 			conn.close();
 		} 

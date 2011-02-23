@@ -93,7 +93,7 @@ public class DCBlockListener extends BlockListener {
 				if(e.effectType == EffectType.PLOW){
 					for(int id:e.tools){
 						if(id == toolId && materialId == 3){
-		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true);
+		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 			    			blockDropChange = true;
 						}
 					}
@@ -163,7 +163,7 @@ public class DCBlockListener extends BlockListener {
 	    			if (e.initiatorId == 59) if(meta != 7) continue;
 		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("Debug Message: Effect:" +e.id + " tool: " + toolId+" and toolRequired:"+e.toolRequired );
 		    		if(correctTool || !e.toolRequired){
-		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true);
+		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 		    			blockDropChange = true;
 	    			}
 	   			}
