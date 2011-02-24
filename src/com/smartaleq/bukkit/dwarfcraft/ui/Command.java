@@ -3,18 +3,17 @@ package com.smartaleq.bukkit.dwarfcraft.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 
-import com.smartaleq.bukkit.dwarfcraft.DataManager;
-import com.smartaleq.bukkit.dwarfcraft.Dwarf;
-import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
-import com.smartaleq.bukkit.dwarfcraft.Effect;
-import com.smartaleq.bukkit.dwarfcraft.School;
-import com.smartaleq.bukkit.dwarfcraft.Skill;
+import com.smartaleq.bukkit.dwarfcraft.*;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
+
+import net.minecraft.server.EntityHuman;
 
 public class Command {
 	
@@ -83,7 +82,9 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
 		if (playerInput[0].equalsIgnoreCase("CREATESCHOOL")) 		return (player.isOp() ? createSchool(): notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removeSCHOOL")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
-		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());		
+		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("createtrainer"))		return (player.isOp() ? createTrainer() : notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("removetrainer"))		return (player.isOp() ? removeTrainer() : notAnOpError());
 		return false;
 	}
 	
@@ -93,6 +94,53 @@ public class Command {
 
 	private boolean listAllSchools() {
 		if(!Out.listSchools(player)){Out.sendMessage(player, Messages.Fixed.ERRORNOZONES.message); return true;}
+		return true;
+	}
+	
+	private boolean createMaster() {
+		return true;
+	}
+	private boolean createTrainer() {
+		if ( playerInput[1] == null || playerInput[2] == null || playerInput[3] == null || playerInput[4] != null ) {
+			Out.sendMessage(player, "&cSyntax: createtrainer <ID> <name> <held item>");
+			return true;
+		}
+		if ( DataManager.getTrainer(playerInput[1]) != null ) {
+			Out.sendMessage(player, "&cThis NPC ID is already in use.");
+			return true;
+		}
+		
+		Skill s = Dwarf.find(player).getSkill(playerInput[3]);
+		
+		if ( s == null ) {
+			Out.sendMessage(player, "&cNo such skill.");
+			return true;
+		}
+		
+		DwarfTrainer d = new DwarfTrainer(player, playerInput[1], playerInput[2], s.getId());
+		DataManager.insertTrainer(d);
+		return true;
+	}
+	
+	private boolean removeTrainer() {
+		if ( playerInput[1] == null || playerInput[2] != null ) {
+			Out.sendMessage(player, "&cSyntax: removetrainer <ID>");
+			return true;
+		}
+		
+		if ( DataManager.removeTrainer(playerInput[1]) ) {
+			Out.sendMessage(player, "Trainer removed.");
+		} else {
+			Out.sendMessage(player, "Could not find trainer.");
+		}
+		return true;
+	}
+	
+	private boolean listTrainers() {
+		// print all the trainers here so admins can get UniqueIDs to delete them if needed
+		for ( DwarfTrainer d : DataManager.getTrainerList()) {
+			Out.sendMessage(player, "ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+		}
 		return true;
 	}
 
@@ -174,6 +222,7 @@ public class Command {
 		else { // playerinput was null
 			target = Dwarf.find(player);
 		}
+		assert (target != null);
 		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + playerInput[1]);
 		return Out.printSkillSheet(target, player, playerInput[1]);
 	}
@@ -189,13 +238,9 @@ public class Command {
 			Out.sendMessage(player, "Usage: /dc skillinfo &b<skill>");
 			return true;
 		}
-//		wtf does this do?			
-//		if (playerInput[2] != null) playerInput[1] = playerInput[1].concat(" " + playerInput[2]);
+
 		Dwarf dwarf = Dwarf.find(player);
-		if (dwarf == null) { // can this ever happen?
-			System.out.println("Error: in skillInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
-			return false;
-		}
+		assert (dwarf != null);
 		
 		Skill skill = dwarf.getSkill(playerInput[1]);
 		if (skill == null) {
@@ -217,10 +262,7 @@ public class Command {
 			return true;
 		}
 		Dwarf dwarf = Dwarf.find(player);
-		if (dwarf == null) { // can this ever happen?
-			System.out.println("Error: in effectInfo(): Player " + player.getDisplayName() + " has no associated dwarf.");
-			return false;			
-		}
+		assert(dwarf != null);
 		
 		if (!isInt(playerInput[1])) {
 			Out.sendMessage(player, "Effect must be a numeric effect ID");
@@ -249,6 +291,7 @@ public class Command {
 		}
 		
 		Dwarf dwarf = (Dwarf.find(player));
+		assert(dwarf != null);
 		Skill skill = dwarf.getSkill(playerInput[1]);
 		if (skill == null) { 
 			Out.sendMessage(player, "&cCould not find skill &b" + playerInput[1]);

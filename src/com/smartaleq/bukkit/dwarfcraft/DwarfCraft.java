@@ -42,8 +42,9 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Low, this);
 		
 		pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.High, this);
+		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.High, this);
 		pm.registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Low, this);
-		
+				
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_RIGHTCLICKED, blockListener, Priority.Low, this);
