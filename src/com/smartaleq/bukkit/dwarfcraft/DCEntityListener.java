@@ -27,7 +27,7 @@ public class DCEntityListener extends EntityListener {
 			event.getCause() == DamageCause.SUFFOCATION || 
 			event.getCause() == DamageCause.FIRE || 
 			event.getCause() == DamageCause.FIRE_TICK){
-			if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: Damage Event: environment");
+			if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: Damage Event: environment");//spammy message
 			onEntityDamagedByEnvirons(event);
 				
 		}
@@ -68,7 +68,7 @@ public class DCEntityListener extends EntityListener {
 					(e.effectType == EffectType.EXPLOSIONDAMAGE && event.getCause() == DamageCause.BLOCK_EXPLOSION)){
     				damage = (int) Math.floor((e.getEffectAmount(dwarf) * damage));
     				if (DwarfCraft.debugMessagesThreshold < 8) System.out.println("Debug Message: environment damage type:" + event.getCause() +
-    						" base damage:"+event.getDamage()+ " new damage:" + damage+ " player HP before:" + hp);
+    						" base damage:"+event.getDamage()+ " new damage:" + damage+ " player HP before:" + hp+" effect called:"+e.id);
     				event.setDamage(damage);
     			}
     		}
@@ -114,7 +114,8 @@ public class DCEntityListener extends EntityListener {
 		    			if(id == toolId) {
 		    				sword=true;
 		    				double effectAmount = e.getEffectAmount(attacker);
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - old:"+durability);
+		    				
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - old:"+durability+" effect called:"+e.id);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a sword - new:"+tool.getDurability());
 		    				Util.toolChecker((Player) damager);
@@ -128,12 +129,12 @@ public class DCEntityListener extends EntityListener {
     					deadThingDrop(victim, attacker);
     				}
     				event.setDamage(damage);
-    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
+    				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
     			}
     			if(e.effectType == EffectType.PVPDAMAGE && isPVP && sword){
     				damage = (int) Util.randomAmount((e.getEffectAmount(attacker)) * damage);
     				event.setDamage(damage);
-       				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp");
+       				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
        			}
     		}
     	}    	
@@ -156,7 +157,7 @@ public class DCEntityListener extends EntityListener {
     				damage = (int) Util.randomAmount((e.getEffectAmount(dwarf)));
     				if(damage > hp) hitThing.setHealth(event.getDamage());
     				else hitThing.setHealth((int) (hp-damage+event.getDamage()));
-    				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+dwarf.player.getName()+" shot " + hitThing.getClass().getSimpleName() +" for " + damage + " of "+ hp + " eventdmg:" + event.getDamage() );
+    				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+dwarf.player.getName()+" shot " + hitThing.getClass().getSimpleName() +" for " + damage + " of "+ hp + " eventdmg:" + event.getDamage()+" effect called:"+e.id );
 
     			}
     		}
@@ -195,8 +196,10 @@ public class DCEntityListener extends EntityListener {
 	    				(e.id == 822 && (deadThing instanceof CraftSkeleton )) ||
 	    				(e.id == 850 && (deadThing instanceof CraftZombie )) ||
 	    				(e.id == 851 && (deadThing instanceof CraftZombie )) ||
-		    				(e.id == 852 && (deadThing instanceof CraftChicken ))){
-	    			Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false, (byte) 0);
+		    			(e.id == 852 && (deadThing instanceof CraftChicken ))){
+    					
+    					if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug Message: killed a "+deadThing.getClass().getSimpleName() +" effect called:"+e.id );
+    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false, (byte) 0);
 					}
 	    		}
 	    	}

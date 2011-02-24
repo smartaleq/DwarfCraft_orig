@@ -5,7 +5,6 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.*;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRightClickEvent;
@@ -70,8 +69,8 @@ public class DCBlockListener extends BlockListener {
     	Block block = event.getBlock();
     	Location loc = block.getLocation();
     	int materialId = event.getBlock().getTypeId();
-    	boolean durabilityChange = false;
-    	boolean blockDropChange = false;
+//    	boolean durabilityChange = false;
+//    	boolean blockDropChange = false;
     	
     	for(Skill s: skills){
     		if (s==null)continue;
@@ -86,7 +85,7 @@ public class DCBlockListener extends BlockListener {
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - new:"+tool.getDurability());
 		    				Util.toolChecker(player);
 		    				block.setTypeId(60);
-		    				durabilityChange = true;
+//		    				durabilityChange = true;
 		    			}
     				}
     			}
@@ -94,15 +93,16 @@ public class DCBlockListener extends BlockListener {
 					for(int id:e.tools){
 						if(id == toolId && materialId == 3){
 		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
-			    			blockDropChange = true;
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: hoed some ground:"+e.getEffectAmount(dwarf));
+//			    			blockDropChange = true;
 						}
 					}
     			}
     		}
     	}
-    	if (durabilityChange || blockDropChange) {
-    		((Cancellable) event).setCancelled(true);
-    	}
+//    	if (durabilityChange || blockDropChange) {
+//    		((Cancellable) event).setCancelled(true);
+//    	}
     }
     	
 

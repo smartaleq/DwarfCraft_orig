@@ -78,7 +78,7 @@ public class Effect {
 		double effectAmount = baseValue;
 		int skillLevel;
 		if (dwarf.isElf) skillLevel = this.elfEffectLevel;
-		else skillLevel = dwarf.skillLevel(this.id%10);
+		else skillLevel = dwarf.skillLevel(this.id/10);
 		
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
@@ -87,6 +87,7 @@ public class Effect {
 		effectAmount = Math.max(effectAmount, minValue);
 		if (hasException && skillLevel <= exceptionHigh && skillLevel >= exceptionLow) effectAmount = exceptionValue;
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: GetEffectAmount Id: " + id +
+				" level checked: "+ skillLevel+
 				" base: " + baseValue +
 				" LevelUp multi:  " + levelUpMultiplier+ 
 				" Novice:  " + noviceLevelUpMultiplier+ 

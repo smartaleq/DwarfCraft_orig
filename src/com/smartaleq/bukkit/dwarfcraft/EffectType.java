@@ -17,7 +17,7 @@ public enum EffectType {
 	ARMORHIT, 	// TODO onEntityDamage
 	PLOW,
 	DIGTIME,	// TODO ??
-	BOWATTACK, 	// TODO onEntityDamageByProjectile
+	BOWATTACK, 
 	VEHICLEDROP,// TODO onVehicleDamage - destroyed
 	VEHICLEMOVE,// TODO onVehicleMove
 	CITIZENBLOCKS,// TODO towny implementation

@@ -1,6 +1,19 @@
-#this file holds custom messages for your server. Using the ':' colon character in your message will break things
+#This file holds custom messages for your server. Using the ':' colon character in your message will break things
 #Blank or missing settings will use the plugin default message
 
+#Put something here. Called when users /dc help
 GeneralHelp:
 
+#Put something here. Called when users /dc rules
 ServerRules:
+
+
+
+## These lines are called when you attempt to change race. Defaults will work with dwarf/elf or user-defined races. 
+## You should only change these if you don't like the "there was a problem in surgery" message
+
+#PRIMARYRACESUCCESS:
+#PRIMARYRACECONFIRM: 
+#SECONDARYRACESUCCESS: 
+#SECONDARYRACECONFIRM: 
+#SECONDARYRACEALREADY:

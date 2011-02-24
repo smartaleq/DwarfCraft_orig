@@ -35,7 +35,7 @@ public class DataManager {
 					rs.next();
 					if (!rs.isClosed()){ //if there is a recent past table, use it to build the new table
 						conn.close();
-						buildDB(ConfigManager.configSkillsVersion-versionNumber);
+						buildDB(versionNumber);
 						return;
 					}
 				} 
@@ -72,7 +72,7 @@ public class DataManager {
 			rs1 = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones';");
 			rs1.next();
 			if (rs1.isClosed()) statement.executeUpdate("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
-				
+			rs1.close();
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
 			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
@@ -81,10 +81,10 @@ public class DataManager {
 			System.out.println(tableCreateSQL);
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}
-			rs2 = statement.executeQuery("select * from sqlite_master WHERE type='table' AND name='dwarfs"+oldVersion+"';");
-			System.out.println("select * from sqlite_master WHERE type='table' AND name='dwarfs"+oldVersion+"';");
+			rs2 = statement.executeQuery("select sql from sqlite_master WHERE name='dwarfs"+oldVersion+"';");
+			System.out.println("select sql from sqlite_master WHERE name='dwarfs"+oldVersion+"';");
 			rs2.next();
-			String schema = rs2.getString("sql");
+			String schema = rs2.getString(1);
 			System.out.println(schema);
 			rs2.close();
 			

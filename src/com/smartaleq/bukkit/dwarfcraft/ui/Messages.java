@@ -7,13 +7,28 @@ public class Messages {
 	public static String GeneralHelp = null;
 	public static String ServerRules = null;
 	
+	public static String PrimaryRaceName = "Dwarf";
+	public static String PrimaryRacePlural = "Dwarves";
+	public static String SecondaryRaceName = "Elf";
+	public static String SecondaryRacePlural = "Elves";
+	
+	public static String PRIMARYRACESUCCESS = null;
+	public static String PRIMARYRACECONFIRM = null;
+	public static String SECONDARYRACESUCCESS = null;
+	public static String SECONDARYRACECONFIRM = null;
+	public static String SECONDARYRACEALREADY = null;
+	
+	
+	
+	
+	
 	
 	//String messages fixed for DwarfCraft, and backup messages when loading fails.
 	public enum Fixed{
 		GENERALHELPMESSAGE(
 				"This is a dummy General Help Message, please place a message in your messages.config"), 
 		SERVERRULESMESSAGE(
-				"This is a dummy General Rules Message, please place a message in your messages.config"), 
+				"This is a dummy Server Rules Message, please place a message in your messages.config"), 
 		INFO(
 				"&dWelcome to DwarfCraft. You are a Dwarf with "
 					+ "a set of skills that let you do minecraft tasks better."
@@ -25,12 +40,12 @@ public class Messages {
 					+ "training a skill and its effects with &4/dc skillinfo "
 					+ "<skillname or id>&d."), 
 		COMMANDLIST1(
-				"help|info|commands|comands2|tutorial|"
-					+ "skillinfo|skillsheet|effectinfo|train|"
-					+ "schoollist|schoolinfo|makemeadwarf|makemeanelf|"
+				"help info commands comands2 tutorial "
+					+ "skillinfo skillsheet effectinfo train "
+					+ "schoollist schoolinfo makemea"+PrimaryRaceName+" makemea"+SecondaryRaceName+" "
 					+ "here"), 
 		COMMANDLIST2(
-				"setSkill|createschool|removeschool"),
+				"setSkill createschool removeschool"),
 	
 		TUTORIAL1(
 				"&fWelcome to the dwarfcraft tutorial. To get started, type &4/dc skillsheet&f."
@@ -51,26 +66,28 @@ public class Messages {
 					+ "things you can train by using &4/dc schoollist&f and &4/dc schoolinfo&f. "
 					+ "Continue with &4/dc tutorial5&f"), 
 		TUTORIAL5(
-				"&fYou now know the basic commands you need to succeed and develop as a dwarf. " 
+				"&fYou now know the basic commands you need to succeed and develop as a " + PrimaryRaceName + ". " 
 					+ "To find out more, use &4/dc help&f and &4/dc help <command>&f. Try &4/dc help " 
 					+ "commands&f first. Good Luck!"),
 	
-		DWARFSUCCESS(
-				"&6Congratulations, you're now a hearty &9dwarf&6 with level 0 skills!"), 
-		DWARFCONFIRM(
-				"&6To become a &9dwarf&6 you need to confirm with &4/dc REALLYmakemeadwarf "
+		PRIMARYRACESUCCESS(
+				"&6Congratulations, you're now a hearty &9"+PrimaryRaceName+"&6 with level 0 skills!"),
+		PRIMARYRACECONFIRM(
+				"&6To become a &9+PrimaryRaceName"+"&6 you need to confirm with &4/dc REALLYmakemea"+PrimaryRaceName+" "
 					+ "&6- this will reset your skills to 0!"), 
-		ELFSUCCESS(
+		SECONDARYRACESUCCESS(
 				"&6I'm sorry to say this... really I must apologize... there was a problem "
-					+ "in surgery and you're now... ahem... an &fElf&6."), 
-		ELFCONFIRM(
+					+ "in surgery and you're now... ahem... an &f"+SecondaryRaceName+"&6."), 
+		SECONDARYRACECONFIRM(
 				"&6If you really want to remove all your skills, you'll have to say you &4'/dc "
-					+ "REALLYmakemeanelf'&6, which is an altogether bad idea!"), 
-		ELFALREADY(
-				"&6You're already an &fElf&6. No wonder you're so confused!"),
+					+ "REALLYmakemea"+SecondaryRaceName+"'&6, which is an altogether bad idea!"), 
+		SECONDARYRACEALREADY(
+				"&6You're already an &f"+SecondaryRaceName+"&6. No wonder you're so confused!"),
 	
 		ERRORBADINPUT("Could not understand your input, try again"), 
-		ERRORNOZONES("Could not find any school zones in your world!");
+		ERRORNOZONES("Could not find any school zones in your world!"),
+		ERRORNOTOP("You are not authorized to use that command")
+		;
 	
 		public String message;
 	

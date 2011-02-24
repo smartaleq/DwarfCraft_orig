@@ -93,12 +93,14 @@ public class DCPlayerListener extends PlayerListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(e.effectType == EffectType.EAT && e.initiatorId==itemId){
+    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: ate food:"+item.getType().toString()+" for "+e.getEffectAmount(dwarf));
     				player.setHealth((int) (player.getHealth()+e.getEffectAmount(dwarf)));
-    				item.setAmount(item.getAmount()-1);
+    				player.getInventory().removeItem(item);
     				
 				}
 			}
 		}
+    	event.setCancelled(true);
     }
     
     public void onPlayerMove(PlayerMoveEvent event){
