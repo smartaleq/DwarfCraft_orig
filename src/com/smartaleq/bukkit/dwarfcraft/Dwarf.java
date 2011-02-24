@@ -325,7 +325,7 @@ public class Dwarf {
 	}
 
 	public int skillLevel(int i) {
-		for (Skill s: skills) if (s.level == i) return s.level;
+		for (Skill s: skills) if (s.id == i) return s.level;
 		return 0;
 	}
 

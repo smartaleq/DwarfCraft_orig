@@ -178,19 +178,19 @@ public class Out {
 	}
 		
 	public static void becameADwarf(Player player) {
-		sendMessage(player, Messages.Fixed.DWARFSUCCESS.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.PRIMARYRACESUCCESS.message, "&6[DC] ");
 	}
 	public static void confirmBecomingDwarf(Player player) {
-		sendMessage(player, Messages.Fixed.DWARFCONFIRM.message,"&6[DC] ");
+		sendMessage(player, Messages.Fixed.PRIMARYRACECONFIRM.message,"&6[DC] ");
 	}
 	public static void becameAnElf(Player player) {
-		sendMessage(player, Messages.Fixed.ELFSUCCESS.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.SECONDARYRACESUCCESS.message, "&6[DC] ");
 	}	
 	public static void alreadyAnElf(Player player) {
-		sendMessage(player, Messages.Fixed.ELFALREADY.message, "&6[DC] ");
+		sendMessage(player, Messages.Fixed.SECONDARYRACEALREADY.message, "&6[DC] ");
 	}
 	public static void confirmBecomingAnElf(Player player) {
-		sendMessage(player, Messages.Fixed.ELFCONFIRM.message,"&6[DC] ");
+		sendMessage(player, Messages.Fixed.SECONDARYRACECONFIRM.message,"&6[DC] ");
 	}
 
 	
@@ -376,8 +376,8 @@ public class Out {
 	public static void welcome(Server server, Dwarf dwarf) {
 		try {
 			String raceName = "";
-			if(dwarf.isElf) raceName = "&fElf";
-			else raceName = "&9Dwarf";
+			if(dwarf.isElf) raceName = "&f"+Messages.SecondaryRaceName;
+			else raceName = "&9"+Messages.SecondaryRaceName;
 			sendBroadcast(server, "&fWelcome, "+raceName+" &6"+dwarf.player.getName() ,"&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();

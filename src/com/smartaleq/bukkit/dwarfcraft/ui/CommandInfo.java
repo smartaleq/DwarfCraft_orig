@@ -17,10 +17,13 @@ public enum CommandInfo {
 			"&dThe &4/dc setskill <ID> <Level> &fADMIN &dcommand will set the selected skill level for the admin."),
 
 	MAKEMEADWARF(
-			"&dThe &4/dc MakeMeADwarf &dcommand will make the player into a &6dwarf&d. If already a &6dwarf&d it will reset your skills. Use &4/dc ReallyMakeMeADwarf &dto confirm."), REALLYMAKEMEADWARF(
-			"&dThe &4/dc ReallyMakeMeADwarf &dcommand will make the player into a &6dwarf&d. If already a &6dwarf&d it will reset your skills."), MAKEMEANELF(
-			"&dThe &4/dc MakeMeAnElf &dcommand will make the player into an &fElf&d. &fElves&d have no skill levels and play like DwarfCraft doesn't exist (mostly). Use &4/dc ReallyMakeMeAnElf &dto confirm."), REALLYMAKEMEANELF(
-			"&dThe &4/dc MakeMeADwarf &dcommand will make the player into an &fElf&d. &fElves &dhave no skill levels and play like DwarfCraft doesn't exist (mostly)."),
+			"&dThe &4/dc Make"+Messages.PrimaryRaceName+" &dcommand will make the player into a &6"+Messages.PrimaryRaceName+"&d. If already a &6"+Messages.PrimaryRaceName+"&d it will reset your skills. Use &4/dc ReallyMakeMeA"+Messages.PrimaryRaceName+" &dto confirm."), 
+	REALLYMAKEMEADWARF(
+			"&dThe &4/dc ReallyMake"+Messages.PrimaryRaceName+" &dcommand will make the player into a &6"+Messages.PrimaryRaceName+"&d. If already a &6"+Messages.PrimaryRaceName+"&d it will reset your skills."), 
+	MAKEMEANELF(
+			"&dThe &4/dc Make"+Messages.SecondaryRaceName+" &dcommand will make the player into an &f"+Messages.SecondaryRaceName+"&d. &f"+Messages.SecondaryRacePlural+"&d have no skill levels and play like DwarfCraft doesn't exist (mostly). Use &4/dc ReallyMake&f"+Messages.SecondaryRaceName+" &dto confirm."), 
+	REALLYMAKEMEANELF(
+			"&dThe &4/dc ReallyMake"+Messages.SecondaryRaceName+" &dcommand will make the player into an &f"+Messages.SecondaryRaceName+"&d. &f"+Messages.SecondaryRacePlural+" &dhave no skill levels and play like DwarfCraft doesn't exist (mostly)."),
 
 	SCHOOLLIST(
 			"&dThe &4/dc schoollist &dcommand will list all 10 of the DwarfCraft schools and their SchoolID"), SCHOOLINFO(

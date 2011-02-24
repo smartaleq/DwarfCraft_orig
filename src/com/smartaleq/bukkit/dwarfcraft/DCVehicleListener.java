@@ -15,7 +15,11 @@ public class DCVehicleListener extends VehicleListener{
      * @param event
      */
     public void onVehicleDamage(VehicleDamageEvent event) {
+    	//if(event.getDamage()>event.getVehicle().getHealth()) dropstuff
+    	event.getAttacker();
     }
+    
+//	public void onVehicleDestroyed(VehicleDestroyedEvent event)
     
     
     /**
