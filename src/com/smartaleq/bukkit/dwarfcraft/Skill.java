@@ -3,6 +3,7 @@ package com.smartaleq.bukkit.dwarfcraft;
 import java.util.List;
 
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.Material;
 
 public class Skill implements Cloneable{
 	
@@ -14,6 +15,7 @@ public class Skill implements Cloneable{
 	public final List <ItemStack> trainingCost;
 	public final double noviceIncrement;
 	public final double masterMultiplier;
+	private Material trainerHeldMaterial;
 		
 	public Skill(
 			int id, 
@@ -23,8 +25,8 @@ public class Skill implements Cloneable{
 			List <Effect> effects,
 			List <ItemStack> trainingCost,
 			double noviceIncrement,
-			double masterMultiplier
-				) 
+			double masterMultiplier,
+			Material trainerHeldMaterial ) 
 	{
 		this.id = id;
 		this.displayName = displayName;
@@ -34,6 +36,7 @@ public class Skill implements Cloneable{
 		this.trainingCost = trainingCost;
 		this.noviceIncrement = noviceIncrement;
 		this.masterMultiplier = masterMultiplier;
+		this.trainerHeldMaterial = trainerHeldMaterial;
 	}
 	
 	/**
@@ -42,7 +45,7 @@ public class Skill implements Cloneable{
 	 * Known issue: it does not clone the effects table or itemStack table. This is not a problem because effects are 100% final, and ItemStack is never modified.
 	 */
 	public Skill clone(){
-		Skill newSkill = new Skill(this.id, this.displayName, this.school, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier);
+		Skill newSkill = new Skill(this.id, this.displayName, this.school, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier, this.trainerHeldMaterial);
 		return newSkill;
 	}
 	
@@ -58,4 +61,6 @@ public class Skill implements Cloneable{
 		return multiplier;
 	}
 	
+	public Material getTrainerHeldMaterial() { return this.trainerHeldMaterial; } 
+	public int getId() { return this.id; }
 }

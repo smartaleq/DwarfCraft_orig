@@ -11,14 +11,16 @@ import java.util.List;
 
 import org.bukkit.util.Vector;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 
+import redecouverte.npcspawner.NpcSpawner;
 
 public class DataManager {
 
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	
+	static List <DwarfTrainer> trainerList = new ArrayList<DwarfTrainer>();
 	
 	public static void dbInitialize() {
 	    try{
@@ -334,5 +336,46 @@ public class DataManager {
 		return dwarves;
 	}
 	
+	public static DwarfTrainer getTrainer(Entity entity) {
+		for ( DwarfTrainer d : trainerList ) {
+			if ( d.equals(entity) )
+				return d; 
+		}
+		return null;		
+	}
+	
+	public static DwarfTrainer getTrainer(String str) {
+		for ( DwarfTrainer d : trainerList ) {
+			if ( d.getUniqueId().equals(str) )
+				return d;
+		}
+		return null;
+	}
+	
+	public static void insertTrainer( DwarfTrainer d ) {
+		assert(d != null);
+		trainerList.add(d);
+		return;
+	}
+	
+	public static boolean removeTrainer( String str ) {
+		try {
+			for ( DwarfTrainer d : trainerList ) {
+				if ( d.getUniqueId().equals(str)) {
+					trainerList.remove(d);
+					NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
+					return true;
+				}
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static List<DwarfTrainer> getTrainerList() {
+		return trainerList;
+	}
 
 }

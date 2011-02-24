@@ -6,12 +6,12 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.bukkit.Location;
 
 public class DCVehicleListener extends VehicleListener{
 	
     public DCVehicleListener(final DwarfCraft plugin) {
+
     }
      
     /**
@@ -71,7 +71,7 @@ public class DCVehicleListener extends VehicleListener{
     			location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*2);
     			event.getVehicle().teleportTo(location);
     		}
-    	}    	
+    	}
     }
 }
 

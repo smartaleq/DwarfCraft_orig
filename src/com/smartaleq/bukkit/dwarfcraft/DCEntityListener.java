@@ -10,7 +10,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
+import redecouverte.npcspawner.NpcEntityTargetEvent;
+import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
+
 
 public class DCEntityListener extends EntityListener {
 
@@ -83,6 +87,13 @@ public class DCEntityListener extends EntityListener {
     	else return;
     	boolean isPVP = false;
     	Dwarf attacker = null;
+    	
+    	if (event.getEntity() instanceof HumanEntity ) {
+    		if (checkDwarfTrainer(event)) // pulling this out so I don't muck up this code.    		
+    			event.setCancelled(true);
+    		return;
+    	}
+    	
     	if(victim instanceof Player) {
     		isPVP = true;
     	}
@@ -205,4 +216,55 @@ public class DCEntityListener extends EntityListener {
 	    	}
 	    }
 	}
+    
+    public void onEntityTarget(EntityTargetEvent event) {
+    	if (event instanceof NpcEntityTargetEvent) {
+    		checkDwarfTrainer((NpcEntityTargetEvent) event);
+    		event.setCancelled(true);
+    	}
+    	return;
+    }
+    
+    public boolean checkDwarfTrainer(EntityDamageByEntityEvent event) {
+    	// all we know right now is that event.entity instanceof HumanEntity
+    	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity()); 
+   		if ( trainer != null ) {
+   			if ( event.getDamager() instanceof Player ) {
+   				// 	in business, left click
+   				trainer.lookAt(event.getDamager());
+   				trainer.printSkillInfo((Player)(event.getDamager()));   				
+   				// if ( )
+   			}
+			return true;
+   		} 
+    	return false;
+    }
+    
+    public boolean checkDwarfTrainer(NpcEntityTargetEvent event) { // will be used for right clicks, move, touch, etc
+    	try {
+    	   	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity()); 
+       		if ( trainer != null ) {
+    			if ( event.getTarget() instanceof Player ) {
+    				// in business
+    				if ( event.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER ) { 
+    					// player is close
+    					// doesn't seem to work except on spawn
+    				} else if ( event.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED ) {
+    					// player right clicked
+    					trainer.lookAt(event.getTarget());
+    					trainer.getBasicHumanNpc().animateArmSwing();
+    					trainer.trainSkill((Player)event.getTarget());
+    				} else if ( event.getNpcReason() == NpcTargetReason.NPC_BOUNCED ) {
+    					// player collided with mob
+    					// doesn't seem to work
+    				}
+    			}
+				return true;
+    		}
+       	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return false;
+    }
 }

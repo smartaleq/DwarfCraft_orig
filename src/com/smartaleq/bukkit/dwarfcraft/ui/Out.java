@@ -211,14 +211,14 @@ public class Out {
 	/**
 	 * Used to send messages to one player
 	 */
-	static void sendMessage(Player player, String message){
+	public static void sendMessage(Player player, String message){
 		sendMessage(player, message, "");
 	}
 	
 	/**
 	 * Dwarf version
 	 */
-	static void sendMessage(Dwarf dwarf, String message){
+	public static void sendMessage(Dwarf dwarf, String message){
 		sendMessage(dwarf.player, message);
 	}
 
@@ -226,7 +226,7 @@ public class Out {
 	 * Used to send messages to one player with a prefix
 	 * @return 
 	 */
-	static void sendMessage(Player player, String message, String prefix){
+	public static void sendMessage(Player player, String message, String prefix){
 		message = parseColors(message);
 		prefix = parseColors(prefix);
 		messagePrinter(player, message, prefix);
@@ -235,35 +235,35 @@ public class Out {
 	/**
 	 * Dwarf version
 	 */
-	static void sendMessage(Dwarf dwarf, String message, String prefix){
+	public static void sendMessage(Dwarf dwarf, String message, String prefix){
 		sendMessage(dwarf.player, message, prefix);
 	}
 	
 	/**
 	 * Used to send messages to many players
 	 */
-	static void sendMessage(Player[] playerArray, String message){
+	public static void sendMessage(Player[] playerArray, String message){
 		sendMessage(playerArray, message, "");
 	}
 	
 	/**
 	 * Used to send messages to many players with a prefix
 	 */
-	static void sendMessage(Player[] playerArray, String message, String prefix ){
+	public static void sendMessage(Player[] playerArray, String message, String prefix ){
 		for (Player p: playerArray) sendMessage(p, message, prefix);
 	}
 	
 	/**
 	 * Used to send messages to all players on a server
 	 */
-	static void sendBroadcast(Server server, String message){
+	public static void sendBroadcast(Server server, String message){
 		sendBroadcast(server, message, "");
 	}
 	
 	/**
 	 * Used to send messages to all players on a server with a prefix TODO
 	 */
-	static void sendBroadcast(Server server, String message, String prefix){
+	public static void sendBroadcast(Server server, String message, String prefix){
 		Player[] playerArray = server.getOnlinePlayers();
 		sendMessage(playerArray, message, prefix);
 	}

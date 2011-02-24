@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
@@ -95,6 +96,7 @@ public class ConfigManager {
 					continue;
 					}
 				//Creating a new Skill - with ID, Name, School read from file
+				Material trainerHeldMaterial = Material.AIR;
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
 				School school = School.getSchool(theline[2]);
@@ -111,7 +113,7 @@ public class ConfigManager {
 				//Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
-				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier));
+				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier, trainerHeldMaterial));
 				line = br.readLine();
 			}
 			return true;
