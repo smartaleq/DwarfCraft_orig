@@ -84,8 +84,11 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("createschool")) 		return (player.isOp() ? createSchool(): notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removeschool")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
 		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());
+		
+		if (playerInput[0].equalsIgnoreCase("createmaster"))		return (player.isOp() ? createMaster() : notAnOpError());		
 		if (playerInput[0].equalsIgnoreCase("createtrainer"))		return (player.isOp() ? createTrainer() : notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removetrainer"))		return (player.isOp() ? removeTrainer() : notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("listtrainers"))		return (player.isOp() ? listTrainers() : notAnOpError());
 		return false;
 	}
 	
@@ -99,6 +102,8 @@ public class Command {
 	}
 	
 	private boolean createMaster() {
+		DwarfTrainer d = new DwarfTrainer(player, playerInput[1], playerInput[2], 3);
+		DataManager.insertTrainer(d);
 		return true;
 	}
 	private boolean createTrainer() {

@@ -97,6 +97,7 @@ public class ConfigManager {
 					}
 				//Creating a new Skill - with ID, Name, School read from file
 				Material trainerHeldMaterial = Material.AIR;
+
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
 				School school = School.getSchool(theline[2]);
