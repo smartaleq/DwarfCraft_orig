@@ -272,6 +272,7 @@ public class DataManager {
 			if (rs == null) return null;
 			zoneList.clear();
 			while(rs.next()){
+				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+rs.getString("name"));
 				zoneList.add(new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name")));
 				rs.next();
 			}

@@ -48,13 +48,14 @@ public class Util {
 	
     /**
      * Drops blocks at a block based on a specific effect(and level)
-     * @param block Block being destroyed
      * @param e Effect causing a block to drop
      * @param effectAmount Double number of blocks to drop
-     * @param drop item naturally or not
+     * @param dropNaturally item naturally or not
+     * @param data 
+     * @param loc Location of item drop
      */
 	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally, byte data) {
-		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount), data);
+		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount), (short) 0, data);
 		if (item.getAmount() == 0){
 			if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("Debug: dropped " + item.toString());
 			return;

@@ -166,7 +166,10 @@ public class DCEntityListener extends EntityListener {
     				damage = event.getDamage()* e.getEffectAmount(dwarf);
     				if(hp <= 0) {event.setCancelled(true); return;}
     				damage = (int) Util.randomAmount((e.getEffectAmount(dwarf)));
-    				if(damage > hp) hitThing.setHealth(event.getDamage());
+    				if(damage >= hp) {
+    					hitThing.setHealth(event.getDamage());
+    					deadThingDrop(hitThing, dwarf);
+    				}
     				else hitThing.setHealth((int) (hp-damage+event.getDamage()));
     				if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("Debug Message: PVP "+dwarf.player.getName()+" shot " + hitThing.getClass().getSimpleName() +" for " + damage + " of "+ hp + " eventdmg:" + event.getDamage()+" effect called:"+e.id );
 
@@ -193,6 +196,7 @@ public class DCEntityListener extends EntityListener {
     }
     
     public void deadThingDrop(LivingEntity deadThing, Dwarf killer){
+    	if (deadThing instanceof CraftSheep)return;
     	for(Skill s: killer.skills){
     		if (s==null)continue;
     		for(Effect e:s.effects){
@@ -201,8 +205,8 @@ public class DCEntityListener extends EntityListener {
     				if(
     					(e.id == 810 && (deadThing instanceof CraftPig )) ||
 	    				(e.id == 811 && (deadThing instanceof CraftCow )) ||
-	    				(e.id == 812 && (deadThing instanceof CraftSheep )) ||
-	    				(e.id == 820 && (deadThing instanceof CraftCreeper )) ||
+	    				(e.id == 820 && (deadThing instanceof CraftCreeper ))||
+	    				
 	    				(e.id == 821 && (deadThing instanceof CraftSkeleton )) ||
 	    				(e.id == 822 && (deadThing instanceof CraftSkeleton )) ||
 	    				(e.id == 850 && (deadThing instanceof CraftZombie )) ||
@@ -211,6 +215,10 @@ public class DCEntityListener extends EntityListener {
     					
     					if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug Message: killed a "+deadThing.getClass().getSimpleName() +" effect called:"+e.id );
     					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false, (byte) 0);
+//    				if (e.id == 812 && (deadThing instanceof CraftSheep )) {
+//    					if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug Message: killed a "+deadThing.getClass().getSimpleName() +" effect called:"+e.id );
+//    					Util.dropBlockEffect(deadThing.getLocation(), e, e.getEffectAmount(killer), false, (byte) 1);
+//    				}
 					}
 	    		}
 	    	}

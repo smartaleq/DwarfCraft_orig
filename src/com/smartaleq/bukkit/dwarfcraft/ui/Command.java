@@ -427,7 +427,7 @@ public class Command {
 			}
 		}
 		Out.schoolInfo(player, school, skills);
-		return false;
+		return true;
 	}
 	
 	private boolean here() {
@@ -435,7 +435,9 @@ public class Command {
 			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
 			return true;
 		}
-		return Out.here(player,(Dwarf.find(player)).listAllZones());
+		if(!Out.here(player,(Dwarf.find(player)).listAllZones())) Out.sendMessage(player, Messages.Fixed.ERRORNOZONES.message);
+		return true;
+		 
 	}
 	
 	private boolean createSchool() {
@@ -453,7 +455,8 @@ public class Command {
 			double z1 = Double.parseDouble(playerInput[6]); 
 			double z2 = Double.parseDouble(playerInput[7]);
 			String name = playerInput[8];
-			return DataManager.addSchoolZone(new Vector(x1,y1,z1), new Vector(x2,y2,z2), world, school, name);
+			System.out.println("Created School " + name);
+			return DataManager.addSchoolZone(new Vector(Math.min(x1,x2),Math.min(y1,y2),Math.min(z1,z2)), new Vector(Math.max(x1,x2),Math.max(y1,y2),Math.max(z1,z2)), world, school, name);
 		} 
 		catch (NumberFormatException e) {
 			e.printStackTrace();

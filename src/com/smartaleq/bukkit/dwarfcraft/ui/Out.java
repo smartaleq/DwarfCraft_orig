@@ -407,12 +407,12 @@ public class Out {
 		boolean foundSome = false;
 		for (TrainingZone tz: DataManager.getSchoolZones(player.getWorld())){
 			sendMessage(player, "&8"+tz.name+"&6, a &1"+tz.school+"&6 training zone from ("+
-					tz.corner1.getBlockX()+","+
-					tz.corner1.getBlockY()+","+
-					tz.corner1.getBlockZ()+") to ("+
-					tz.corner2.getBlockX()+","+
-					tz.corner2.getBlockY()+","+
-					tz.corner2.getBlockZ()+")"
+					tz.lowCorner.getBlockX()+","+
+					tz.lowCorner.getBlockY()+","+
+					tz.lowCorner.getBlockZ()+") to ("+
+					tz.highCorner.getBlockX()+","+
+					tz.highCorner.getBlockY()+","+
+					tz.highCorner.getBlockZ()+")"
 					,"&6[&8Zone&6]");
 			foundSome = true;
 		}

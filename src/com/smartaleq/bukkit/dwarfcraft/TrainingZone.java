@@ -5,20 +5,20 @@ import org.bukkit.util.Vector;
 
 public class TrainingZone {
 	
-	public Vector corner1;
-	public Vector corner2;
+	public Vector lowCorner;
+	public Vector highCorner;
 	public School school;
 	public World world;
 	public String name;
 	
 	TrainingZone(
-			Vector corner1,
-			Vector corner2,
+			Vector lowCorner,
+			Vector highCorner,
 			School school,
 			World world,
 			String name){
-		this.corner1 = corner1;
-		this.corner2 = corner2;
+		this.lowCorner = lowCorner;
+		this.highCorner = highCorner;
 		this.school = school;
 		this.world = world;
 		this.name = name;

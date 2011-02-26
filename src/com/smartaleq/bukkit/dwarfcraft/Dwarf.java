@@ -251,27 +251,24 @@ public class Dwarf {
 
 	public boolean isInSchoolZone(School school){
 		World world = player.getWorld();
-		int playerX = (int) player.getLocation().getX();
-		int playerY = (int) player.getLocation().getY();
-		int playerZ = (int) player.getLocation().getY();
-		Vector victor = new Vector(playerX, playerY, playerZ);
+		Vector victor = player.getLocation().toVector();
 		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
 		for(TrainingZone zone: schoolZones){
-			if (victor.isInAABB(zone.corner1, zone.corner2) && zone.school == school && world == zone.world) return true;
+			if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+zone.name);
+			if (victor.isInAABB(zone.lowCorner, zone.highCorner) && zone.school == school && world == zone.world) return true;
 		}
 		return false;
 	}
 	
 	public List<TrainingZone> listAllZones(){
 		World world = player.getWorld();
-		double playerX =  player.getLocation().getX();
-		double playerY = player.getLocation().getY();
-		double playerZ =  player.getLocation().getY();
-		Vector victor = new Vector(playerX, playerY, playerZ);
+		Vector victor = player.getLocation().toVector();
+		if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: player at x,y,z:"+victor.getX()+","+victor.getY()+","+victor.getZ());
 		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
 		List <TrainingZone> zonesHere = new ArrayList <TrainingZone> ();
 		for(TrainingZone zone: schoolZones){
-			if (victor.isInAABB(zone.corner1, zone.corner2) && world == zone.world){
+			if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+zone.name);
+			if (victor.isInAABB(zone.lowCorner, zone.highCorner)){
 				zonesHere.add(zone);
 			}
 		}
