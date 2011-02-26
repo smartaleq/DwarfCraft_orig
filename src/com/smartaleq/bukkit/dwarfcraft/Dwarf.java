@@ -36,7 +36,7 @@ public class Dwarf {
 		return null;
 	}
 
-	public static Dwarf find(String name) {
+	public static Dwarf findOffline(String name) {
 		Dwarf dwarf = createDwarf(null);
 		if(DataManager.getDwarfData(dwarf, name)) return dwarf;
 		else{
@@ -76,13 +76,13 @@ public class Dwarf {
 		return playerLevel;
 	}
 	
-	public ItemStack[] calculateTrainingCost(Skill skill) {
+	public List<ItemStack> calculateTrainingCost(Skill skill) {
 		int highSkills = countHighSkills();
 		int dwarfLevel = getDwarfLevel();
 		int quartileSize = Math.min(4,highSkills/4);
 		int quartileNumber = 1; //1 = top, 2 = 2nd, etc.
 		int[] levelList = new int[highSkills+1];
-		ItemStack[] trainingStack = new ItemStack[3];
+		List <ItemStack> trainingStack = new ArrayList<ItemStack>();
 		int i = 0;
 		
 		//Creates an ordered list of skill levels and finds where in that list the skill is (what quartile)
@@ -92,7 +92,6 @@ public class Dwarf {
 			if (s.level > 5){
 				levelList[i] = s.level;
 				i++;}}
-		i = 0;
 		Arrays.sort(levelList);
 		if (levelList[highSkills - quartileSize]<=skill.level) quartileNumber = 1 ;
 		else if (levelList[highSkills - 2 * quartileSize]<=skill.level) quartileNumber = 2 ;
@@ -108,8 +107,7 @@ public class Dwarf {
 		//create output item stack of new items
 		for(ItemStack item:skill.trainingCost){
 			if (item.getAmount() != 0){
-				trainingStack[i] = new ItemStack(item.getTypeId(), (int) Math.floor(item.getAmount()*multiplier));
-				if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: new training item stack ID: "+trainingStack[i].getTypeId()+" amount: " + trainingStack[i].getAmount());
+				trainingStack.add(new ItemStack(item.getTypeId(), (int) Math.floor(item.getAmount()*multiplier)));
 				i++;
 			}
 		}
@@ -161,7 +159,9 @@ public class Dwarf {
 		catch (NumberFormatException n){
 			for (Skill skill: skills){
 				if (skill.displayName.equalsIgnoreCase(skillName)) return skill;
+				if (skill.toString().equalsIgnoreCase(skillName)) return skill;
 				if (skill.displayName.toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
+				if (skill.toString().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
 			}
 			
 		}

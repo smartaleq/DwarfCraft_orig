@@ -43,7 +43,7 @@ public class DCPlayerListener extends PlayerListener {
 					//successful command
 				}
 				else {
-					Out.error(player, Messages.Fixed.ERRORBADINPUT);
+					Out.sendMessage(player, Messages.Fixed.ERRORCOMMANDNOTFOUND.message);
 					return;
 					//failed command don't cancel in case it was someone else's
 				}
@@ -80,7 +80,7 @@ public class DCPlayerListener extends PlayerListener {
     	Player player = event.getPlayer();
     	Dwarf dwarf = Dwarf.find(player);
     	List<Skill> skills = dwarf.skills;
-    	
+    	boolean hadEffect = false;
    	//Effect Specific information
     	ItemStack item = player.getItemInHand();
     	int itemId = -1;
@@ -96,11 +96,12 @@ public class DCPlayerListener extends PlayerListener {
     				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: ate food:"+item.getType().toString()+" for "+e.getEffectAmount(dwarf));
     				player.setHealth((int) (player.getHealth()+e.getEffectAmount(dwarf)));
     				player.getInventory().removeItem(item);
+    				hadEffect = true;
     				
 				}
 			}
 		}
-    	event.setCancelled(true);
+    	if(hadEffect) event.setCancelled(true);
     }
     
     public void onPlayerMove(PlayerMoveEvent event){
