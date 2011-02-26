@@ -2,18 +2,12 @@ package com.smartaleq.bukkit.dwarfcraft.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-
 import com.smartaleq.bukkit.dwarfcraft.*;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
-
-import net.minecraft.server.EntityHuman;
 
 public class Command {
 	
@@ -35,19 +29,7 @@ public class Command {
         return null;
 	}	
 	
-	/**
-	 * isInt(String)
-	 * returns true if string is an int, false if not
-	 */
-	public boolean isInt (String str) {
-		try {
-			Integer.parseInt(str);
-			return true;
-		}
-		catch(NumberFormatException nfe) {
-			return false;
-		}
-	}
+
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
@@ -71,6 +53,7 @@ public class Command {
 		
 		if (playerInput[0].equalsIgnoreCase("train")) 				return train();
 		if (playerInput[0].equalsIgnoreCase("setskill")) 			return (player.isOp() ? setSkill(): notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("setskill")) 			return (player.isOp() ? setAll(): notAnOpError());
 		
 		if (playerInput[0].equalsIgnoreCase("MAKE"+Messages.PrimaryRaceName)) 		return makeMeDwarf(false);
 		if (playerInput[0].equalsIgnoreCase("REALLYMAKE"+Messages.PrimaryRaceName))	return makeMeDwarf(true);
@@ -84,17 +67,24 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("createschool")) 		return (player.isOp() ? createSchool(): notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removeschool")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
 		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());
+		
+		if (playerInput[0].equalsIgnoreCase("listtrainers"))		return (player.isOp() ? listTrainers() : notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("createtrainer"))		return (player.isOp() ? createTrainer() : notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removetrainer"))		return (player.isOp() ? removeTrainer() : notAnOpError());
 		return false;
 	}
 	
+
+
 	private boolean rules() {
 		return Out.rules(player);
 	}
 
 	private boolean listAllSchools() {
-		if(!Out.listSchools(player)){Out.sendMessage(player, Messages.Fixed.ERRORNOZONES.message); return true;}
+		if(!Out.listSchools(player)){
+			Out.sendMessage(player, Messages.Fixed.ERRORNOZONES.message); 
+			return true;
+		}
 		return true;
 	}
 	
@@ -160,10 +150,18 @@ public class Command {
 	 * Changes the level of debug reporting in console
 	 */
 	private boolean debug() {
-		if (playerInput[1] != null ) {
+		try{if (playerInput[1] != null ) {
 			DwarfCraft.debugMessagesThreshold=Integer.parseInt(playerInput[1]);
 			if (DwarfCraft.debugMessagesThreshold < 9) System.out.println("*** DEBUG LEVEL CHANGED TO "+playerInput[1]+" ***");
+			Out.sendBroadcast(plugin.getServer(), "Debug messaging level set to "+DwarfCraft.debugMessagesThreshold);
 			return true;
+		}}
+		catch(NumberFormatException e){
+			Out.sendMessage(player, Messages.Fixed.ERRORBADINPUT.message);
+			return true;
+		}
+		catch(Exception e){
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -172,21 +170,20 @@ public class Command {
 	 * Sends detailed help text from command help listing or general help text with no argument
 	 */
 	public boolean help() {
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: started help");
+		if (playerInput.length > 2) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		if (playerInput[1] == null)	return Out.generalHelp(player);
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help2");
 		for (CommandInfo c: CommandInfo.values()){
-			if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help3");
-			if (playerInput[1].equalsIgnoreCase(c.toString())){		
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help4");
-				//this is a command
+			if (playerInput[1].equalsIgnoreCase(c.toString())){	
 				return Out.commandHelp(player, c);
 			}
 		}
-		// this is not a command
-		Out.error(player, Messages.Fixed.ERRORBADINPUT);
+		Out.sendMessage(player, Messages.Fixed.ERRORCOMMANDNOTFOUND.message);
 		return false;
 	}
+	
 	
 	private boolean info() {
 		return Out.info(player);
@@ -206,24 +203,12 @@ public class Command {
 	 * Target is optional, will print caller's skillsheet on null
 	 */
 	private boolean skillSheet() {
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skillsheet");
-		Dwarf target;
-		if (playerInput[1] != null) {
-			Player playerTarget = getPlayer(playerInput[1]);
-			if (playerTarget != null && playerTarget.isOnline())
-				target = Dwarf.find(playerTarget);
-			else
-				target = Dwarf.find(playerInput[1]);
-			
-			if (target == null) {
-				Out.sendMessage(player, "Could not find player &9" + playerInput[1]);
-				return true;
-			}
+		if (playerInput.length > 3) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
 		}
-		else { // playerinput was null
-			target = Dwarf.find(player);
-		}
-		assert (target != null);
+		Dwarf target = parseDwarfNameInput(1);
+		if (target == null) return true;
 		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: skillsheet target =" + playerInput[1]);
 		return Out.printSkillSheet(target, player, playerInput[1]);
 	}
@@ -235,19 +220,14 @@ public class Command {
 	 * Does own error checking.
 	 */
 	private boolean skillInfo() {
-		if ( playerInput[1] == null || playerInput[2] != null ) {
-			Out.sendMessage(player, "Usage: /dc skillinfo &b<skill>");
+		if (playerInput.length > 2) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
 			return true;
 		}
-
 		Dwarf dwarf = Dwarf.find(player);
 		assert (dwarf != null);
-		
 		Skill skill = dwarf.getSkill(playerInput[1]);
-		if (skill == null) {
-			Out.sendMessage(player, "Skill &b" + playerInput[1] + "&6 not found.");
-			return true;
-		}
+		if (skill == null) return true;
 		return Out.printSkillInfo(player, skill);
 	}
 
@@ -258,24 +238,15 @@ public class Command {
 	 * Does own error checking.
 	 */
 	private boolean effectInfo() {
-		if (playerInput[1] == null || playerInput[2] != null) { 
-			Out.sendMessage(player, "Usage: /dc effectinfo &5<effect>");
+		if (playerInput.length > 2) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
 			return true;
 		}
 		Dwarf dwarf = Dwarf.find(player);
 		assert(dwarf != null);
-		
-		if (!isInt(playerInput[1])) {
-			Out.sendMessage(player, "Effect must be a numeric effect ID");
-			return true;			
-		}
-		Effect effect = dwarf.getEffect(Integer.parseInt(playerInput[1]));
-		if(effect == null) {
-			Out.sendMessage(player, "Could not find effect ID &5" + playerInput[1]);
-			return true;
-		}
-		else
-			return Out.effectInfo(player, effect);
+		Effect effect = parseEffectInput(1, dwarf);
+		if(effect == null)return true;
+		return Out.effectInfo(player, effect);
 	}
 	
 	/**
@@ -285,22 +256,15 @@ public class Command {
 	 * Does own error checking
 	 */
 	private boolean train() {
-		boolean soFarSoGood = true;
-		if ( playerInput[1] == null || playerInput[2] != null ) {
-			Out.sendMessage(player, "Usage: /dc train &b<skill>");
+		if (playerInput.length > 2) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
 			return true;
 		}
-		
+		boolean soFarSoGood = true;
 		Dwarf dwarf = (Dwarf.find(player));
 		assert(dwarf != null);
-		Skill skill = dwarf.getSkill(playerInput[1]);
-		if (skill == null) { 
-			Out.sendMessage(player, "&cCould not find skill &b" + playerInput[1]);
-			return true;
-		}
-		
-		ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
-		
+		Skill skill = parseSkillInput(1, dwarf);
+		List <ItemStack> trainingCosts = dwarf.calculateTrainingCost(skill); 
 		//Must be a dwarf, not an elf
 		if (dwarf.isElf) {
 			Out.sendMessage(dwarf, "&cYou are one of the &f"+Messages.SecondaryRacePlural+" &cnot a &9"+Messages.PrimaryRaceName+"&6!", "&6[Train &b"+skill.id+"&6] ");
@@ -309,7 +273,7 @@ public class Command {
 		else Out.sendMessage(dwarf, "&aYou are a &9"+Messages.PrimaryRaceName+" &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
 		
 		//Must have skill level between 0 and 29
-		if ( skill.level >= 30) {
+		if ( skill.level >= 30 || skill.level < 0) {
 			Out.sendMessage(dwarf, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
@@ -348,69 +312,66 @@ public class Command {
 	}
 	
 	/**
-	 * Admin Command to change another player's skill.
+	 * Admin Command to change all of a player's skills.
+	 * Syntax: /dc setall <player> <level>
+	 * <player> is target, <level> is desired level in range 0-30
+	 */
+	private boolean setAll() {
+		if (playerInput.length > 3) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
+		Dwarf dwarf = parseDwarfNameInput(1);
+		if (dwarf == null) return true;
+		if (dwarf.isElf()) {
+			Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &eis an &f"+Messages.SecondaryRaceName+".");
+			return true;
+		}
+		Integer level = parseSkillLevelInput(2);
+		if (level == -2)return true;			
+		for(Skill s:dwarf.skills) s.level = level;
+		Out.sendMessage(player, "&aAdmin: &eset all skills for player &9" + dwarf.player.getDisplayName() + "&e to &3" + level);
+		DataManager.saveDwarfData(dwarf);
+		return true;
+
+	}
+	
+	/**
+	 * Admin Command to change a player's skill.
 	 * Syntax: /dc setskill <player> <skill> <level>
 	 * <player> is target, <skill> is skill ID or alpha
 	 * <level> is desired level in range 0-30
-	 * Performs input sanitization and cursory error checking,
 	 */
 	private boolean setSkill() {
-//		if (!player.hasPermission()) return false;
-		try{
-			
-			if (playerInput[1] == null || playerInput[2] == null || playerInput[3] == null || playerInput[4] != null) {
-				Out.sendMessage(player, "&cSyntax: &e/dc setskill &9<player> &b<skill> &3<level>");
-				return true;
-			}
-			
-			Player target = getPlayer(playerInput[1]);
-			if (target == null) {
-				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &ecould not be found.");
-				return true;
-			}
-			Dwarf dwarf = Dwarf.find(target);
-			if (dwarf == null) {
-				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &efound, but could not find associated &9"+Messages.PrimaryRaceName+".");
-				return true;
-			}
-			if (dwarf.isElf()) {
-				Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &eis an &f"+Messages.SecondaryRaceName+".");
-				return true;
-			}
-			
-			Skill skill = dwarf.getSkill(playerInput[2]);
-			if (skill == null) {
-				Out.sendMessage(player, "&cError: &eCould not find skill &b" + playerInput[2]);
-				return true;
-			}
-			
-			if (!isInt(playerInput[3])) {
-				Out.sendMessage(player, "&cError: &eSkill value not a number");
-				return true;
-			}
-			Integer level = Integer.parseInt(playerInput[3]);
-			
-			if ( level < 0 || level > 30) { // only support setting in-bounds skills. (0-30)
-				Out.sendMessage(player, "&cError: &eskill level &3" + level + "&e out of bounds.");
-				return true;
-			}
-			
-			skill.level = level;
-			Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + target.getDisplayName() + "&e to &3" + level);
-			DataManager.saveDwarfData(dwarf);
+		if (playerInput.length > 4) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
 			return true;
 		}
-		catch (Exception e){
-			e.printStackTrace();
-			return false;
+		Dwarf dwarf = parseDwarfNameInput(1);
+		if (dwarf == null) return true;
+		if (dwarf.isElf()) {
+			Out.sendMessage(player, "&cError: &ePlayer &9" + playerInput[1] + " &eis an &f"+Messages.SecondaryRaceName+".");
+			return true;
 		}
+		Skill skill = parseSkillInput(2, dwarf);
+		if (skill == null) return true;
+		Integer level = parseSkillLevelInput(3);
+		if (level == -2)return true;			
+		skill.level = level;
+		Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + dwarf.player.getDisplayName() + "&e to &3" + level);
+		DataManager.saveDwarfData(dwarf);
+		return true;
 	}
 
 	private boolean makeMeDwarf(boolean confirmed) {
+		if (playerInput.length > 1) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		Dwarf dwarf = Dwarf.find(player);
 		if (dwarf.isElf) return dwarf.makeElfIntoDwarf(); 
 		else if (confirmed) {
-			Out.becameADwarf(player);
+			Out.becameDwarf(player);
 			return dwarf.makeElfIntoDwarf();
 		}
 		else {
@@ -420,28 +381,40 @@ public class Command {
 	}
 	
 	private boolean makeMeElf(boolean confirmed) {
+		if (playerInput.length > 1) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		Dwarf dwarf = Dwarf.find(player);		
 		if (dwarf.isElf) {
-			Out.alreadyAnElf(player);
+			Out.alreadyElf(player);
 			return true;
 		}
 		else if (confirmed) {
-			Out.becameAnElf(player);
+			Out.becameElf(player);
 			return dwarf.makeElf();
 		}
 		else {
-			Out.confirmBecomingAnElf(player);
+			Out.confirmBecomingElf(player);
 			return true;
 		}
 	}
 	
 	private boolean schoolList() {
+		if (playerInput.length > 1) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		return Out.schoolList(player);
 	}
 	
 	private boolean schoolInfo() {
+		if (playerInput.length > 2) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		List<Skill> skills = new ArrayList<Skill>();
-		School school = School.getSchool(playerInput[1]);
+		School school = parseSchoolInput(1);
 		for (Skill s: (Dwarf.find(player)).skills){
 			if (s==null) continue;
 			if(s.school == school) {
@@ -453,13 +426,21 @@ public class Command {
 	}
 	
 	private boolean here() {
+		if (playerInput.length > 1) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		return Out.here(player,(Dwarf.find(player)).listAllZones());
 	}
 	
 	private boolean createSchool() {
+		if (playerInput.length > 9) {
+			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
+			return true;
+		}
 		try {
 			World world = player.getWorld();
-			School school = School.getSchool(Integer.parseInt(playerInput[1]));
+			School school = parseSchoolInput(1);
 			double x1 = Double.parseDouble(playerInput[2]); 
 			double x2 = Double.parseDouble(playerInput[3]); 
 			double y1 = Double.parseDouble(playerInput[4]); 
@@ -479,4 +460,109 @@ public class Command {
 		Out.sendMessage(player, Messages.Fixed.ERRORNOTOP.message);
 	return true;
 	}
+
+	private Dwarf parseDwarfNameInput(int argNumber){
+		String dwarfName;
+		Dwarf target = null;
+		try{
+			dwarfName = playerInput[argNumber];
+		}
+		catch (NullPointerException npe){
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+			return null;
+		}	
+		if (dwarfName != "") {
+			Player playerTarget = getPlayer(dwarfName);
+			if (playerTarget != null && playerTarget.isOnline())
+				target = Dwarf.find(playerTarget);
+			else
+				target = Dwarf.findOffline(playerInput[argNumber]);
+			
+			if (target == null) {
+				Out.sendMessage(player, Messages.Fixed.ERRORINVALIDDWARFNAME.message);
+			}
+		}
+		else {
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+		}
+		return target;
+	}
+	
+	private int parseSkillLevelInput(int argNumber){
+		int level = -2;
+		try{
+			level = Integer.parseInt(playerInput[argNumber]);
+		}
+		catch (NullPointerException npe){
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+			return level;
+		}	
+		catch(NumberFormatException nfe) {
+			Out.sendMessage(player, Messages.Fixed.ERRORNOTANUMBER.message);
+			return level;
+		}
+		if (level >30 || level <-1){
+			Out.sendMessage(player, Messages.Fixed.ERRORINVALIDSKILLLEVEL.message);
+			return -2;
+		}
+		return level;
+	}
+	
+	private Skill parseSkillInput(int argNumber, Dwarf dwarf){
+		Skill skill = null;
+		int skillID = -1;
+		try{
+			skillID = Integer.parseInt(playerInput[argNumber]);
+			skill = dwarf.getSkill(skillID);
+		}
+		catch (NullPointerException npe){
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+			return null;
+		}
+		catch(NumberFormatException nfe){}
+		if (skill == null) skill = dwarf.getSkill(playerInput[argNumber]);
+		if (skill == null) Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDSKILLINPUT.message);
+		return skill;
+		
+	}
+	
+	private Effect parseEffectInput(int argNumber, Dwarf dwarf){
+		Effect effect;
+		int effectId = -1;
+		try{
+			effectId = Integer.parseInt(playerInput[argNumber]);
+			if (effectId < 0 || effectId>=1000){
+				Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDEFFECTINPUT.message);
+			}
+			effect = dwarf.getEffect(effectId);
+			return effect;
+		}
+		catch (NullPointerException npe){
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+			return null;
+		}
+		catch(NumberFormatException nfe){
+			Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDEFFECTINPUT.message);
+			return null;
+		}		
+	}
+	
+	private School parseSchoolInput(int argNumber){
+		School school = null;
+		int schoolId = -1;
+		try{
+			schoolId = Integer.parseInt(playerInput[argNumber]);
+			school = School.getSchool(schoolId);
+		}
+		catch (NullPointerException npe){
+			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
+			return null;
+		}
+		catch(NumberFormatException nfe){
+		}		
+		if (school == null) school = School.getSchool(playerInput[argNumber]);
+		if (school == null) Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDSKILLINPUT.message);
+		return school;
+	}
+
 }

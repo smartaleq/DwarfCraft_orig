@@ -43,7 +43,7 @@ public class DCPlayerListener extends PlayerListener {
 					//successful command
 				}
 				else {
-					Out.error(player, Messages.Fixed.ERRORBADINPUT);
+					Out.sendMessage(player, Messages.Fixed.ERRORCOMMANDNOTFOUND.message);
 					return;
 					//failed command don't cancel in case it was someone else's
 				}

@@ -104,7 +104,7 @@ public class Out {
 			return true;
 		}
 		Out.sendMessage(player, "&6---Train costs for level &3"+(skill.level+1)+"&6 at a &1" + skill.school.toString() + " school&6---");
-		ItemStack[] costs = (Dwarf.find(player)).calculateTrainingCost(skill);
+		List <ItemStack> costs = (Dwarf.find(player)).calculateTrainingCost(skill);
 		for(ItemStack item:costs){
 			if (item != null) Out.sendMessage(player, " &2" +item.getAmount() + " " + item.getType()+ "&6  --" , " &6-- ");
 		}
@@ -177,36 +177,21 @@ public class Out {
 		return false;
 	}
 		
-	public static void becameADwarf(Player player) {
+	public static void becameDwarf(Player player) {
 		sendMessage(player, Messages.Fixed.PRIMARYRACESUCCESS.message, "&6[DC] ");
 	}
 	public static void confirmBecomingDwarf(Player player) {
 		sendMessage(player, Messages.Fixed.PRIMARYRACECONFIRM.message,"&6[DC] ");
 	}
-	public static void becameAnElf(Player player) {
+	public static void becameElf(Player player) {
 		sendMessage(player, Messages.Fixed.SECONDARYRACESUCCESS.message, "&6[DC] ");
 	}	
-	public static void alreadyAnElf(Player player) {
+	public static void alreadyElf(Player player) {
 		sendMessage(player, Messages.Fixed.SECONDARYRACEALREADY.message, "&6[DC] ");
 	}
-	public static void confirmBecomingAnElf(Player player) {
+	public static void confirmBecomingElf(Player player) {
 		sendMessage(player, Messages.Fixed.SECONDARYRACECONFIRM.message,"&6[DC] ");
 	}
-
-	
-	public static boolean error(Player player, Messages.Fixed error) {
-		if (error == Messages.Fixed.ERRORBADINPUT){
-			Out.sendMessage(player, "&d" + Messages.Fixed.ERRORBADINPUT.message, "&6[&d?&6] " );
-			return true;}
-		
-		return false;
-	}
-	
-
-	
-
-	
-	
 	
 	/**
 	 * Used to send messages to one player
@@ -377,7 +362,7 @@ public class Out {
 		try {
 			String raceName = "";
 			if(dwarf.isElf) raceName = "&f"+Messages.SecondaryRaceName;
-			else raceName = "&9"+Messages.SecondaryRaceName;
+			else raceName = "&9"+Messages.PrimaryRaceName;
 			sendBroadcast(server, "&fWelcome, "+raceName+" &6"+dwarf.player.getName() ,"&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();

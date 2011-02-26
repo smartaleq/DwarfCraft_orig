@@ -42,7 +42,7 @@ public class Messages {
 		COMMANDLIST1(
 				"help info commands comands2 tutorial "
 					+ "skillinfo skillsheet effectinfo train "
-					+ "schoollist schoolinfo makemea"+PrimaryRaceName+" makemea"+SecondaryRaceName+" "
+					+ "schoollist schoolinfo make"+PrimaryRaceName+" make"+SecondaryRaceName+" "
 					+ "here"), 
 		COMMANDLIST2(
 				"setSkill createschool removeschool"),
@@ -73,20 +73,29 @@ public class Messages {
 		PRIMARYRACESUCCESS(
 				"&6Congratulations, you're now a hearty &9"+PrimaryRaceName+"&6 with level 0 skills!"),
 		PRIMARYRACECONFIRM(
-				"&6To become a &9+PrimaryRaceName"+"&6 you need to confirm with &4/dc REALLYmakemea"+PrimaryRaceName+" "
+				"&6To become a &9+PrimaryRaceName"+"&6 you need to confirm with &4/dc REALLYmake"+PrimaryRaceName+" "
 					+ "&6- this will reset your skills to 0!"), 
 		SECONDARYRACESUCCESS(
 				"&6I'm sorry to say this... really I must apologize... there was a problem "
 					+ "in surgery and you're now... ahem... an &f"+SecondaryRaceName+"&6."), 
 		SECONDARYRACECONFIRM(
 				"&6If you really want to remove all your skills, you'll have to say you &4'/dc "
-					+ "REALLYmakemea"+SecondaryRaceName+"'&6, which is an altogether bad idea!"), 
+					+ "REALLYmake"+SecondaryRaceName+"'&6, which is an altogether bad idea!"), 
 		SECONDARYRACEALREADY(
 				"&6You're already an &f"+SecondaryRaceName+"&6. No wonder you're so confused!"),
 	
-		ERRORBADINPUT("Could not understand your input, try again"), 
-		ERRORNOZONES("Could not find any school zones in your world!"),
-		ERRORNOTOP("You are not authorized to use that command")
+		ERRORBADINPUT("(Input Error)Could not understand your input, try again"), 
+		ERRORNOZONES("(No Zones)Could not find any school zones in your world!"),
+		ERRORNOTOP("(Not OP)You are not authorized to use that command"), 
+		ERRORINVALIDDWARFNAME("(Input Error)Could not find that player"),
+		ERRORINVALIDSKILLLEVEL("(Input Error)Skill levels must be between 0 and 30"), 
+		ERRORNOTANUMBER("(Input Error)Where an integer was expected something else was found"), 
+		ERRORMISSINGINPUT("(Input Error)Could not find all the arguments required for that command"), 
+		ERRORNOTVALIDSKILLINPUT("(Input Error)To find a skill you must input either the name or ID of an existing skill"),
+		ERRORNOTVALIDEFFECTINPUT("(Input Error)To find an effect you must input either the name or ID of an existing effect"), 
+		ERRORTOOMANYINPUTS("(Input Error)You gave me too many arguments. Please use underscores for spaces in skill names and no extra inputs."), 
+		ERRORCOMMANDNOTFOUND("(Input Error)Could not understand your input as a command."),		
+		
 		;
 	
 		public String message;

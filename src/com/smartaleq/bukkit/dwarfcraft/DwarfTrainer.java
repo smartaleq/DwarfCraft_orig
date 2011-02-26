@@ -1,13 +1,13 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
-import com.smartaleq.bukkit.dwarfcraft.ui.Out;
-
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.*;
@@ -83,7 +83,7 @@ public class DwarfTrainer {
 		Skill skill = dwarf.getSkill(this.skillId);
 		assert(skill != null);
 		
-		ItemStack[] trainingCosts = dwarf.calculateTrainingCost(skill); 
+		List <ItemStack> trainingCosts = dwarf.calculateTrainingCost(skill); 
 		
 		//Must be a dwarf, not an elf
 		if (dwarf.isElf) {

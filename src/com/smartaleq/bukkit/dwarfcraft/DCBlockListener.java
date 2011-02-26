@@ -3,6 +3,7 @@ package com.smartaleq.bukkit.dwarfcraft;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -51,7 +52,7 @@ public class DCBlockListener extends BlockListener {
      *
      * @param event Relevant event details
      */
-    public void onBlockRightClick(BlockRightClickEvent event) {
+	public void onBlockRightClick(BlockRightClickEvent event) {
     	if (DwarfCraft.disableEffects) return;
      //General information
     	Player player = event.getPlayer();
@@ -67,10 +68,17 @@ public class DCBlockListener extends BlockListener {
     		durability = tool.getDurability(); 	
     	}
     	Block block = event.getBlock();
+//    	Block blockAbove = block.getRelative(0,1,0);
     	Location loc = block.getLocation();
-    	int materialId = event.getBlock().getTypeId();
+    	Material material = event.getBlock().getType();
 //    	boolean durabilityChange = false;
 //    	boolean blockDropChange = false;
+//    	if(tool.getType()==Material.SEEDS && block.getType() == Material.SOIL && blockAbove.getType()==Material.AIR){
+//    		blockAbove.setType(Material.CROPS);
+//    		if (tool.getAmount()==1) player.getInventory().removeItem(tool);
+//    		else tool.setAmount(tool.getAmount()-1);
+//    	}
+    	
     	
     	for(Skill s: skills){
     		if (s==null)continue;
@@ -78,7 +86,7 @@ public class DCBlockListener extends BlockListener {
     			if (e==null) continue;
     			if(e.effectType == EffectType.PLOWDURABILITY){
     				for(int id:e.tools){
-    					if(id == toolId && (materialId == 3 || materialId == 2)) {
+    					if(id == toolId && (material == Material.DIRT || material == Material.GRASS)) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
@@ -91,7 +99,7 @@ public class DCBlockListener extends BlockListener {
     			}
 				if(e.effectType == EffectType.PLOW){
 					for(int id:e.tools){
-						if(id == toolId && materialId == 3){
+						if(id == toolId && material == Material.GRASS){
 		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: hoed some ground:"+e.getEffectAmount(dwarf));
 //			    			blockDropChange = true;
@@ -100,9 +108,6 @@ public class DCBlockListener extends BlockListener {
     			}
     		}
     	}
-//    	if (durabilityChange || blockDropChange) {
-//    		((Cancellable) event).setCancelled(true);
-//    	}
     }
     	
 
