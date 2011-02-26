@@ -18,7 +18,6 @@ public class ConfigManager {
 		configParamsFileName = paramsFileName;
 	}
 	
-	
 	private String configDirectory;
 	private String configParamsFileName;
 	
@@ -63,10 +62,10 @@ public class ConfigManager {
 				if (theline[0].equalsIgnoreCase("Messages File Name")) configMessagesFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Database File Name")) dbpath = configDirectory + theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Debug Level")) DwarfCraft.debugMessagesThreshold = Integer.parseInt(theline[1].trim());
-				if (theline[0].equalsIgnoreCase("Primary Race Name")) Messages.PrimaryRaceName = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Secondary Race Name")) Messages.SecondaryRaceName = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Primary Race Plural")) Messages.PrimaryRacePlural = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Secondary Race Plural")) Messages.SecondaryRacePlural = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Primary Race Name")) Messages.primaryRaceName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Secondary Race Name")) Messages.secondaryRaceName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Primary Race Plural")) Messages.primaryRacePlural = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Secondary Race Plural")) Messages.secondaryRacePlural = theline[1].trim();
 				line = br.readLine();
 			}
 			
@@ -198,12 +197,9 @@ public class ConfigManager {
 				String[] theline = line.split(":");
 				if (theline.length > 2)	{line = br.readLine(); continue;}
 				
-				if (theline[0].equalsIgnoreCase("GeneralHelp")) Messages.GeneralHelp = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("ServerRules")) Messages.ServerRules = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("General Info")) Messages.GeneralInfo = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Server Rules")) Messages.ServerRules = theline[1].trim();
+				
 				line = br.readLine();
 			}
 
@@ -216,7 +212,7 @@ public class ConfigManager {
 		}
 		finally {
 			//Default to enum values if not found
-			if (Messages.GeneralHelp ==null) Messages.GeneralHelp = Messages.Fixed.GENERALHELPMESSAGE.message;
+			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.message;
 			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
 		}
 		return true;

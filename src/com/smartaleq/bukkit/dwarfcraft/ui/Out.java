@@ -20,7 +20,7 @@ public class Out {
 /*
  * Messaging Statics	
  */
-	static final int lineLength = 68;
+	static final int lineLength = 328; //pixels
 	static final int maxLines = 10;
 	
 /*
@@ -44,26 +44,24 @@ public class Out {
  */
 	
 	
-	public static boolean generalHelp(Player player) {
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help6");
-		Out.sendMessage(player, "&d" + Messages.GeneralHelp, "&6[&d?&6] ");
+	public static boolean generalInfo(Player player) {
+		Out.sendMessage(player, "&d" + Messages.GeneralInfo, "&6[&d?&6] ");
 		return true;
 	}
 		
 	public static boolean commandHelp(Player player, CommandInfo c) {
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started help5");
 		Out.sendMessage(player, "&d" + c.helpText, "&6[&d?&6] " );
 		return true;
 	}
 	
 	public static boolean info(Player player) {
-		Out.sendMessage(player, Messages.Fixed.INFO.message, "&6[Info&6] ");
+		Out.sendMessage(player, Messages.Fixed.INFO.message, "&6[&dInfo&6] ");
 		return true;
 	}
 	
 	public static boolean rules(Player player) {
-		Out.sendMessage(player, Messages.ServerRules, "&6[Info&6] ");
-		return false;
+		Out.sendMessage(player, Messages.ServerRules, "&6[&dRules&6] ");
+		return true;
 	}
 
 
@@ -133,17 +131,17 @@ public class Out {
 				// the goal here is for every skill sheet line to be 60 characters long.
 				// each skill should take 30 characters - no more, no less
 				String interim;
-				if ( s.level < 10 )
+				if ( s.level < 10)
 					interim = String.format("&6[&30%d&6] &b%.18s", s.level, s.displayName);
 				else 
 					interim = String.format("&6[&3%d&6] &b%.18s", s.level, s.displayName);
 				
 				if (!odd) { 
 					int interimLen = Util.msgLength(interim);
-					int numSpaces = ((140 - interimLen) / 4) - 1;
+					int numSpaces = ((136 - interimLen) / 4) - 1;
 					for ( int i = 0; i < numSpaces; i++ )
 						interim = interim.concat(" ");
-					interimLen = 140 - interimLen - numSpaces*4;
+					interimLen = 136 - interimLen - numSpaces*4;
 				// 	4 possible cases - need 4, 5, 6, or 7
 					if ( interimLen == 4 )
 						interim = interim.concat("&0.| &b");
@@ -174,7 +172,7 @@ public class Out {
 	public static boolean effectInfo(Player player, Effect effect) {
 		Out.sendMessage(player, effect.describeLevel((Dwarf.find(player))), "&6[&5" +effect.id+"&6] ");
 		Out.sendMessage(player, effect.describeGeneral(), "&6[&5" +effect.id+"&6] ");
-		return false;
+		return true;
 	}
 		
 	public static void becameDwarf(Player player) {
@@ -254,47 +252,42 @@ public class Out {
 	}
 	
 	/**
-	 * Used to find the printed length of a string, removing two characters of length for each § found
-	 * @param string
-	 * @return
+	 * Removes carriage returns from strings and passes separate 
+	 * @param player
+	 * @param message
+	 * @param prefix
 	 */
-	static int lengthWithoutColors(String string){
-		String[] split = string.split("§");
-		int length = 0;
-		if (split.length == 1) return string.length();
-		for(String section: split){
-			length += section.length() - 1;
-		}
-		return length;
+	private static void messagePrinter(Player player, String message, String prefix){
+		String[] lines = message.split("/n");
+		String lastColor = "";
+		for (String line:lines) lastColor = linePrinter(player, lastColor.concat(line), prefix);
 	}
 	
 	/**
-	 * Used to parse and send multiple line messages
+	 * Used to parse and send multiple line messages 
 	 * Sends actual output commands
 	 */
-	private static void messagePrinter(Player player, String message, String prefix){
-		// if no message throw exception		
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started printer");
-		int messageSectionLength = lineLength - prefix.length();
-		String currentLine = "";
+	private static String linePrinter(Player player, String message, String prefix){
+		int messageSectionLength = lineLength - Util.msgLength(prefix);
+		String currentLine = "";		
 		String words[] = message.split(" ");
 		String lastColor = "";
 		int lineTotal = 0;
 		for (String word: words){
-			if (lengthWithoutColors(word)>messageSectionLength) word = word.substring(0, messageSectionLength);
-			if (lengthWithoutColors(currentLine)+lengthWithoutColors(word) <= messageSectionLength){ 
+			if (Util.msgLength(currentLine)+Util.msgLength(word) <= messageSectionLength){ 
 				currentLine = currentLine.concat(word+" ");
 			}
 			else {
 				player.sendMessage(prefix.concat(lastColor + currentLine).trim());
 				lineTotal++;
-				if (lineTotal >= maxLines) return;
+				if (lineTotal >= maxLines) return lastColor;
 				lastColor = lastColor(lastColor + currentLine);
 				currentLine = word+ " ";
 			}
 		}
-		lastColor = lastColor(lastColor + currentLine);
 		player.sendMessage(prefix.concat(lastColor + currentLine).trim());
+		lastColor = lastColor(lastColor + currentLine);
+		return lastColor;
 	}
 	
 	private static String lastColor(String currentLine) {
@@ -342,6 +335,10 @@ public class Out {
 					else if (message.charAt(i+1)=='d') message = message.replace("&d", "§d");
 					else if (message.charAt(i+1)=='e') message = message.replace("&e", "§e");
 					else if (message.charAt(i+1)=='f') message = message.replace("&f", "§f");
+					else if (message.charAt(i+1)=='p') message = message.replace("&p", Messages.primaryRaceName);
+					else if (message.charAt(i+1)=='q') message = message.replace("&q", Messages.primaryRacePlural);
+					else if (message.charAt(i+1)=='s') message = message.replace("&s", Messages.secondaryRaceName);
+					else if (message.charAt(i+1)=='t') message = message.replace("&t", Messages.secondaryRacePlural);
 					else message = message.replaceFirst("&", " AND ");
 				}
 			}
@@ -361,8 +358,8 @@ public class Out {
 	public static void welcome(Server server, Dwarf dwarf) {
 		try {
 			String raceName = "";
-			if(dwarf.isElf) raceName = "&f"+Messages.SecondaryRaceName;
-			else raceName = "&9"+Messages.PrimaryRaceName;
+			if(dwarf.isElf) raceName = "&f&s";
+			else raceName = "&9&p";
 			sendBroadcast(server, "&fWelcome, "+raceName+" &6"+dwarf.player.getName() ,"&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -421,16 +418,5 @@ public class Out {
 		}
 		return foundSome;
 	}
-
-
-
-
-
-
-
-
-
-
-
 
 }

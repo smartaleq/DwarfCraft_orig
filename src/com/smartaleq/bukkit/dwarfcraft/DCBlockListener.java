@@ -175,7 +175,7 @@ public class DCBlockListener extends BlockListener {
     		}
     	}
     	
-    	if (durabilityChange || blockDropChange) {
+    	if (blockDropChange) {
     		block.setTypeId(0);
     		event.setCancelled(true);
     	}
