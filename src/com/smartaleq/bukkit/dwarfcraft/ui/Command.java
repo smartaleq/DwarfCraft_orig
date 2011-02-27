@@ -470,16 +470,9 @@ public class Command {
 	}
 
 	private Dwarf parseDwarfNameInput(int argNumber){
-		String dwarfName;
+		String dwarfName = playerInput[argNumber];
 		Dwarf target = null;
-		try{
-			dwarfName = playerInput[argNumber];
-		}
-		catch (NullPointerException npe){
-			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
-			return null;
-		}	
-		if (dwarfName == "") dwarfName = player.getName();
+		if (dwarfName == null) return Dwarf.find(player);
 		Player playerTarget = getPlayer(dwarfName);
 		if (playerTarget != null && playerTarget.isOnline())
 			target = Dwarf.find(playerTarget);
@@ -513,9 +506,11 @@ public class Command {
 	
 	private Skill parseSkillInput(int argNumber, Dwarf dwarf){
 		Skill skill = null;
+		String arg = playerInput[argNumber];
+		if (arg == null) return null;
 		int skillID = -1;
 		try{
-			skillID = Integer.parseInt(playerInput[argNumber]);
+			skillID = Integer.parseInt(arg);
 			skill = dwarf.getSkill(skillID);
 		}
 		catch (NullPointerException npe){
@@ -523,7 +518,7 @@ public class Command {
 			return null;
 		}
 		catch(NumberFormatException nfe){}
-		if (skill == null) skill = dwarf.getSkill(playerInput[argNumber]);
+		if (skill == null) skill = dwarf.getSkill(arg);
 		if (skill == null) Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDSKILLINPUT.message);
 		return skill;
 		

@@ -301,7 +301,7 @@ public class DataManager {
 	    	prep.setDouble(7, vector2.getZ());
 	    	prep.setString(8, world.getName());
 	    	prep.setString(9, name);
-	    	
+	    	if(DwarfCraft.debugMessagesThreshold<7) System.out.println("Debug Message Added school" +school.name() + " " + name);
 	    	prep.addBatch();
 	    	conn.setAutoCommit(false);
 	    	prep.executeBatch();

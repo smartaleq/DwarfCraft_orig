@@ -89,9 +89,10 @@ public class DCEntityListener extends EntityListener {
     	Dwarf attacker = null;
     	
     	if (event.getEntity() instanceof HumanEntity ) {
-    		if (checkDwarfTrainer(event)) // pulling this out so I don't muck up this code.    		
+    		if (checkDwarfTrainer(event)){ // pulling this out so I don't muck up this code.    		
     			event.setCancelled(true);
-    		return;
+    			return;
+    		}
     	}
     	
     	if(victim instanceof Player) {
@@ -206,7 +207,7 @@ public class DCEntityListener extends EntityListener {
     					(e.id == 810 && (deadThing instanceof CraftPig )) ||
 	    				(e.id == 811 && (deadThing instanceof CraftCow )) ||
 	    				(e.id == 820 && (deadThing instanceof CraftCreeper ))||
-	    				
+	    				(e.id == 823 && (deadThing instanceof CraftSpider ))||
 	    				(e.id == 821 && (deadThing instanceof CraftSkeleton )) ||
 	    				(e.id == 822 && (deadThing instanceof CraftSkeleton )) ||
 	    				(e.id == 850 && (deadThing instanceof CraftZombie )) ||
