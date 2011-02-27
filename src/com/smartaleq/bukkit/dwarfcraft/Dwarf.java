@@ -158,6 +158,7 @@ public class Dwarf {
 		}
 		catch (NumberFormatException n){
 			for (Skill skill: skills){
+				if (skill.displayName== null) continue;
 				if (skill.displayName.equalsIgnoreCase(skillName)) return skill;
 				if (skill.toString().equalsIgnoreCase(skillName)) return skill;
 				if (skill.displayName.toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
@@ -236,12 +237,12 @@ public class Dwarf {
 						
 					}
 					else if(items[i].getAmount() == amountLeft){
-						inventory.remove(items[i]);
+						inventory.removeItem(items[i]);
 						break;
 					}
 					else {
 						amountLeft = amountLeft - items[i].getAmount();
-						inventory.remove(items[i]);
+						inventory.removeItem(items[i]);
 					}
 				}
 			}
