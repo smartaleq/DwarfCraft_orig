@@ -280,14 +280,7 @@ public class Command {
 			Out.sendMessage(dwarf, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
-			
-		//Must be in training Zone, may change this to near a trainer if/when NPCs are implemented
-		if (!dwarf.isInSchoolZone(skill.school)) {
-			Out.sendMessage(dwarf, "&cYou are not in a &1"+skill.school+" &ctraining zone", "&6[Train &b"+skill.id+"&6] ");
-			soFarSoGood = false;
-		}
-		else Out.sendMessage(dwarf, "&aYou are in a &1"+skill.school+" &atraining zone", "&6[Train &b"+skill.id+"&6] ");
-		
+
 		//Must have enough materials to train
 		for (ItemStack itemStack: trainingCosts) {
 			if(itemStack == null) continue;

@@ -236,7 +236,6 @@ public class Dwarf {
 	 * @param itemId
 	 * @param amount
 	 */
-	// TODO fix buggy inventory shiznit
 	public void removeInventoryItems(int itemId, int amount){
 		Inventory inventory = player.getInventory();
 		ItemStack[] items = inventory.getContents();
@@ -258,8 +257,6 @@ public class Dwarf {
 					}
 				}
 			}
-				//don't think this is required			
-//		inventory.setContents(items);
 	}
 
 	public boolean isInSchoolZone(School school){
