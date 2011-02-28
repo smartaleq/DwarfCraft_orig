@@ -60,16 +60,6 @@ public class Command {
 		if (playerInput[0].equalsIgnoreCase("MAKE"+Messages.secondaryRaceName)) 	return makeMeElf(false);
 		if (playerInput[0].equalsIgnoreCase("REALLYMAKE"+Messages.secondaryRaceName))return makeMeElf(true);
 		
-		if (playerInput[0].equalsIgnoreCase("schools")) 			return schoolList();
-		if (playerInput[0].equalsIgnoreCase("schoollist")) 			return schoolList();
-		if (playerInput[0].equalsIgnoreCase("school")) 				return schoolInfo();
-		if (playerInput[0].equalsIgnoreCase("schoolinfo")) 			return schoolInfo();
-		if (playerInput[0].equalsIgnoreCase("HERE")) 				return here();
-
-		if (playerInput[0].equalsIgnoreCase("createschool")) 		return (player.isOp() ? createSchool(): notAnOpError());
-		if (playerInput[0].equalsIgnoreCase("removeschool")) 		return (player.isOp() ? removeSchool(): notAnOpError());			
-		if (playerInput[0].equalsIgnoreCase("listschools")) 		return (player.isOp() ? listAllSchools(): notAnOpError());
-		
 		if (playerInput[0].equalsIgnoreCase("createmaster"))		return createMaster(); //(player.isOp() ? createMaster() : notAnOpError());		
 		if (playerInput[0].equalsIgnoreCase("createtrainer"))		return (player.isOp() ? createTrainer() : notAnOpError());
 		if (playerInput[0].equalsIgnoreCase("removetrainer"))		return (player.isOp() ? removeTrainer() : notAnOpError());
@@ -273,11 +263,15 @@ public class Command {
 			Out.sendMessage(dwarf, "&cYou are one of the &f&t&cnot a &9&p&6!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
-		else Out.sendMessage(dwarf, "&aYou are a &9&p &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
+//		else Out.sendMessage(dwarf, "&aYou are a &9&p &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
 		
 		//Must have skill level between 0 and 29
-		if ( skill.level >= 30 || skill.level < 0) {
+		if ( skill.level >= 30 ) {
 			Out.sendMessage(dwarf, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
+			soFarSoGood = false;
+		}
+		if ( skill.level < 0) {
+			Out.sendMessage(dwarf, "&cYour skill was set to be Elf-level, ask an admin to return this to 0!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
 
@@ -404,22 +398,6 @@ public class Command {
 		return Out.schoolList(player);
 	}
 	
-	private boolean schoolInfo() {
-		if (playerInput.length > 3) {
-			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
-			return true;
-		}
-		List<Skill> skills = new ArrayList<Skill>();
-		School school = parseSchoolInput(1);
-		for (Skill s: (Dwarf.find(player)).skills){
-			if (s==null) continue;
-			if(s.school == school) {
-				skills.add(s);
-			}
-		}
-		Out.schoolInfo(player, school, skills);
-		return true;
-	}
 	
 	private boolean here() {
 		if (playerInput.length > 2) {
@@ -431,30 +409,6 @@ public class Command {
 		 
 	}
 	
-	private boolean createSchool() {
-		if (playerInput.length > 10) {
-			Out.sendMessage(player, Messages.Fixed.ERRORTOOMANYINPUTS.message);
-			return true;
-		}
-		try {
-			World world = player.getWorld();
-			School school = parseSchoolInput(1);
-			double x1 = Double.parseDouble(playerInput[2]); 
-			double x2 = Double.parseDouble(playerInput[3]); 
-			double y1 = Double.parseDouble(playerInput[4]); 
-			double y2 = Double.parseDouble(playerInput[5]);
-			double z1 = Double.parseDouble(playerInput[6]); 
-			double z2 = Double.parseDouble(playerInput[7]);
-			String name = playerInput[8];
-			System.out.println("Created School " + name);
-			return DataManager.addSchoolZone(new Vector(Math.min(x1,x2),Math.min(y1,y2),Math.min(z1,z2)), new Vector(Math.max(x1,x2),Math.max(y1,y2),Math.max(z1,z2)), world, school, name);
-		} 
-		catch (NumberFormatException e) {
-			e.printStackTrace();
-			return false;
-		} 		
-	}
-
 	private boolean notAnOpError(){
 		Out.sendMessage(player, Messages.Fixed.ERRORNOTOP.message);
 	return true;
@@ -536,22 +490,4 @@ public class Command {
 		}		
 	}
 	
-	private School parseSchoolInput(int argNumber){
-		School school = null;
-		int schoolId = -1;
-		try{
-			schoolId = Integer.parseInt(playerInput[argNumber]);
-			school = School.getSchool(schoolId);
-		}
-		catch (NullPointerException npe){
-			Out.sendMessage(player, Messages.Fixed.ERRORMISSINGINPUT.message);
-			return null;
-		}
-		catch(NumberFormatException nfe){
-		}		
-		if (school == null) school = School.getSchool(playerInput[argNumber]);
-		if (school == null) Out.sendMessage(player, Messages.Fixed.ERRORNOTVALIDSKILLINPUT.message);
-		return school;
-	}
-
 }
