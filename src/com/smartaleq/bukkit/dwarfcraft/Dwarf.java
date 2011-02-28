@@ -99,18 +99,30 @@ public class Dwarf {
 		if (skill.level < 5) quartileNumber = 1;   //low skills train full speed
 		
 		//calculate quartile penalties for 2nd/3rd/4th quartile
-		double multiplier = skill.baseTrainingMultiplier();
+		double multiplier = 1;
 		if (quartileNumber == 2) multiplier *= (1 + 1* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 3) multiplier *= (1 + 2* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 4) multiplier *= (1 + 3* dwarfLevel/(100 + 3*dwarfLevel));
 		
 		//create output item stack of new items
-		for(ItemStack item:skill.trainingCost){
-			if (item.getAmount() != 0){
-				trainingStack.add(new ItemStack(item.getTypeId(), (int) Math.floor(item.getAmount()*multiplier)));
-				i++;
-			}
-		}
+		trainingStack.add(new ItemStack(
+				skill.TrainingItem1Mat, 
+				(int) Math.min(
+						Math.ceil(skill.level*skill.TrainingItem1BaseCost*multiplier-.01), //fudge factor for icky multiplication
+						skill.TrainingItem1MaxAmount)));
+		
+		if (skill.TrainingItem2Mat != Material.AIR)
+			trainingStack.add(new ItemStack(
+					skill.TrainingItem2Mat, 
+					(int) Math.min(
+							Math.ceil(skill.level*skill.TrainingItem2BaseCost*multiplier-.01), //fudge factor for icky multiplication
+							skill.TrainingItem2MaxAmount)));
+		if (skill.TrainingItem3Mat != Material.AIR)
+			trainingStack.add(new ItemStack(
+					skill.TrainingItem3Mat, 
+					(int) Math.min(
+							Math.ceil(skill.level*skill.TrainingItem3BaseCost*multiplier-.01), //fudge factor for icky multiplication
+							skill.TrainingItem3MaxAmount)));
 		return trainingStack;
 	}
 
@@ -224,7 +236,6 @@ public class Dwarf {
 	 * @param itemId
 	 * @param amount
 	 */
-	// TODO fix buggy inventory shiznit
 	public void removeInventoryItems(int itemId, int amount){
 		Inventory inventory = player.getInventory();
 		ItemStack[] items = inventory.getContents();
@@ -246,8 +257,6 @@ public class Dwarf {
 					}
 				}
 			}
-				//don't think this is required			
-//		inventory.setContents(items);
 	}
 
 	public int countSkills() {

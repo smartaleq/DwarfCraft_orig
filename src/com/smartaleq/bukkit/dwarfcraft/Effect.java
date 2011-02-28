@@ -191,19 +191,19 @@ public class Effect {
 		String effectLevelColor = effectLevelColor(dwarf.getSkill(this).level);
 		String toolType = toolType();
 		
-		if (effectType.equals(EffectType.ARMORHIT)){
-			if (moreThanOne){description = String.format("&6When attacked your &2%s&6 takes %s%.2f &cMore &6damage",
-						initiator,
-						effectLevelColor,
-						effectAmount);
-			}
-			else {description = String.format("&6When attacked your &2%s&6 takes %s%.2f &aLess &6 damage",
-					initiator,
-					effectLevelColor,
-					effectAmount);
-			}
-		}
-		else if (effectType.equals(EffectType.BLOCKDROP)){
+//		if (effectType.equals(EffectType.ARMORHIT)){
+//			if (moreThanOne){description = String.format("&6When attacked your &2%s&6 takes %s%.2f &cMore &6damage",
+//						initiator,
+//						effectLevelColor,
+//						effectAmount);
+//			}
+//			else {description = String.format("&6When attacked your &2%s&6 takes %s%.2f &aLess &6 damage",
+//					initiator,
+//					effectLevelColor,
+//					effectAmount);
+//			}
+//		}
+		/*else*/ if (effectType.equals(EffectType.BLOCKDROP)){
 			description = String.format("&6When you break a &2%s &6approx. %s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
@@ -217,30 +217,30 @@ public class Effect {
 				effectLevelColor,
 				effectAmount);
 		}
-		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
-			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
-				effectLevelColor,
-				effectAmount );
-		}
-		else if (effectType.equals(EffectType.CRAFT)){
-			description = String.format("&6You craft %s%.0f &2%s instead of &e%.0f",
-				effectLevelColor,
-				effectAmount,
-				output,
-				elfAmount);
-		}
-		else if (effectType.equals(EffectType.DIGTIME)){
-			if (moreThanOne){description = String.format("&6You dig %s%d%% slower &6with &2%s",
-					effectLevelColor,
-					(int)(effectAmount*100 - 100),
-					toolType);
-			}
-			else {description = String.format("&6You dig %s%d%% faster &6with &2%s",
-					effectLevelColor,
-					(int)(100 - effectAmount*100),
-					toolType);
-			}
-		}
+//		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
+//			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
+//				effectLevelColor,
+//				effectAmount );
+//		}
+//		else if (effectType.equals(EffectType.CRAFT)){
+//			description = String.format("&6You craft %s%.0f &2%s instead of &e%.0f",
+//				effectLevelColor,
+//				effectAmount,
+//				output,
+//				elfAmount);
+//		}
+//		else if (effectType.equals(EffectType.DIGTIME)){
+//			if (moreThanOne){description = String.format("&6You dig %s%d%% slower &6with &2%s",
+//					effectLevelColor,
+//					(int)(effectAmount*100 - 100),
+//					toolType);
+//			}
+//			else {description = String.format("&6You dig %s%d%% faster &6with &2%s",
+//					effectLevelColor,
+//					(int)(100 - effectAmount*100),
+//					toolType);
+//			}
+//		}
 		else if (effectType.equals(EffectType.TOOLDURABILITY)){
 			description = String.format("&6Each use of a &2%s &6removes approx. %s%.2f &6durability",
 					toolType,
@@ -307,26 +307,27 @@ public class Effect {
 				toolType);
 		}				
 		
-		else if (effectType.equals(EffectType.TOWNBLOCKS)){
-			description = String.format("&6As a town mayor your town can claim no more than %s%.2f &6blocks, or the sum of your residents' citizen skills",
-				effectLevelColor,
-				effectAmount );
-		}
-		else if (effectType.equals(EffectType.VEHICLEDROP)){
-			description = String.format("&6When you break a boat &6approx. %s%s%.2f &2%s&6 are created",
-				initiator,
-				effectLevelColor,
-				effectAmount,
-				output );
-		}
+//		else if (effectType.equals(EffectType.TOWNBLOCKS)){
+//			description = String.format("&6As a town mayor your town can claim no more than %s%.2f &6blocks, or the sum of your residents' citizen skills",
+//				effectLevelColor,
+//				effectAmount );
+//		}
+//		else if (effectType.equals(EffectType.VEHICLEDROP)){
+//			description = String.format("&6When you break a boat &6approx. %s%s%.2f &2%s&6 are created",
+//				initiator,
+//				effectLevelColor,
+//				effectAmount,
+//				output );
+//		}
 		else if (effectType.equals(EffectType.VEHICLEMOVE)){
 			description = String.format("&6Your boat travels %s%d%% faster than normal",
 				effectLevelColor,
 				(int)(effectAmount*100 - 100));
 		}
-		else if (effectType.equals(EffectType.SPECIAL)){
-			description = String.format("special");
-		}
+//		else if (effectType.equals(EffectType.SPECIAL)){
+//			description = String.format("special");
+//		}
+		else {description = "This Effect is not yet implemented: " + effectType.toString();}
 		
 		return description;
 	}

@@ -94,7 +94,7 @@ public class ConfigManager {
 				if(line.charAt(0) == '#')  {line = br.readLine(); continue;}
 				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2));line = br.readLine(); continue;}
 				String[] theline = line.split(",");
-				if (theline.length < 11){ 
+				if (theline.length < 12){ 
 					continue;
 					}
 				//Creating a new Skill 
@@ -104,18 +104,24 @@ public class ConfigManager {
 				String displayName = theline[1];
 				//New skill initialized with level 0
 				int level = 0;
+
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
-				List <ItemStack> trainingCost = new ArrayList <ItemStack>();
-				if (theline[3] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[3]), Integer.parseInt(theline[4])));
-				if (theline[5] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[5]), Integer.parseInt(theline[6])));
-				if (theline[7] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[7]), Integer.parseInt(theline[8])));
-				//training multipliers taken from file
-				double noviceIncrement = Double.parseDouble(theline[9]);
-				double masterMultiplier = Double.parseDouble(theline[10]);
+				Material	TrainingItem1Mat  		= 	Material.getMaterial(Integer.parseInt(theline[2]));
+				double 		TrainingItem1BaseCost 	= 	Double.parseDouble(theline[3]);
+				int 		TrainingItem1MaxAmount 	= 	Integer.parseInt(theline[4]);
+				Material 	TrainingItem2Mat 		= 	Material.getMaterial(Integer.parseInt(theline[5]));
+				double 		TrainingItem2BaseCost 	= 	Double.parseDouble(theline[6]);
+				int 		TrainingItem2MaxAmount 	= 	Integer.parseInt(theline[7]);
+				Material 	TrainingItem3Mat 		= 	Material.getMaterial(Integer.parseInt(theline[8]));
+				double 		TrainingItem3BaseCost 	= 	Double.parseDouble(theline[9]);
+				int			TrainingItem3MaxAmount	= 	Integer.parseInt(theline[10]);
+				trainerHeldMaterial 	= 	Material.getMaterial(Integer.parseInt(theline[11]));
 				//Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
-				skillsArray.add(new Skill(id, displayName, level, effects, trainingCost, noviceIncrement, masterMultiplier, trainerHeldMaterial));
+
+				skillsArray.add(new Skill(id, displayName,0,effects,TrainingItem1Mat,TrainingItem1BaseCost ,TrainingItem1MaxAmount,TrainingItem2Mat ,TrainingItem2BaseCost,TrainingItem2MaxAmount ,TrainingItem3Mat  ,TrainingItem3BaseCost   ,TrainingItem3MaxAmount, trainerHeldMaterial)); 
+
 				line = br.readLine();
 			}
 			return true;
@@ -159,14 +165,15 @@ public class ConfigManager {
 				int 		initiator 				= Integer.parseInt(theline[13]); 
 				int 		output 					= Integer.parseInt(theline[14]); 
 				boolean 	toolRequired 			= (theline[15].equalsIgnoreCase("TRUE"));
-
+				
 				int[] tooltable = 
 					{	Integer.parseInt(theline[16]),
 						Integer.parseInt(theline[17]),
 						Integer.parseInt(theline[18]),
 						Integer.parseInt(theline[19]),
 						Integer.parseInt(theline[20])};
-
+			
+					
 				for(Skill skill:skillsArray){
 					if(effectId / 10 == skill.id){
 						skill.effects.add(new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable));

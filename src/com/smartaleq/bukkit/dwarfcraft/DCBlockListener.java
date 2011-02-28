@@ -117,6 +117,7 @@ public class DCBlockListener extends BlockListener {
      */
     public void onBlockBreak(BlockBreakEvent event) {
     	if (DwarfCraft.disableEffects) return;
+    	if (event.isCancelled()) return;
     	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: on block break called");
     //General information
     	Player player = event.getPlayer();

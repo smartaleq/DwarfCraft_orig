@@ -2,7 +2,6 @@ package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.List;
 
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 
 public class Skill implements Cloneable{
@@ -11,30 +10,51 @@ public class Skill implements Cloneable{
 	public final String displayName;
 	public int level;
 	public final List <Effect> effects;
-	public final List <ItemStack> trainingCost;
-	public final double noviceIncrement;
-	public final double masterMultiplier;
+	public final Material TrainingItem1Mat;
+	public final double TrainingItem1BaseCost;
+	public final int TrainingItem1MaxAmount;
+	public final Material TrainingItem2Mat;
+	public final double TrainingItem2BaseCost;
+	public final int TrainingItem2MaxAmount;
+	public final Material TrainingItem3Mat;
+	public final double TrainingItem3BaseCost;
+	public final int TrainingItem3MaxAmount;
 	private Material trainerHeldMaterial;
 		
 	public Skill(
 			int id, 
-			String displayName, 
+			String displayName,
 			int level,
 			List <Effect> effects,
-			List <ItemStack> trainingCost,
-			double noviceIncrement,
-			double masterMultiplier,
+			Material 		TrainingItem1Mat 		,
+			double 		TrainingItem1BaseCost 	,
+			int 		TrainingItem1MaxAmount 	,
+			Material 		TrainingItem2Mat 		,
+			double 		TrainingItem2BaseCost 	,
+			int 		TrainingItem2MaxAmount 	,
+			Material 		TrainingItem3Mat  		,
+			double 		TrainingItem3BaseCost 	,
+			int			TrainingItem3MaxAmount	,
 			Material trainerHeldMaterial ) 
 	{
 		this.id = id;
 		this.displayName = displayName;
+		this.TrainingItem1Mat  = TrainingItem1Mat ;
+		this.TrainingItem2Mat  = TrainingItem2Mat ;
+		this.TrainingItem3Mat = TrainingItem3Mat ;
+		this.TrainingItem1BaseCost = TrainingItem1BaseCost;
+		this.TrainingItem2BaseCost = TrainingItem2BaseCost;
+		this.TrainingItem3BaseCost = TrainingItem3BaseCost;
+		this.TrainingItem1MaxAmount = TrainingItem1MaxAmount;
+		this.TrainingItem2MaxAmount = TrainingItem2MaxAmount;
+		this.TrainingItem3MaxAmount = TrainingItem3MaxAmount;
+
 		this.level = level;
 		this.effects = effects;
-		this.trainingCost = trainingCost;
-		this.noviceIncrement = noviceIncrement;
-		this.masterMultiplier = masterMultiplier;
 		this.trainerHeldMaterial = trainerHeldMaterial;
 	}
+	
+	
 	
 	/**
 	 * My attempt at making a cloneable class.
@@ -42,20 +62,12 @@ public class Skill implements Cloneable{
 	 * Known issue: it does not clone the effects table or itemStack table. This is not a problem because effects are 100% final, and ItemStack is never modified.
 	 */
 	public Skill clone(){
-		Skill newSkill = new Skill(this.id, this.displayName, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier, this.trainerHeldMaterial);
+		Skill newSkill = new Skill(this.id, this.displayName, this.level, this.effects,this.TrainingItem1Mat,this.TrainingItem1BaseCost ,this.TrainingItem1MaxAmount,this.TrainingItem2Mat ,this.TrainingItem2BaseCost,this.TrainingItem2MaxAmount ,this.TrainingItem3Mat  ,this.TrainingItem3BaseCost   ,this.TrainingItem3MaxAmount, this.trainerHeldMaterial);
 		return newSkill;
 	}
 	
 	public String toString(){
 		return displayName.toUpperCase().replaceAll(" ", "_");
-	}
-
-	public double baseTrainingMultiplier() {
-		double multiplier = Math.ceil(Math.min(((double)level + 1), 5) * noviceIncrement);
-		if (level >= 5){
-			multiplier *= Math.pow(masterMultiplier, level-5);
-		}
-		return multiplier;
 	}
 	
 	public Material getTrainerHeldMaterial() { return this.trainerHeldMaterial; } 

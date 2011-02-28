@@ -252,14 +252,19 @@ public class Command {
 			Out.sendMessage(dwarf, "&cYou are one of the &f&t&cnot a &9&p&6!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
-		else Out.sendMessage(dwarf, "&aYou are a &9&p &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
+//		else Out.sendMessage(dwarf, "&aYou are a &9&p &aand can train skills.", "&6[Train &b"+skill.id+"&6] ");
 		
 		//Must have skill level between 0 and 29
-		if ( skill.level >= 30 || skill.level < 0) {
+		if ( skill.level >= 30 ) {
 			Out.sendMessage(dwarf, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
 			soFarSoGood = false;
 		}
-			
+
+		if ( skill.level < 0) {
+			Out.sendMessage(dwarf, "&cYour skill was set to be Elf-level, ask an admin to return this to 0!", "&6[Train &b"+skill.id+"&6] ");
+			soFarSoGood = false;
+		}
+
 		//Must have enough materials to train
 		for (ItemStack itemStack: trainingCosts) {
 			if(itemStack == null) continue;
