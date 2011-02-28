@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.bukkit.util.Vector;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -23,14 +24,10 @@ import redecouverte.npcspawner.NpcSpawner;
 
 public class DataManager {
 
-	private static DwarfCraft plugin;
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
 	static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	static HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
-	
-	DataManager() {}
-	DataManager(DwarfCraft newPlugin) {plugin = newPlugin;}
 	
 	public static void dbInitialize() {
 	    try{
@@ -156,7 +153,6 @@ public class DataManager {
 	
 	public static void createDwarfData(Dwarf dwarf) {
 	    try{
-	    	System.out.println("IN CREATEDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
 	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
@@ -182,7 +178,6 @@ public class DataManager {
 	
 	public static boolean saveDwarfData(Dwarf dwarf){
 		try{
-			System.out.println("IN SAVEDWARFDATA");
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
@@ -205,7 +200,6 @@ public class DataManager {
 	
 	public static boolean getDwarfData(Dwarf dwarf){
 	    try{
-	    	System.out.println("IN GETDWARFDATA");
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
@@ -283,7 +277,8 @@ public class DataManager {
 				// (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
 				if ( world.getName().equals(rs.getString("world")) ) {
 					// create trainer in this world
-					if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: trainer:"+rs.getString("name")+" in world: "+world.getName());
+					//if (DwarfCraft.debugMessagesThreshold < 7)
+						System.out.println("Debug Message: trainer:"+rs.getString("name")+" in world: "+world.getName());
 					DwarfTrainer trainer = new DwarfTrainer(
 						world,							rs.getString("uniqueId"),
 						rs.getString("name"),			rs.getInt("skill"), 
@@ -296,6 +291,7 @@ public class DataManager {
 				}
 			}
 			rs.close();
+			statement.close();
 	    	conn.close();
 		} catch (Exception e){
 			e.printStackTrace();
@@ -308,7 +304,14 @@ public class DataManager {
 	}
 	
 	public static DwarfTrainer getTrainer(Entity entity) {
-		return (trainerList.get(entity.getEntityId())); // can return null
+		// kind of ugly, could replace this with a hashmap, but i dont think the perf. gains will be very significant
+		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
+			DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
+			if ( d.getBasicHumanNpc().getBukkitEntity().getEntityId() == entity.getEntityId() )
+				return d;
+		}
+		return null;
 	}
 	
 	public static DwarfTrainer getTrainer(String str) {
@@ -356,6 +359,19 @@ public class DataManager {
 			return false;
 		}
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
+
+		try {
+			Class.forName("org.sqlite.JDBC");
+			Connection conn =
+			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+			Statement statement = conn.createStatement();
+			statement.execute("delete from trainers where uniqueId='" + d.getUniqueId() + "';");
+			statement.close();
+			conn.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 	
@@ -368,6 +384,17 @@ public class DataManager {
 		}
 	}
 	
+	public static boolean checkTrainersInChunk(Chunk chunk) {
+		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
+			Map.Entry<String, DwarfTrainer> pairs = i.next();
+			DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
+			if ( Math.abs(chunk.getX()-d.getLocation().getBlock().getChunk().getX()) > 1) continue;
+			if ( Math.abs(chunk.getZ()-d.getLocation().getBlock().getChunk().getZ()) > 1) continue;
+			return true;
+		}
+		return false;
+	}
+	
 	public static GreeterMessage getGreeterMessage(String messageId) {
 		return greeterMessageList.get(messageId);
 	}
@@ -377,9 +404,10 @@ public class DataManager {
 			Out.sendMessage(player, "There are currently no trainers.");
 			System.out.println("There are currently no trainers.");
 		}
-		else {
-			for ( Iterator<DwarfTrainer> i = trainerList.values().iterator(); i.hasNext(); ) {
-				DwarfTrainer d = i.next();
+		else { 
+			for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry<String, DwarfTrainer> pairs = i.next();
+				DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
 				Out.sendMessage(player, "ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
 				System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
 			}

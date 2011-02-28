@@ -21,12 +21,25 @@ public class DwarfTrainer {
 	private boolean greeter;
 	private String messageId;
 	private World world;
-	private ItemStack itemStack;
+	private ItemStack itemStack;	
+	private double x, y, z;
+	private float yaw, pitch;
+	String basicNpcUniqueId, basicNpcName;
 	
 	// only used by DB
 	// schema (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
 	public DwarfTrainer (World newWorld, String newUniqueId, String newName, Integer newSkillId, Integer newMaxSkill, Material newMaterial, boolean newIsGreeter, String newMessageId, double newX, double newY, double newZ, Float newYaw, Float newPitch ) {
-		Material material;
+		skillId = newSkillId;
+		maxSkill = newMaxSkill;
+		greeter = newIsGreeter;
+		messageId = newMessageId;
+		x = newX;
+		y = newY;
+		z = newZ;
+		yaw = newYaw;
+		pitch = newPitch;
+		basicNpcUniqueId = newUniqueId;
+		basicNpcName = newName;
 		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
 				newUniqueId, 
 				newName, 
@@ -37,7 +50,7 @@ public class DwarfTrainer {
 				newYaw, 
 				newPitch);
 		
-		material = newMaterial;
+		Material material = newMaterial;
 		assert (material != null);
 		if ( material != Material.AIR ) {
 			itemStack = new ItemStack(material);
@@ -54,6 +67,13 @@ public class DwarfTrainer {
 		this.messageId = messageId;
 		greeter = isGreeter;
 		world = player.getWorld();
+		x = player.getLocation().getX();
+		y = player.getLocation().getY();
+		z = player.getLocation().getZ();
+		yaw = player.getLocation().getYaw();
+		pitch = player.getLocation().getPitch();
+		basicNpcUniqueId = uniqueId;
+		basicNpcName = name;
 
 		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
 				uniqueId, 
@@ -99,6 +119,18 @@ public class DwarfTrainer {
 	
 	public Location getLocation() {
 		return basicHumanNpc.getBukkitEntity().getLocation();
+	}
+	
+	public void spawn() {
+		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
+				basicNpcUniqueId,
+				basicNpcName, 
+				world,
+				x, 
+				y, 
+				z, 
+				yaw, 
+				pitch);
 	}
 	
 	public void lookAt(Entity target) {

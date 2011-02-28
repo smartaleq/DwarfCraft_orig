@@ -23,6 +23,14 @@ public class DCEntityListener extends EntityListener {
 	}
 
 	public void onEntityDamage(EntityDamageEvent event){
+		if (event instanceof EntityDamageByEntityEvent){
+		   	if (event.getEntity() instanceof HumanEntity ) {
+	    		if (checkDwarfTrainer((EntityDamageByEntityEvent)event)){ // pulling this out so I don't muck up this code.    		
+	    			event.setCancelled(true);
+	    			return;
+	    		}
+	    	}
+		}
 		if(event.isCancelled()) return;
 		if(
 			event.getCause() == DamageCause.BLOCK_EXPLOSION ||
@@ -87,14 +95,7 @@ public class DCEntityListener extends EntityListener {
     	else return;
     	boolean isPVP = false;
     	Dwarf attacker = null;
-    	
-    	if (event.getEntity() instanceof HumanEntity ) {
-    		if (checkDwarfTrainer(event)){ // pulling this out so I don't muck up this code.    		
-    			event.setCancelled(true);
-    			return;
-    		}
-    	}
-    	
+    	    	
     	if(victim instanceof Player) {
     		isPVP = true;
     	}
@@ -236,7 +237,7 @@ public class DCEntityListener extends EntityListener {
     
     public boolean checkDwarfTrainer(EntityDamageByEntityEvent event) {
     	// all we know right now is that event.entity instanceof HumanEntity
-    	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity()); 
+    	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity());
    		if ( trainer != null ) {
    			if ( event.getDamager() instanceof Player ) {
    				// 	in business, left click
@@ -266,7 +267,7 @@ public class DCEntityListener extends EntityListener {
     					// player right clicked
     	   				if ( trainer.isGreeter() ) {
     	   					trainer.printRightClick((Player)(event.getTarget()));
-    	   				}
+    	   				} 
     	   				else {
 	    					trainer.lookAt(event.getTarget());
 	    					trainer.getBasicHumanNpc().animateArmSwing();
