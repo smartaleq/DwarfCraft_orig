@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
+import org.bukkit.World;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.*;
@@ -16,10 +17,43 @@ public class DwarfTrainer {
 	// public static BasicHumanNpcList HumanNpcList;
 	private BasicHumanNpc basicHumanNpc;
 	private Integer skillId;
+	private Integer maxSkill;
+	private boolean greeter;
+	private String messageId;
+	private World world;
+	private ItemStack itemStack;
+	
+	// only used by DB
+	// schema (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
+	public DwarfTrainer (World newWorld, String newUniqueId, String newName, Integer newSkillId, Integer newMaxSkill, Material newMaterial, boolean newIsGreeter, String newMessageId, double newX, double newY, double newZ, Float newYaw, Float newPitch ) {
+		Material material;
+		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
+				newUniqueId, 
+				newName, 
+				newWorld,
+				newX, 
+				newY, 
+				newZ, 
+				newYaw, 
+				newPitch);
+		
+		material = newMaterial;
+		assert (material != null);
+		if ( material != Material.AIR ) {
+			itemStack = new ItemStack(material);
+			itemStack.setAmount(1);
+			itemStack.setDurability((short)0);
+			basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
+		}
+	}
 
 	// constructor only for *trainers*
-	public DwarfTrainer (Player player, String uniqueId, String name, Integer skillId) {
+	public DwarfTrainer (Player player, String uniqueId, String name, Integer skillId, Integer maxSkill, String messageId, boolean isGreeter) {
 		this.skillId = skillId; 
+		this.maxSkill = maxSkill;
+		this.messageId = messageId;
+		greeter = isGreeter;
+		world = player.getWorld();
 
 		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
 				uniqueId, 
@@ -33,12 +67,12 @@ public class DwarfTrainer {
 		
 		Material material = Dwarf.find(player).getSkill(skillId).getTrainerHeldMaterial();
 		assert (material != null);
-	/*	
-		ItemStack itemStack = new ItemStack(material);
-		itemStack.setAmount(1);
-		itemStack.setDurability((short)0);
-		basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
-		*/
+		if ( material != Material.AIR ) {
+			ItemStack itemStack = new ItemStack(material);
+			itemStack.setAmount(1);
+			itemStack.setDurability((short)0);
+			basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
+		}
 	}
 	
 	public boolean equals(Object that) {
@@ -57,6 +91,15 @@ public class DwarfTrainer {
 	public String getName() { return basicHumanNpc.getName(); }
 	public BasicHumanNpc getBasicHumanNpc() { return basicHumanNpc; }
 	public Integer getSkillTrained() { return skillId; }
+	public World getWorld() { return world; }
+	public Integer getMaxSkill() { return maxSkill; }
+	public boolean isGreeter() { return greeter; }
+	public int getMaterial() { if (itemStack != null) return itemStack.getTypeId(); else return (int)(Material.AIR.getId()); }
+	public String getMessageId() { return messageId; }
+	
+	public Location getLocation() {
+		return basicHumanNpc.getBukkitEntity().getLocation();
+	}
 	
 	public void lookAt(Entity target) {
 		assert(target != null);
@@ -76,6 +119,22 @@ public class DwarfTrainer {
 	
 	public void printSkillInfo(Player player){
 		Out.printSkillInfo(player, Dwarf.find(player).getSkill(this.skillId));
+	}
+	
+	public void printLeftClick(Player player) {
+		GreeterMessage msg = DataManager.getGreeterMessage(messageId);
+		if ( msg != null ) {
+			Out.sendMessage(player, msg.getRightClickMessage());
+		}
+		return;
+	}
+	
+	public void printRightClick(Player player) {
+		GreeterMessage msg = DataManager.getGreeterMessage(messageId);
+		if ( msg != null ) {
+			Out.sendMessage(player, msg.getRightClickMessage());
+		}
+		return;
 	}
 	
 	public void trainSkill(Player player){

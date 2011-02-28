@@ -9,7 +9,7 @@ import org.bukkit.plugin.PluginManager;
 /**
  * 
  * DwarfCraft is a RPG-like plugin for minecraft (via Bukkit) that allows players to improve their characters.
- * Players(Dwarfs!) may pay materials in a school area to improve a skill level, which will provide benefits
+ * Players(Dwarfs!) may pay materials to a trainer to improve a skill level, which will provide benefits
  * such as increased weapon damage, decreased tool durability drop, increased drops from blocks or mobs, etc.
  * 
  * Data used for this plugin comes from two places: 

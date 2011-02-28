@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
 
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
@@ -22,10 +23,14 @@ import redecouverte.npcspawner.NpcSpawner;
 
 public class DataManager {
 
+	private static DwarfCraft plugin;
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
-	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
 	static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
+	static HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
+	
+	DataManager() {}
+	DataManager(DwarfCraft newPlugin) {plugin = newPlugin;}
 	
 	public static void dbInitialize() {
 	    try{
@@ -75,10 +80,11 @@ public class DataManager {
 			ResultSet rs1;
 			ResultSet rs2;
 			ResultSet rs3;
-			//if no school table, create it
-			rs1 = statement.executeQuery("select * from sqlite_master WHERE name = 'schoolzones';");
+			//if no trainer table, create it
+			rs1 = statement.executeQuery("select * from sqlite_master WHERE name = 'trainers';");
 			rs1.next();
-			if (rs1.isClosed()) statement.executeUpdate("create table schoolzones (school,x1,y1,z1,x2,y2,z2,world,name);");
+			// SCHEMA(world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
+			if (rs1.isClosed()) statement.executeUpdate("create table trainers (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch);");
 			rs1.close();
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
@@ -122,10 +128,8 @@ public class DataManager {
 				for (Skill s: tempSkills ){
 					if (s.level==1)	{
 						prep.setInt(i, Integer.parseInt(rs3.getString(s.toString())));
-						System.out.println("prep set "+i+ " to "+rs3.getString(s.toString()));//;
 					}
 					else prep.setInt(i, 0);
-					System.out.println("prep set "+i+ " to 0");//
 					i++;
 				}
 				System.out.println(prep.toString());//
@@ -267,75 +271,36 @@ public class DataManager {
 		
 	}
 
-	public static List<TrainingZone> getSchoolZones(World world) {
+	public static HashMap<String, DwarfTrainer> populateTrainers(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
 		    Statement statement = conn.createStatement();
-		    String query = "select * from schoolzones Where world='"+world.getName()+"';";
+		    String query = "select * from trainers Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
-			if (rs == null) return null;
-			zoneList.clear();
 			while(rs.next()){
-				if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+rs.getString("name"));
-				zoneList.add(new TrainingZone(new Vector(rs.getDouble("x1"),rs.getDouble("y1"),rs.getDouble("z1")), new Vector(rs.getDouble("x2"),rs.getDouble("y2"),rs.getDouble("z2")), School.getSchool(rs.getString("school")), world, rs.getString("name")));
-				rs.next();
+				// DB SCHEMA
+				// (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
+				if ( world.getName().equals(rs.getString("world")) ) {
+					// create trainer in this world
+					if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: trainer:"+rs.getString("name")+" in world: "+world.getName());
+					DwarfTrainer trainer = new DwarfTrainer(
+						world,							rs.getString("uniqueId"),
+						rs.getString("name"),			rs.getInt("skill"), 
+						rs.getInt("maxSkill"),			Material.getMaterial(rs.getInt("material")),
+						rs.getBoolean("isGreeter"),		rs.getString("messageId"),
+						rs.getDouble("x"),				rs.getDouble("y"),
+						rs.getDouble("z"),				rs.getFloat("yaw"),
+						rs.getFloat("pitch"));
+					trainerList.put(rs.getString("uniqueId"), trainer);
+				}
 			}
 			rs.close();
 	    	conn.close();
-			return zoneList;
+		} catch (Exception e){
+			e.printStackTrace();
 		}
-		catch (Exception e){
-	    	e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public static boolean addSchoolZone(Vector vector1, Vector vector2, World world, School school, String name){
-	    try{
-	    	Class.forName("org.sqlite.JDBC");
-	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
-	    	PreparedStatement prep = conn.prepareStatement("insert into schoolzones values (?,?,?,?,?,?,?,?,?);");
-	    	prep.setString(1, Util.sanitize(school.name()));
-	    	prep.setDouble(2, vector1.getX());
-	    	prep.setDouble(3, vector1.getY());
-	    	prep.setDouble(4, vector1.getZ());
-	    	prep.setDouble(5, vector2.getX());
-	    	prep.setDouble(6, vector2.getY());
-	    	prep.setDouble(7, vector2.getZ());
-	    	prep.setString(8, world.getName());
-	    	prep.setString(9, name);
-	    	if(DwarfCraft.debugMessagesThreshold<7) System.out.println("Debug Message Added school" +school.name() + " " + name);
-	    	prep.addBatch();
-	    	conn.setAutoCommit(false);
-	    	prep.executeBatch();
-	    	conn.setAutoCommit(true);
-	    	conn.close();
-	    	return true;
-	    }
-	    catch (Exception e){
-	    	e.printStackTrace();
-	    	return false;
-	    }	    
-	}
-	
-	public static boolean removeSchoolZone(String schoolName){
-		 try{
-	    	Class.forName("org.sqlite.JDBC");
-	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
-	    	Statement statement = conn.createStatement();
-	    	String sanitizedSchoolName = Util.sanitize(schoolName);
-	    	String query = "delete from schoolzones where name = '"+sanitizedSchoolName+"'";
-	    	statement.executeUpdate(query);
-	    	conn.close();
-	    	return true;
-		    }
-		    catch (Exception e){
-		    	e.printStackTrace();
-		    	return false;
-		    }	    
+		return trainerList;
 	}
 
 	public static List<Dwarf> getDwarves() {
@@ -353,6 +318,35 @@ public class DataManager {
 	public static void insertTrainer( DwarfTrainer d ) {
 		assert(d != null);
 		trainerList.put(d.getUniqueId(), d);
+    	// SCHEMA(world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
+	    try{
+	    	Class.forName("org.sqlite.JDBC");
+	    	Connection conn =
+	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+	    	PreparedStatement prep = conn.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?);");
+	    	prep.setString(1, d.getWorld().getName());
+	    	prep.setString(2, d.getUniqueId());
+	    	prep.setString(3, d.getName());
+	    	prep.setInt(4, d.getSkillTrained());
+	    	prep.setInt(5, d.getMaxSkill());
+	    	prep.setInt(6, d.getMaterial());
+	    	prep.setBoolean(7, d.isGreeter());
+	    	prep.setString(8, d.getMessageId());
+	    	prep.setDouble(9, d.getLocation().getX());
+	    	prep.setDouble(10, d.getLocation().getY());
+	    	prep.setDouble(11, d.getLocation().getZ());
+	    	prep.setFloat(12, d.getLocation().getYaw());
+	    	prep.setFloat(13, d.getLocation().getPitch());
+	    	if(DwarfCraft.debugMessagesThreshold<7) System.out.println("Debug Message Added trainer" +d.getUniqueId()+ " in world: " + d.getWorld().getName());
+	    	prep.addBatch();
+	    	conn.setAutoCommit(false);
+	    	prep.executeBatch();
+	    	conn.setAutoCommit(true);
+	    	conn.close();
+	    }
+	    catch (Exception e){
+	    	e.printStackTrace();
+	    }	    
 		return;
 	}
 	
@@ -363,6 +357,19 @@ public class DataManager {
 		}
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
 		return true;
+	}
+	
+	public static void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
+		try {
+			greeterMessageList.put(messageId, greeterMessage);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static GreeterMessage getGreeterMessage(String messageId) {
+		return greeterMessageList.get(messageId);
 	}
 	
 	public static void printTrainerList(Player player) {
@@ -378,9 +385,5 @@ public class DataManager {
 			}
 		}
 	}
-/*	
-	public static HashMap<DwarfTrainer> getTrainerList() {
-		return trainerList;
-	}
-*/
+
 }

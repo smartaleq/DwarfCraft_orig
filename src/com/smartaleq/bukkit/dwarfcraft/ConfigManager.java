@@ -25,7 +25,8 @@ public class ConfigManager {
 	public static int configSkillsVersion;
 	private String configEffectsFileName;
 	public static int configEffectsVersion;
-	private String configMessagesFileName;	
+	private String configMessagesFileName;
+	private String configGreeterMessagesFileName;
 	static String dbpath;
 	
 	
@@ -37,6 +38,7 @@ public class ConfigManager {
 		if (configSkillsFileName == null) configSkillsFileName = "skills.config";
 		if (configEffectsFileName == null) configEffectsFileName = "effects.config";;
 		if (configMessagesFileName == null) configMessagesFileName = "messages.config";
+		if (configGreeterMessagesFileName == null) configGreeterMessagesFileName = "greeters.config";
 		if (dbpath == null) dbpath = "./DwarfCraft/dwarfcraft.db";
 		if (Messages.PRIMARYRACECONFIRM == null) Messages.PRIMARYRACECONFIRM = Messages.Fixed.PRIMARYRACECONFIRM.message;
 		if (Messages.PRIMARYRACESUCCESS == null) Messages.PRIMARYRACESUCCESS = Messages.Fixed.PRIMARYRACESUCCESS.message;
@@ -60,6 +62,7 @@ public class ConfigManager {
 				if (theline[0].equalsIgnoreCase("Skills File Name")) configSkillsFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Effects File Name")) configEffectsFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Messages File Name")) configMessagesFileName = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Greeter Messages File Name")) configGreeterMessagesFileName = theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Database File Name")) dbpath = configDirectory + theline[1].trim();
 				if (theline[0].equalsIgnoreCase("Debug Level")) DwarfCraft.debugMessagesThreshold = Integer.parseInt(theline[1].trim());
 				if (theline[0].equalsIgnoreCase("Primary Race Name")) Messages.primaryRaceName = theline[1].trim();
@@ -94,12 +97,11 @@ public class ConfigManager {
 				if (theline.length < 11){ 
 					continue;
 					}
-				//Creating a new Skill - with ID, Name, School read from file
+				//Creating a new Skill 
 				Material trainerHeldMaterial = Material.AIR;
 
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
-				School school = School.getSchool(theline[2]);
 				//New skill initialized with level 0
 				int level = 0;
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
@@ -113,7 +115,7 @@ public class ConfigManager {
 				//Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
-				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier, trainerHeldMaterial));
+				skillsArray.add(new Skill(id, displayName, level, effects, trainingCost, noviceIncrement, masterMultiplier, trainerHeldMaterial));
 				line = br.readLine();
 			}
 			return true;
@@ -217,6 +219,35 @@ public class ConfigManager {
 			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
 		}
 		return true;
+	}
+	
+	public boolean readGreeterMessagesfile() {
+		System.out.println("Reading greeter messages file");
+		try {
+			getDefaultValues();
+			FileReader fr = new FileReader(configDirectory + configGreeterMessagesFileName);
+			BufferedReader br = new BufferedReader(fr);
+			String messageId = br.readLine();
+			while (messageId != null) {
+				String leftClick, rightClick;
+				if(messageId.length()==0) {messageId = br.readLine(); continue;}
+				if(messageId.charAt(0) == '#') {messageId = br.readLine(); continue;}
+				leftClick = br.readLine();
+				rightClick = br.readLine();
+				DataManager.insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
+				messageId = br.readLine();
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally {
+			//Default to enum values if not found
+			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.message;
+			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
+		}
+		return true;
+
 	}
 	
 	public static List<Skill> getAllSkills() {

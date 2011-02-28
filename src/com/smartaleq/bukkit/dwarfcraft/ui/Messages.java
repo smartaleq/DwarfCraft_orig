@@ -42,11 +42,10 @@ public class Messages {
 		COMMANDLIST1(
 				"&dhelp &6|&d info &6|&d  commands &6|&d  comands2 &6|&d  tutorial &6|&d  "
 					+ "skillinfo skillsheet &6|&d  effectinfo &6|&d  train "
-					+ "schoollist(schools) &6|&d  schoolinfo(school) &6|&d  "
 					+ "make"+primaryRaceName+" &6|&d  make"+secondaryRaceName+" &6|&d  "
 					+ "here"), 
 		COMMANDLIST2(
-				"setSkill createschool removeschool"),
+				""),
 	
 		TUTORIAL1(
 				"&fWelcome to the dwarfcraft tutorial. To get started, type &4/dc skillsheet&f."
@@ -63,8 +62,7 @@ public class Messages {
 					+ "in town and use &4/dc train 63&f. Continue with &4/dc tutorial4&f"), 
 		TUTORIAL4(
 				"&fWhen you tried to train the skill, it showed whether you had the right "
-					+ "materials and were in the right place to train. You can find out about other "
-					+ "things you can train by using &4/dc schoollist&f and &4/dc schoolinfo&f. "
+					+ "materials."
 					+ "Continue with &4/dc tutorial5&f"), 
 		TUTORIAL5(
 				"&fYou now know the basic commands you need to succeed and develop as a " + primaryRaceName + ". " 
@@ -86,7 +84,6 @@ public class Messages {
 				"&6You're already an &f&s&6. No wonder you're so confused!"),
 	
 		ERRORBADINPUT("(Input Error)Could not understand your input, try again"), 
-		ERRORNOZONES("(No Zones)Could not find any school zones in your world!"),
 		ERRORNOTOP("(Not OP)You are not authorized to use that command"), 
 		ERRORINVALIDDWARFNAME("(Input Error)Could not find that player"),
 		ERRORINVALIDSKILLLEVEL("(Input Error)Skill levels must be between 0 and 30"), 

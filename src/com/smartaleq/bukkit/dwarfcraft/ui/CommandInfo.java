@@ -23,22 +23,7 @@ public enum CommandInfo {
 	MAKEMEANELF(
 			"&dThe &4/dc Make&s &dcommand will make the player into an &f&s&d. &f"+Messages.secondaryRacePlural+"&d have no skill levels and play like DwarfCraft doesn't exist (mostly). Use &4/dc ReallyMake&f&s &dto confirm."), 
 	REALLYMAKEMEANELF(
-			"&dThe &4/dc ReallyMake&s &dcommand will make the player into an &f&s&d. &f"+Messages.secondaryRacePlural+" &dhave no skill levels and play like DwarfCraft doesn't exist (mostly)."),
-	SCHOOLs(
-			"&dThe &4/dc schools &dcommand will list all 10 of the DwarfCraft schools and their SchoolID"),
-	SCHOOLLIST(
-			"&dThe &4/dc schoollist &dcommand will list all 10 of the DwarfCraft schools and their SchoolID"),
-	SCHOOLINFO(
-			"&dThe &4/dc schoolinfo <args> &dcommand will list all skills associated with a School. Use &1SchoolID &dor &1SkillName&d."), 
-	SCHOOL(
-			"&dThe &4/dc school <args> &dcommand will list all skills associated with a School. Use &1SchoolID &dor &1SkillName&d."), 
-	HERE(
-			"&dThe &4/dc here &dcommand will list all training Schools you are currently inside."), 
-	CREATESCHOOL(
-			"&dThe &4/dc createschool <args> &fADMIN &dcommand will create a new School training zone. &fArgs= SchoolID,X,X,Y,Y,Z,Z,Name"),
-	REMOVESCHOOL(
-			"&dThe &4/dc removeschool <args> &fADMIN &dcommand will remove a School training zone. &fArgs= Name"),;
-
+			"&dThe &4/dc ReallyMake&s &dcommand will make the player into an &f&s&d. &f"+Messages.secondaryRacePlural+" &dhave no skill levels and play like DwarfCraft doesn't exist (mostly)."),;
 	public String helpText;
 
 	CommandInfo(String helpText) {

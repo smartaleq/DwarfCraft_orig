@@ -240,9 +240,13 @@ public class DCEntityListener extends EntityListener {
    		if ( trainer != null ) {
    			if ( event.getDamager() instanceof Player ) {
    				// 	in business, left click
-   				trainer.lookAt(event.getDamager());
-   				trainer.printSkillInfo((Player)(event.getDamager()));   				
-   				// if ( )
+   				if ( trainer.isGreeter() ) {
+   					trainer.printLeftClick((Player)(event.getDamager()));
+   				}
+   				else {
+   					trainer.lookAt(event.getDamager());
+   					trainer.printSkillInfo((Player)(event.getDamager()));
+   				}
    			}
 			return true;
    		} 
@@ -260,9 +264,18 @@ public class DCEntityListener extends EntityListener {
     					// doesn't seem to work except on spawn
     				} else if ( event.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED ) {
     					// player right clicked
-    					trainer.lookAt(event.getTarget());
-    					trainer.getBasicHumanNpc().animateArmSwing();
-    					trainer.trainSkill((Player)event.getTarget());
+    	   				if ( trainer.isGreeter() ) {
+    	   					trainer.printRightClick((Player)(event.getTarget()));
+    	   				}
+    	   				else {
+	    					trainer.lookAt(event.getTarget());
+	    					trainer.getBasicHumanNpc().animateArmSwing();
+	    					if ( Dwarf.find(((Player)event.getTarget())).getSkill(trainer.getSkillTrained()).level < trainer.getMaxSkill() )
+	    						trainer.trainSkill((Player)event.getTarget());
+	    					else
+	    						// can't train error message
+	    						;
+    	   				}
     				} else if ( event.getNpcReason() == NpcTargetReason.NPC_BOUNCED ) {
     					// player collided with mob
     					// doesn't seem to work

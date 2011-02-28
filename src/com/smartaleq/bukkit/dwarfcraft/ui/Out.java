@@ -10,9 +10,7 @@ import com.smartaleq.bukkit.dwarfcraft.DataManager;
 import com.smartaleq.bukkit.dwarfcraft.Dwarf;
 import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 import com.smartaleq.bukkit.dwarfcraft.Effect;
-import com.smartaleq.bukkit.dwarfcraft.School;
 import com.smartaleq.bukkit.dwarfcraft.Skill;
-import com.smartaleq.bukkit.dwarfcraft.TrainingZone;
 import com.smartaleq.bukkit.dwarfcraft.Util;
 
 public class Out {
@@ -33,7 +31,6 @@ public class Out {
  * §a Green			- "Good"
  * §b Teal			- skill name/ID
  * §3 Dark Teal		- levels
- * §1 Dark Blue		- school name/id
  * §9 Blue			- dwarves
  * §d Pink			- Help/info
  * §5 Purple		- effect ID
@@ -101,7 +98,7 @@ public class Out {
 			Out.sendMessage(player, "&6---This skill is maximum level, no training available---");
 			return true;
 		}
-		Out.sendMessage(player, "&6---Train costs for level &3"+(skill.level+1)+"&6 at a &1" + skill.school.toString() + " school&6---");
+		Out.sendMessage(player, "&6---Train costs for level &3"+(skill.level+1));
 		List <ItemStack> costs = (Dwarf.find(player)).calculateTrainingCost(skill);
 		for(ItemStack item:costs){
 			if (item != null) Out.sendMessage(player, " &2" +item.getAmount() + " " + item.getType()+ "&6  --" , " &6-- ");
@@ -365,58 +362,4 @@ public class Out {
 			e.printStackTrace();
 		}
 	}
-
-	/** 
-	 * Sends a player the list of all schools and ID's
-	 * @param player
-	 * @return
-	 */
-	public static boolean schoolList(Player player) {
-		String message="";
-		for(School school:School.values()){
-			message = message.concat("&1"+ school.name() + "&6(&1" + school.id+"&6)  ");
-		}
-		sendMessage(player, message, "&6[&dSchoolList&6] ");
-		return true;
-	}
-
-	/**
-	 * Sends a player details about a school including its skills
-	 * @param player
-	 * @param school
-	 * @param skills is an array of skills in the specific school
-	 */
-	public static void schoolInfo(Player player, School school, List<Skill> skills) {
-		String message = "";
-		for(Skill s:skills){
-			if (s!=null) message = message.concat("&b" + s.displayName + "&6(&b" +s.id+"&6) ");
-		}
-		sendMessage(player, message, "&6[&1"+school.name()+"&6] ");
-	}
-
-	public static boolean here(Player player, List<TrainingZone> list) {
-		boolean foundSome = false;
-		for (TrainingZone tz:list){
-			sendMessage(player, "&6You are in &8"+tz.name+"&6 a &1"+tz.school+"&6 training zone","&6[&8Zone&6]");
-			foundSome = true;
-		}
-		return foundSome;
-	}
-	
-	public static boolean listSchools(Player player){
-		boolean foundSome = false;
-		for (TrainingZone tz: DataManager.getSchoolZones(player.getWorld())){
-			sendMessage(player, "&8"+tz.name+"&6, a &1"+tz.school+"&6 training zone from ("+
-					tz.lowCorner.getBlockX()+","+
-					tz.lowCorner.getBlockY()+","+
-					tz.lowCorner.getBlockZ()+") to ("+
-					tz.highCorner.getBlockX()+","+
-					tz.highCorner.getBlockY()+","+
-					tz.highCorner.getBlockZ()+")"
-					,"&6[&8Zone&6]");
-			foundSome = true;
-		}
-		return foundSome;
-	}
-
 }

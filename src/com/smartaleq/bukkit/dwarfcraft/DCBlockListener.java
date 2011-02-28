@@ -12,7 +12,6 @@ import org.bukkit.event.block.BlockRightClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 
-
 /**
  * This watches for broken blocks and reacts
  * 

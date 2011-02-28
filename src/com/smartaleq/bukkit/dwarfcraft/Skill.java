@@ -9,7 +9,6 @@ public class Skill implements Cloneable{
 	
 	public final int id;
 	public final String displayName;
-	public final School school;
 	public int level;
 	public final List <Effect> effects;
 	public final List <ItemStack> trainingCost;
@@ -20,7 +19,6 @@ public class Skill implements Cloneable{
 	public Skill(
 			int id, 
 			String displayName, 
-			School school,
 			int level,
 			List <Effect> effects,
 			List <ItemStack> trainingCost,
@@ -30,7 +28,6 @@ public class Skill implements Cloneable{
 	{
 		this.id = id;
 		this.displayName = displayName;
-		this.school = school;
 		this.level = level;
 		this.effects = effects;
 		this.trainingCost = trainingCost;
@@ -45,7 +42,7 @@ public class Skill implements Cloneable{
 	 * Known issue: it does not clone the effects table or itemStack table. This is not a problem because effects are 100% final, and ItemStack is never modified.
 	 */
 	public Skill clone(){
-		Skill newSkill = new Skill(this.id, this.displayName, this.school, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier, this.trainerHeldMaterial);
+		Skill newSkill = new Skill(this.id, this.displayName, this.level, this.effects, this.trainingCost, this.noviceIncrement, this.masterMultiplier, this.trainerHeldMaterial);
 		return newSkill;
 	}
 	

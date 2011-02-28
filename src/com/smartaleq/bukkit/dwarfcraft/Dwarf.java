@@ -250,32 +250,6 @@ public class Dwarf {
 //		inventory.setContents(items);
 	}
 
-	public boolean isInSchoolZone(School school){
-		World world = player.getWorld();
-		Vector victor = player.getLocation().toVector();
-		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
-		for(TrainingZone zone: schoolZones){
-			if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+zone.name);
-			if (victor.isInAABB(zone.lowCorner, zone.highCorner) && zone.school == school && world == zone.world) return true;
-		}
-		return false;
-	}
-	
-	public List<TrainingZone> listAllZones(){
-		World world = player.getWorld();
-		Vector victor = player.getLocation().toVector();
-		if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: player at x,y,z:"+victor.getX()+","+victor.getY()+","+victor.getZ());
-		List <TrainingZone> schoolZones = DataManager.getSchoolZones(world);
-		List <TrainingZone> zonesHere = new ArrayList <TrainingZone> ();
-		for(TrainingZone zone: schoolZones){
-			if (DwarfCraft.debugMessagesThreshold < 7) System.out.println("Debug Message: zone:"+zone.name);
-			if (victor.isInAABB(zone.lowCorner, zone.highCorner)){
-				zonesHere.add(zone);
-			}
-		}
-		return zonesHere;
-	}
-	
 	public int countSkills() {
 		int count = 0;
 		for (Skill s:skills) if(s != null) count++;
