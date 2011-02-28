@@ -98,22 +98,21 @@ public class ConfigManager {
 				//Creating a new Skill - with ID, Name, School read from file
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
-				School school = School.getSchool(theline[2]);
-				//New skill initialized with level 0
-				int level = 0;
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
-				List <ItemStack> trainingCost = new ArrayList <ItemStack>();
-				if (theline[3] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[3]), Integer.parseInt(theline[4])));
-				if (theline[5] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[5]), Integer.parseInt(theline[6])));
-				if (theline[7] != "0") trainingCost.add(new ItemStack(Integer.parseInt(theline[7]), Integer.parseInt(theline[8])));
-				//training multipliers taken from file
-				double noviceIncrement = Double.parseDouble(theline[9]);
-				double masterMultiplier = Double.parseDouble(theline[10]);
-				Material	trainerHeldMaterial 	= Material.getMaterial(Integer.parseInt(theline[11]));
+				Material	TrainingItem1Mat  		= 	Material.getMaterial(Integer.parseInt(theline[2]));
+				double 		TrainingItem1BaseCost 	= 	Double.parseDouble(theline[3]);
+				int 		TrainingItem1MaxAmount 	= 	Integer.parseInt(theline[4]);
+				Material 	TrainingItem2Mat 		= 	Material.getMaterial(Integer.parseInt(theline[5]));
+				double 		TrainingItem2BaseCost 	= 	Double.parseDouble(theline[6]);
+				int 		TrainingItem2MaxAmount 	= 	Integer.parseInt(theline[7]);
+				Material 	TrainingItem3Mat 		= 	Material.getMaterial(Integer.parseInt(theline[8]));
+				double 		TrainingItem3BaseCost 	= 	Double.parseDouble(theline[9]);
+				int			TrainingItem3MaxAmount	= 	Integer.parseInt(theline[10]);
+				Material	trainerHeldMaterial 	= 	Material.getMaterial(Integer.parseInt(theline[11]));
 				//Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
-				skillsArray.add(new Skill(id, displayName, school, level, effects, trainingCost, noviceIncrement, masterMultiplier, trainerHeldMaterial));
+				skillsArray.add(new Skill(id, displayName,0,effects,TrainingItem1Mat,TrainingItem1BaseCost ,TrainingItem1MaxAmount,TrainingItem2Mat ,TrainingItem2BaseCost,TrainingItem2MaxAmount ,TrainingItem3Mat  ,TrainingItem3BaseCost   ,TrainingItem3MaxAmount, trainerHeldMaterial)); 
 				line = br.readLine();
 			}
 			return true;
