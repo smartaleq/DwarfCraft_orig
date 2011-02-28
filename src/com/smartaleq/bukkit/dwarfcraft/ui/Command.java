@@ -92,7 +92,6 @@ public class Command {
 	}
 	
 	private boolean createMaster() {
-		DataManager.insertTrainer(d);
 		return true;
 	}
 	private boolean createTrainer() {

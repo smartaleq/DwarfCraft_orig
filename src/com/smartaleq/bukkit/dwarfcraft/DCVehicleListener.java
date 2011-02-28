@@ -67,8 +67,8 @@ public class DCVehicleListener extends VehicleListener{
     					event.getVehicle().getLocation().getX(),
     					event.getVehicle().getLocation().getY(),
     					event.getVehicle().getLocation().getZ());
-    			location.setX(location.getX()+event.getVehicle().getVelocity().getX()*2);
-    			location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*2);
+    			location.setX(location.getX()+event.getVehicle().getVelocity().getX()*effectAmount);
+    			location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*effectAmount);
     			event.getVehicle().teleportTo(location);
     		}
     	}
