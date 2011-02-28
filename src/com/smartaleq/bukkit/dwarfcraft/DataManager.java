@@ -7,11 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 import org.bukkit.util.Vector;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
+import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.NpcSpawner;
 
@@ -20,7 +25,7 @@ public class DataManager {
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <TrainingZone> zoneList = new ArrayList <TrainingZone>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	static List <DwarfTrainer> trainerList = new ArrayList<DwarfTrainer>();
+	static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	
 	public static void dbInitialize() {
 	    try{
@@ -338,45 +343,44 @@ public class DataManager {
 	}
 	
 	public static DwarfTrainer getTrainer(Entity entity) {
-		for ( DwarfTrainer d : trainerList ) {
-			if ( d.equals(entity) )
-				return d; 
-		}
-		return null;		
+		return (trainerList.get(entity.getEntityId())); // can return null
 	}
 	
 	public static DwarfTrainer getTrainer(String str) {
-		for ( DwarfTrainer d : trainerList ) {
-			if ( d.getUniqueId().equals(str) )
-				return d;
-		}
-		return null;
+		return (trainerList.get(str)); // can return null
 	}
 	
 	public static void insertTrainer( DwarfTrainer d ) {
 		assert(d != null);
-		trainerList.add(d);
+		trainerList.put(d.getUniqueId(), d);
 		return;
 	}
 	
 	public static boolean removeTrainer( String str ) {
-		try {
-			for ( DwarfTrainer d : trainerList ) {
-				if ( d.getUniqueId().equals(str)) {
-					trainerList.remove(d);
-					NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
-					return true;
-				}
-			}
+		DwarfTrainer d;
+		if ( (d = trainerList.remove(str)) == null ) {
+			return false;
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		return false;
+		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
+		return true;
 	}
 	
-	public static List<DwarfTrainer> getTrainerList() {
+	public static void printTrainerList(Player player) {
+		if ( trainerList.isEmpty() ) {
+			Out.sendMessage(player, "There are currently no trainers.");
+			System.out.println("There are currently no trainers.");
+		}
+		else {
+			for ( Iterator<DwarfTrainer> i = trainerList.values().iterator(); i.hasNext(); ) {
+				DwarfTrainer d = i.next();
+				Out.sendMessage(player, "ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+				System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+			}
+		}
+	}
+/*	
+	public static HashMap<DwarfTrainer> getTrainerList() {
 		return trainerList;
 	}
-
+*/
 }

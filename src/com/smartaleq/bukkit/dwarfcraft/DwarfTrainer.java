@@ -33,11 +33,12 @@ public class DwarfTrainer {
 		
 		Material material = Dwarf.find(player).getSkill(skillId).getTrainerHeldMaterial();
 		assert (material != null);
-		
+	/*	
 		ItemStack itemStack = new ItemStack(material);
 		itemStack.setAmount(1);
 		itemStack.setDurability((short)0);
 		basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
+		*/
 	}
 	
 	public boolean equals(Object that) {

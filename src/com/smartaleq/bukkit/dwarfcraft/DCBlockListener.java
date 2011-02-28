@@ -143,7 +143,6 @@ public class DCBlockListener extends BlockListener {
     	boolean blockDropChange = false;
     	    	
    	//Check if durability change happens
-    	
     	for(Skill s: skills){
     		if (s==null)continue;
     		for(Effect e:s.effects){

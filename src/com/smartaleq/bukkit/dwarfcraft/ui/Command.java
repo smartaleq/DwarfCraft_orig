@@ -132,9 +132,7 @@ public class Command {
 	
 	private boolean listTrainers() {
 		// print all the trainers here so admins can get UniqueIDs to delete them if needed
-		for ( DwarfTrainer d : DataManager.getTrainerList()) {
-			Out.sendMessage(player, "ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-		}
+		DataManager.printTrainerList(player);
 		return true;
 	}
 
