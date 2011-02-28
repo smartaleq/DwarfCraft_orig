@@ -91,12 +91,11 @@ public class ConfigManager {
 				if(line.charAt(0) == '#')  {line = br.readLine(); continue;}
 				if(line.charAt(0) == '^') {configSkillsVersion = Integer.parseInt(line.substring(2));line = br.readLine(); continue;}
 				String[] theline = line.split(",");
-				if (theline.length < 11){ 
+				if (theline.length < 12){ 
 					continue;
 					}
+				
 				//Creating a new Skill - with ID, Name, School read from file
-				Material trainerHeldMaterial = Material.AIR;
-
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
 				School school = School.getSchool(theline[2]);
@@ -110,6 +109,7 @@ public class ConfigManager {
 				//training multipliers taken from file
 				double noviceIncrement = Double.parseDouble(theline[9]);
 				double masterMultiplier = Double.parseDouble(theline[10]);
+				Material	trainerHeldMaterial 	= Material.getMaterial(Integer.parseInt(theline[11]));
 				//Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
@@ -157,14 +157,15 @@ public class ConfigManager {
 				int 		initiator 				= Integer.parseInt(theline[13]); 
 				int 		output 					= Integer.parseInt(theline[14]); 
 				boolean 	toolRequired 			= (theline[15].equalsIgnoreCase("TRUE"));
-
+				
 				int[] tooltable = 
 					{	Integer.parseInt(theline[16]),
 						Integer.parseInt(theline[17]),
 						Integer.parseInt(theline[18]),
 						Integer.parseInt(theline[19]),
 						Integer.parseInt(theline[20])};
-
+			
+					
 				for(Skill skill:skillsArray){
 					if(effectId / 10 == skill.id){
 						skill.effects.add(new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable));
