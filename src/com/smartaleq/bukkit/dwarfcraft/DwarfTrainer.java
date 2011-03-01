@@ -216,7 +216,7 @@ public class DwarfTrainer {
 			for (ItemStack itemStack: trainingCosts)
 				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
 			Out.sendMessage(dwarf,"&6Training Successful!","&6[&b"+skill.id+"&6] ");
-			DataManager.saveDwarfData(dwarf);
+			DataManager.saveDwarfData(dwarf, player.getName());
 			return;
 		}
 		else{

@@ -143,7 +143,7 @@ public class Dwarf {
 		if (isElf) return false;
 		isElf = true;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this);
+		DataManager.saveDwarfData(this, player.getName());
 		return isElf;
 	}
 	
@@ -153,7 +153,7 @@ public class Dwarf {
 	public boolean makeElfIntoDwarf(){
 		isElf = false;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this);
+		DataManager.saveDwarfData(this, player.getName());
 		return true;
 	}
 	

@@ -1,6 +1,10 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.Iterator;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -9,6 +13,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
 
 import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
+import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
 
 /**
  * 
@@ -26,6 +31,7 @@ import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
  */
 public class DwarfCraft extends JavaPlugin {
 
+
 private final DCBlockListener	blockListener 	= new DCBlockListener(this);
 private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
@@ -34,7 +40,7 @@ private final DCWorldListener 	worldListener 	= new DCWorldListener();
 
 private final CraftListener	craftListener	= new CraftListener(this);
 
-public static int debugMessagesThreshold = 0;
+public static int debugMessagesThreshold = 7;
 public static boolean disableEffects = false;
 
 	/**	
@@ -43,7 +49,7 @@ public static boolean disableEffects = false;
 	public void onEnable() {
 	    PluginManager pm = getServer().getPluginManager();
 	    
-		pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
+	    pm.registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Low, this);
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Low, this);
@@ -94,5 +100,22 @@ public static boolean disableEffects = false;
 		 * close dbs
 		 */
 	}
-}
+	
+	//IM MAKING THIS KLUDGY BECAUSE FUCK YOU THATS WHY
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args){
+		String commandName = command.getName().toLowerCase();
+		System.out.println(commandName);
+		Player player = (Player) sender;
+		String[] newargs = new String[args.length+1];
+		newargs[0]="/dc";
+		for(int i=1;i<args.length+1;i++) newargs[i] = args[i-1];
+		if (commandName.equalsIgnoreCase("dc") ) {
+			System.out.println(args[0]);
+			DCCommand input = new DCCommand(this, player, args);
+			return input.execute();
+			}
+		return false;
+	}
 
+}

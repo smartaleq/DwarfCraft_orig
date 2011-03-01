@@ -176,7 +176,7 @@ public class DataManager {
 	    }	    
 	}
 	
-	public static boolean saveDwarfData(Dwarf dwarf){
+	public static boolean saveDwarfData(Dwarf dwarf, String name){
 		try{
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =

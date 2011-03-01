@@ -100,7 +100,8 @@ public class ConfigManager {
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
 				//New skill initialized with level 0
-
+				int level = 0;
+				
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
 				Material	TrainingItem1Mat  		= 	Material.getMaterial(Integer.parseInt(theline[2]));
 				double 		TrainingItem1BaseCost 	= 	Double.parseDouble(theline[3]);
@@ -238,6 +239,7 @@ public class ConfigManager {
 				if(messageId.charAt(0) == '#') {messageId = br.readLine(); continue;}
 				leftClick = br.readLine().trim();
 				rightClick = br.readLine().trim();
+
 				DataManager.insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
 				messageId = br.readLine();
 			}

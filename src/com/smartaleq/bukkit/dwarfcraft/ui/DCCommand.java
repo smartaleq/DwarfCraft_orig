@@ -6,13 +6,13 @@ import org.bukkit.inventory.ItemStack;
 import com.smartaleq.bukkit.dwarfcraft.*;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
-public class Command {
+public class DCCommand {
 	
 	Player player;
 	String[] playerInput;
 	private final DwarfCraft plugin;
 	
-	public Command(DwarfCraft instance, Player player, String[] playerInput){
+	public DCCommand(DwarfCraft instance, Player player, String[] playerInput){
 		this.plugin = instance;
 		this.player = player;
 		this.playerInput = playerInput;
@@ -28,7 +28,8 @@ public class Command {
 	
 	public boolean execute(){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
-
+		
+		
 		if (playerInput[0].equalsIgnoreCase("debug")) return debug();
 
 		if (playerInput[0].equalsIgnoreCase("help")) return help();
@@ -48,7 +49,7 @@ public class Command {
 		
 		if (playerInput[0].equalsIgnoreCase("train")) 				return train();
 		if (playerInput[0].equalsIgnoreCase("setskill")) 			return (player.isOp() ? setSkill(): notAnOpError());
-		if (playerInput[0].equalsIgnoreCase("setskill")) 			return (player.isOp() ? setAll(): notAnOpError());
+		if (playerInput[0].equalsIgnoreCase("setall")) 			return (player.isOp() ? setAll(): notAnOpError());
 		
 		if (playerInput[0].equalsIgnoreCase("MAKE"+Messages.primaryRaceName)) 		return makeMeDwarf(false);
 		if (playerInput[0].equalsIgnoreCase("REALLYMAKE"+Messages.primaryRaceName))	return makeMeDwarf(true);
@@ -280,7 +281,7 @@ public class Command {
 			for (ItemStack itemStack: trainingCosts)
 				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
 			Out.sendMessage(dwarf,"&6Training Successful!","&6[&b"+skill.id+"&6] ");
-			DataManager.saveDwarfData(dwarf);
+			DataManager.saveDwarfData(dwarf, dwarf.player.getName());
 			return true;
 		}
 		else{
@@ -308,7 +309,7 @@ public class Command {
 		if (level == -2)return true;			
 		for(Skill s:dwarf.skills) s.level = level;
 		Out.sendMessage(player, "&aAdmin: &eset all skills for player &9" + dwarf.player.getDisplayName() + "&e to &3" + level);
-		DataManager.saveDwarfData(dwarf);
+		DataManager.saveDwarfData(dwarf, playerInput[1]);
 		return true;
 
 	}
@@ -335,8 +336,8 @@ public class Command {
 		Integer level = parseSkillLevelInput(3);
 		if (level == -2)return true;			
 		skill.level = level;
-		Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + dwarf.player.getDisplayName() + "&e to &3" + level);
-		DataManager.saveDwarfData(dwarf);
+		Out.sendMessage(player, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + playerInput[1]+"&e to &3" + level);
+		DataManager.saveDwarfData(dwarf, playerInput[1]);
 		return true;
 	}
 
@@ -383,6 +384,7 @@ public class Command {
 	}
 
 	private Dwarf parseDwarfNameInput(int argNumber){
+		if (playerInput[argNumber]==null) return Dwarf.find(player);
 		String dwarfName = playerInput[argNumber];
 		Dwarf target = null;
 		if (dwarfName == null) return Dwarf.find(player);
