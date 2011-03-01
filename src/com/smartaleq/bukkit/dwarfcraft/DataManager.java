@@ -330,8 +330,14 @@ public class DataManager {
 	    	prep.setString(1, d.getWorld().getName());
 	    	prep.setString(2, d.getUniqueId());
 	    	prep.setString(3, d.getName());
-	    	prep.setInt(4, d.getSkillTrained());
-	    	prep.setInt(5, d.getMaxSkill());
+	    	if ( !d.isGreeter() ) {
+	    		prep.setInt(4, d.getSkillTrained());
+	    		prep.setInt(5, d.getMaxSkill());
+	    	}
+	    	else {
+	    		prep.setInt(4, 0);
+	    		prep.setInt(5, 0);
+	    	}
 	    	prep.setInt(6, d.getMaterial());
 	    	prep.setBoolean(7, d.isGreeter());
 	    	prep.setString(8, d.getMessageId());
@@ -396,6 +402,7 @@ public class DataManager {
 	}
 	
 	public static GreeterMessage getGreeterMessage(String messageId) {
+		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
 	}
 	
@@ -408,8 +415,14 @@ public class DataManager {
 			for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
 				Map.Entry<String, DwarfTrainer> pairs = i.next();
 				DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
-				Out.sendMessage(player, "ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-				System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+				if ( d.isGreeter() ) {
+					Out.sendMessage(player, "Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
+					System.out.println("Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
+				}
+				else {
+					Out.sendMessage(player, "Trainer ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+					System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
+				}
 			}
 		}
 	}

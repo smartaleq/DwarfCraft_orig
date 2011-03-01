@@ -1,11 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft.ui;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import com.smartaleq.bukkit.dwarfcraft.*;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 

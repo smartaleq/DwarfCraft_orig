@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bukkit.Material;
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
 
@@ -101,7 +100,6 @@ public class ConfigManager {
 				int id = Integer.parseInt(theline[0]);
 				String displayName = theline[1];
 				//New skill initialized with level 0
-				int level = 0;
 
 				//Training cost stack array created, including "empty" itemstacks of type 0 qty 0
 				Material	TrainingItem1Mat  		= 	Material.getMaterial(Integer.parseInt(theline[2]));
@@ -234,11 +232,12 @@ public class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String messageId = br.readLine();
 			while (messageId != null) {
+				messageId = messageId.trim();
 				String leftClick, rightClick;
 				if(messageId.length()==0) {messageId = br.readLine(); continue;}
 				if(messageId.charAt(0) == '#') {messageId = br.readLine(); continue;}
-				leftClick = br.readLine();
-				rightClick = br.readLine();
+				leftClick = br.readLine().trim();
+				rightClick = br.readLine().trim();
 				DataManager.insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
 				messageId = br.readLine();
 			}
