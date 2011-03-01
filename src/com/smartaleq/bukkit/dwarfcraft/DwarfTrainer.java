@@ -85,7 +85,11 @@ public class DwarfTrainer {
 				player.getLocation().getYaw(), 
 				player.getLocation().getPitch());
 		
-		Material material = Dwarf.find(player).getSkill(skillId).getTrainerHeldMaterial();
+		Material material;
+		if ( greeter )
+			material = Material.AIR;
+		else
+			material = Dwarf.find(player).getSkill(skillId).getTrainerHeldMaterial();
 		assert (material != null);
 		if ( material != Material.AIR ) {
 			ItemStack itemStack = new ItemStack(material);
@@ -156,7 +160,10 @@ public class DwarfTrainer {
 	public void printLeftClick(Player player) {
 		GreeterMessage msg = DataManager.getGreeterMessage(messageId);
 		if ( msg != null ) {
-			Out.sendMessage(player, msg.getRightClickMessage());
+			Out.sendMessage(player, msg.getLeftClickMessage());
+		}
+		else { 
+			System.out.println("[DC] Error: Greeter " + basicHumanNpc.getUniqueId() + " has no left click message. Check your configuration file for message ID " + messageId);
 		}
 		return;
 	}

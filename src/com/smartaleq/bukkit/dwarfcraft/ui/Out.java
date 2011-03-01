@@ -6,7 +6,6 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.smartaleq.bukkit.dwarfcraft.DataManager;
 import com.smartaleq.bukkit.dwarfcraft.Dwarf;
 import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 import com.smartaleq.bukkit.dwarfcraft.Effect;
