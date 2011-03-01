@@ -18,7 +18,7 @@ public class Out {
 /*
  * Messaging Statics	
  */
-	static final int lineLength = 328; //pixels
+	static final int lineLength = 332; //pixels
 	static final int maxLines = 10;
 	
 /*
@@ -122,8 +122,13 @@ public class Out {
 				return true;
 			}
 			boolean odd = true;
+			String untrainedSkills = "&6Untrained Skills: ";
 			for (Skill s:dwarf.skills){	
 				if(s == null) continue;
+				if(s.level == 0) {
+					untrainedSkills = untrainedSkills.concat("|&7" + s.displayName+"&6| ");
+					continue;
+				}
 				odd = !odd;
 				// the goal here is for every skill sheet line to be 60 characters long.
 				// each skill should take 30 characters - no more, no less
@@ -135,10 +140,10 @@ public class Out {
 				
 				if (!odd) { 
 					int interimLen = Util.msgLength(interim);
-					int numSpaces = ((136 - interimLen) / 4) - 1;
+					int numSpaces = ((140 - interimLen) / 4) - 1;
 					for ( int i = 0; i < numSpaces; i++ )
 						interim = interim.concat(" ");
-					interimLen = 136 - interimLen - numSpaces*4;
+					interimLen = 140 - interimLen - numSpaces*4;
 				// 	4 possible cases - need 4, 5, 6, or 7
 					if ( interimLen == 4 )
 						interim = interim.concat("&0.| &b");
@@ -155,9 +160,12 @@ public class Out {
 					sendMessage(viewer, message2, prefix2);
 					message2 = "";
 				}
+				
 			}
 			if (!message2.equals(""))
 				sendMessage(viewer, message2, prefix2);
+			sendMessage(viewer, untrainedSkills, prefix2);
+			
 			return true;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -309,10 +317,10 @@ public class Out {
 	 */
 	static String parseColors(String message){	
 		if (message == null){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: printing null message!");
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: parsing null message!");
 			return null;
 		}
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: parsing colors for: "+ message);
+		if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: parsing colors for: "+ message);
 		for(int i =0; i<message.length();i++){
 			try{
 				if(message.charAt(i)=='&'){

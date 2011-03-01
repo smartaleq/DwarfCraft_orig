@@ -239,6 +239,7 @@ public class ConfigManager {
 				if(messageId.charAt(0) == '#') {messageId = br.readLine(); continue;}
 				leftClick = br.readLine();
 				rightClick = br.readLine();
+				System.out.println("Got a new greeter");
 				DataManager.insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
 				messageId = br.readLine();
 			}

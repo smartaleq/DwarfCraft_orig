@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.smartaleq.bukkit.dwarfcraft.ui.Command;
+import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
 import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
@@ -26,30 +26,7 @@ public class DCPlayerListener extends PlayerListener {
  * Reads player input and checks for a /dc command
  * this functionality may soon be obsolete and use the Command class from bukkit
  */
-	public void onPlayerCommand(PlayerChatEvent event) {
-		Player player = event.getPlayer();
-		String[] fullPlayerInput = event.getMessage().split(" ");
-		if (fullPlayerInput.length >= 1) {
-			if (fullPlayerInput[0].equalsIgnoreCase("/dc")){
-
-				String[] playerInput = new String[(fullPlayerInput.length)];
-				for(int i=1; i < fullPlayerInput.length; i++){
-					playerInput[i-1] = fullPlayerInput[i];
-				}
-				Command input = new Command(plugin, player, playerInput);
-				if (input.execute()) {
-					event.setCancelled(true);
-					return;
-					//successful command
-				}
-				else {
-					Out.sendMessage(player, Messages.Fixed.ERRORCOMMANDNOTFOUND.message);
-					return;
-					//failed command don't cancel in case it was someone else's
-				}
-			}
-		}
-	}
+	
 	
 	/**
 	 * When a player joins the server this initialized their data

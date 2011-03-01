@@ -3,3 +3,7 @@ description: A skills and progression plugin for character development in RPG wo
 author: smartaleq
 main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
 version: 1.0
+commands:
+   dc:
+      description: DwarfCraft commands
+      usage:
