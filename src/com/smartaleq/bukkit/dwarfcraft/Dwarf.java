@@ -5,11 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class Dwarf {
 
@@ -99,7 +97,7 @@ public class Dwarf {
 		if (skill.level < 5) quartileNumber = 1;   //low skills train full speed
 		
 		//calculate quartile penalties for 2nd/3rd/4th quartile
-		double multiplier = 1;
+		double multiplier = Math.min(1, Math.pow(1.072,(skill.level-5)));
 		if (quartileNumber == 2) multiplier *= (1 + 1* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 3) multiplier *= (1 + 2* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 4) multiplier *= (1 + 3* dwarfLevel/(100 + 3*dwarfLevel));
@@ -108,20 +106,20 @@ public class Dwarf {
 		trainingStack.add(new ItemStack(
 				skill.TrainingItem1Mat, 
 				(int) Math.min(
-						Math.ceil(skill.level*skill.TrainingItem1BaseCost*multiplier-.01), //fudge factor for icky multiplication
+						Math.ceil((skill.level+1)*skill.TrainingItem1BaseCost*multiplier-.01), //fudge factor for icky multiplication
 						skill.TrainingItem1MaxAmount)));
 		
 		if (skill.TrainingItem2Mat != Material.AIR)
 			trainingStack.add(new ItemStack(
 					skill.TrainingItem2Mat, 
 					(int) Math.min(
-							Math.ceil(skill.level*skill.TrainingItem2BaseCost*multiplier-.01), //fudge factor for icky multiplication
+							Math.ceil((skill.level+1)*skill.TrainingItem2BaseCost*multiplier-.01), //fudge factor for icky multiplication
 							skill.TrainingItem2MaxAmount)));
 		if (skill.TrainingItem3Mat != Material.AIR)
 			trainingStack.add(new ItemStack(
 					skill.TrainingItem3Mat, 
 					(int) Math.min(
-							Math.ceil(skill.level*skill.TrainingItem3BaseCost*multiplier-.01), //fudge factor for icky multiplication
+							Math.ceil((skill.level+1)*skill.TrainingItem3BaseCost*multiplier-.01), //fudge factor for icky multiplication
 							skill.TrainingItem3MaxAmount)));
 		return trainingStack;
 	}

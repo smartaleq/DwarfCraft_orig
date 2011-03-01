@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
 
+import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
+
 /**
  * 
  * DwarfCraft is a RPG-like plugin for minecraft (via Bukkit) that allows players to improve their characters.
@@ -29,6 +31,8 @@ private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 private final DCWorldListener 	worldListener 	= new DCWorldListener();
+
+private final CraftListener	craftListener	= new CraftListener(this);
 
 public static int debugMessagesThreshold = 0;
 public static boolean disableEffects = false;
@@ -60,7 +64,10 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.CHUNK_UNLOADED, worldListener, Priority.Low, this);
 		pm.registerEvent(Event.Type.WORLD_LOADED, worldListener, Priority.Low, this);
 		
-		ConfigManager cm = new ConfigManager("./DwarfCraft/", "DwarfCraft.config");
+		//Cookbook
+		pm.registerEvent(Event.Type.BLOCK_INTERACT, craftListener, Priority.Normal, this);
+				
+		ConfigManager cm = new ConfigManager("./plugins/DwarfCraft/", "DwarfCraft.config");
 		cm.readConfigFile();
 		if(!cm.readSkillsFile() || !cm.readEffectsFile() || !cm.readMessagesFile()){
 			System.out.println("Failed to Enable DwarfCraft Skills and Effects)");

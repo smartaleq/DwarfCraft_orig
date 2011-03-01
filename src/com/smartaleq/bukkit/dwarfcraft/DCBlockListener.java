@@ -138,28 +138,15 @@ public class DCBlockListener extends BlockListener {
     	int materialId = event.getBlock().getTypeId();
     	byte meta = block.getData();
     	
-    //Logic vars, would be better with methods, but kept ugly for code simplicity
-    	boolean durabilityChange = false;
+    //Logic var
     	boolean blockDropChange = false;
-    	    	
-   	//Check if durability change happens
+    	    	   
     	for(Skill s: skills){
     		if (s==null)continue;
     		for(Effect e:s.effects){
     			if (e==null) continue;
-    			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
-	    			for(int id:e.tools){
-		    			if(id == toolId) {
-		    				double effectAmount = e.getEffectAmount(dwarf);
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
-		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
-		    				Util.toolChecker(player);
-		    				durabilityChange = true;
-		    			}
-		    		}
-    			}
-     //Check if blockdrop change happens  	
+    			
+    		    //Check if blockdrop change happens  	
     			if(e.effectType == EffectType.BLOCKDROP && e.initiatorId == materialId){
     				correctTool = false;
 	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
@@ -171,6 +158,20 @@ public class DCBlockListener extends BlockListener {
 		    			blockDropChange = true;
 	    			}
 	   			}
+    			
+    			//Check if durability change happens   			
+    			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
+	    			for(int id:e.tools){
+		    			if(id == toolId) {
+		    				double effectAmount = e.getEffectAmount(dwarf);
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
+		    				if(blockDropChange) tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
+		    			//if you use the tool on a non-dropping block it doesn't take special durability damage
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
+		    				Util.toolChecker(player);
+		    			}
+		    		}
+    			}
     		}
     	}
     	

@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-
 import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
 
 public class ConfigManager {
@@ -120,7 +118,7 @@ public class ConfigManager {
 				List<Effect> effects = new ArrayList<Effect>();
 				//create the new skill in the skillsarray
 
-				skillsArray.add(new Skill(id, displayName,0,effects,TrainingItem1Mat,TrainingItem1BaseCost ,TrainingItem1MaxAmount,TrainingItem2Mat ,TrainingItem2BaseCost,TrainingItem2MaxAmount ,TrainingItem3Mat  ,TrainingItem3BaseCost   ,TrainingItem3MaxAmount, trainerHeldMaterial)); 
+				skillsArray.add(new Skill(id, displayName,level,effects,TrainingItem1Mat,TrainingItem1BaseCost ,TrainingItem1MaxAmount,TrainingItem2Mat ,TrainingItem2BaseCost,TrainingItem2MaxAmount ,TrainingItem3Mat  ,TrainingItem3BaseCost   ,TrainingItem3MaxAmount, trainerHeldMaterial)); 
 
 				line = br.readLine();
 			}
