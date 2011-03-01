@@ -11,7 +11,6 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.smartaleq.bukkit.dwarfcraft.Dwarf;
-import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 import com.smartaleq.bukkit.dwarfcraft.Effect;
 import com.smartaleq.bukkit.dwarfcraft.EffectType;
 import com.smartaleq.bukkit.dwarfcraft.Skill;
