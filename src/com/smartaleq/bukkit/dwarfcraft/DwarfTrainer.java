@@ -92,7 +92,7 @@ public class DwarfTrainer {
 			material = Dwarf.find(player).getSkill(skillId).getTrainerHeldMaterial();
 		assert (material != null);
 		if ( material != Material.AIR ) {
-			ItemStack itemStack = new ItemStack(material);
+			itemStack = new ItemStack(material);
 			itemStack.setAmount(1);
 			itemStack.setDurability((short)0);
 			basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
