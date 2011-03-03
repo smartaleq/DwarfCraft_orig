@@ -19,7 +19,7 @@ public class Skill implements Cloneable{
 	public final Material TrainingItem3Mat;
 	public final double TrainingItem3BaseCost;
 	public final int TrainingItem3MaxAmount;
-	private Material trainerHeldMaterial;
+	private final Material trainerHeldMaterial;
 		
 	public Skill(
 			int id, 

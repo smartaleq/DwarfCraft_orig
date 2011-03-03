@@ -18,7 +18,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
 
-import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.NpcSpawner;
 
@@ -26,7 +25,7 @@ public class DataManager {
 
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
+	public static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	static HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
 	
 	public static void dbInitialize() {
@@ -176,7 +175,7 @@ public class DataManager {
 	    }	    
 	}
 	
-	public static boolean saveDwarfData(Dwarf dwarf, String name){
+	public static boolean saveDwarfData(Dwarf dwarf){
 		try{
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
@@ -340,7 +339,7 @@ public class DataManager {
 	    	}
 	    	prep.setInt(6, d.getMaterial());
 	    	prep.setBoolean(7, d.isGreeter());
-	    	prep.setString(8, d.getMessageId());
+	    	prep.setString(8, d.getMessage());
 	    	prep.setDouble(9, d.getLocation().getX());
 	    	prep.setDouble(10, d.getLocation().getY());
 	    	prep.setDouble(11, d.getLocation().getZ());
@@ -359,11 +358,9 @@ public class DataManager {
 		return;
 	}
 	
-	public static boolean removeTrainer( String str ) {
+	public static void removeTrainer( String str ) {
 		DwarfTrainer d;
-		if ( (d = trainerList.remove(str)) == null ) {
-			return false;
-		}
+		d = trainerList.remove(str);
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
 
 		try {
@@ -378,7 +375,6 @@ public class DataManager {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
 	}
 	
 	public static void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
@@ -404,27 +400,6 @@ public class DataManager {
 	public static GreeterMessage getGreeterMessage(String messageId) {
 		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
-	}
-	
-	public static void printTrainerList(Player player) {
-		if ( trainerList.isEmpty() ) {
-			Out.sendMessage(player, "There are currently no trainers.");
-			System.out.println("There are currently no trainers.");
-		}
-		else { 
-			for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, DwarfTrainer> pairs = i.next();
-				DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
-				if ( d.isGreeter() ) {
-					Out.sendMessage(player, "Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
-					System.out.println("Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
-				}
-				else {
-					Out.sendMessage(player, "Trainer ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-					System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-				}
-			}
-		}
 	}
 
 }
