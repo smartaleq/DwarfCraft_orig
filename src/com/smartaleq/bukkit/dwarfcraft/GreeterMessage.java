@@ -1,6 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-class GreeterMessage {
+public class GreeterMessage {
 	String leftClick;
 	String rightClick;
 	

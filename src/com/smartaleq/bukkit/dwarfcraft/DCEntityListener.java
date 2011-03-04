@@ -84,6 +84,11 @@ public class DCEntityListener extends EntityListener {
     				event.setDamage(damage);
     			}
     		}
+    		for(Effect e:s.effects){
+    			if( e.effectType == EffectType.FALLTHRESHOLD && event.getCause() == DamageCause.FALL){
+    				if (event.getDamage()<=e.getEffectAmount(dwarf)) event.setCancelled(true);
+    			}
+    		}
        	}  	
     }
 

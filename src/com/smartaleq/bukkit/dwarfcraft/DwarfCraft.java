@@ -13,6 +13,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
 
 import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
+import com.smartaleq.bukkit.dwarfcraft.ui.DCCommandException;
 import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
 
 /**
@@ -40,7 +41,7 @@ private final DCWorldListener 	worldListener 	= new DCWorldListener();
 
 private final CraftListener	craftListener	= new CraftListener(this);
 
-public static int debugMessagesThreshold = 7;
+public static int debugMessagesThreshold = 0;
 public static boolean disableEffects = false;
 
 	/**	
@@ -101,21 +102,18 @@ public static boolean disableEffects = false;
 		 */
 	}
 	
-	//IM MAKING THIS KLUDGY BECAUSE FUCK YOU THATS WHY
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args){
-		String commandName = command.getName().toLowerCase();
-		System.out.println(commandName);
-		Player player = (Player) sender;
-		String[] newargs = new String[args.length+1];
-		newargs[0]="/dc";
-		for(int i=1;i<args.length+1;i++) newargs[i] = args[i-1];
-		if (commandName.equalsIgnoreCase("dc") ) {
-			System.out.println(args[0]);
-			DCCommand input = new DCCommand(this, player, args);
-			return input.execute();
-			}
-		return false;
+		DCCommand cmd = new DCCommand(command.getName());
+		return cmd.execute(sender, commandLabel, args);
 	}
+	
+	public Player getPlayer(String playerName){
+		Player[] players = this.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(playerName)) return player;
+        }
+        return null;
+	}	
 
 }

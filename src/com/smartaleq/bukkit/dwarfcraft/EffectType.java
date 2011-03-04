@@ -10,19 +10,21 @@ public enum EffectType {
 	EXPLOSIONDAMAGE,
 	FIREDAMAGE,
 	FALLDAMAGE, 
+	FALLTHRESHOLD,
 	PLOWDURABILITY,
 	TOOLDURABILITY,
 	EAT,
-	CRAFT, 		// TODO ??
-	ARMORHIT, 	// TODO onEntityDamage
+	CRAFT, 		
+	ARMORHIT, 
 	PLOW,
-	DIGTIME,	// TODO ??
+	DIGTIME,	
 	BOWATTACK, 
-	VEHICLEDROP,// TODO onVehicleDamage - destroyed
-	VEHICLEMOVE,// TODO onVehicleMove
-	CITIZENBLOCKS,// TODO towny implementation
-	TOWNBLOCKS, // TODO towny implementation
-	SPECIAL; 	// TODO forges 
+	VEHICLEDROP,
+	VEHICLEMOVE,
+	CITIZENBLOCKS,
+	TOWNBLOCKS,
+	SPECIAL, // TODO forges 
+	;
 	
 	public static EffectType getEffectType(String name){
 		for(EffectType effectType:EffectType.values()){

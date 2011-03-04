@@ -203,7 +203,7 @@ public class Effect {
 //					effectAmount);
 //			}
 //		}
-		/*else*/ if (effectType.equals(EffectType.BLOCKDROP)){
+		if (effectType.equals(EffectType.BLOCKDROP)){
 			description = String.format("&6When you break a &2%s &6approx. %s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
@@ -217,30 +217,24 @@ public class Effect {
 				effectLevelColor,
 				effectAmount);
 		}
-//		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
-//			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
-//				effectLevelColor,
-//				effectAmount );
-//		}
-//		else if (effectType.equals(EffectType.CRAFT)){
-//			description = String.format("&6You craft %s%.0f &2%s instead of &e%.0f",
-//				effectLevelColor,
-//				effectAmount,
-//				output,
-//				elfAmount);
-//		}
-//		else if (effectType.equals(EffectType.DIGTIME)){
-//			if (moreThanOne){description = String.format("&6You dig %s%d%% slower &6with &2%s",
-//					effectLevelColor,
-//					(int)(effectAmount*100 - 100),
-//					toolType);
-//			}
-//			else {description = String.format("&6You dig %s%d%% faster &6with &2%s",
-//					effectLevelColor,
-//					(int)(100 - effectAmount*100),
-//					toolType);
-//			}
-//		}
+		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
+			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
+				effectLevelColor,
+				effectAmount );
+		}
+		else if (effectType.equals(EffectType.CRAFT)){
+			description = String.format("&6You craft %s%.0f &2%s instead of &e%.0f",
+				effectLevelColor,
+				effectAmount,
+				output,
+				elfAmount);
+		}
+		else if (effectType.equals(EffectType.DIGTIME)){
+			description = String.format("&a%.0f&6%% of the time &2%s &6break &2%s &6instantly ",
+					(int)(effectAmount*100),toolType,
+					Material.getMaterial(this.initiatorId).toString()
+					);
+		}
 		else if (effectType.equals(EffectType.TOOLDURABILITY)){
 			description = String.format("&6Each use of a &2%s &6removes approx. %s%.2f &6durability",
 					toolType,
@@ -260,6 +254,16 @@ public class Effect {
 					(int)(effectAmount*100 - 100));
 			}
 			else {description = String.format("&6You take %s%d%% less &6damage from explosions",
+					effectLevelColor,
+					(int)(effectAmount*100 - 100));
+			}
+		}
+		else if (effectType.equals(EffectType.FALLDAMAGE)){
+			if (moreThanOne){description = String.format("&6You take %s%d%% more &6damage from falling",
+					effectLevelColor,
+					(int)(effectAmount*100 - 100));
+			}
+			else {description = String.format("&6You take %s%d%% less &6damage from falling",
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}

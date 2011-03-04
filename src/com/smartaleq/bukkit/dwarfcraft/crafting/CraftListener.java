@@ -24,7 +24,7 @@ public class CraftListener extends BlockListener {
 	}
 
 	public void onBlockInteract(BlockInteractEvent e) {
-		if (e.getBlock().getTypeId() == 58 && e.getEntity() instanceof Player) {
+		if (e.getBlock().getTypeId() == 58 && e.isPlayer()) {
 			// start thread
 			Thread newThread = new Thread(
 					new WorkThread((Player) e.getEntity(), e.getBlock()));

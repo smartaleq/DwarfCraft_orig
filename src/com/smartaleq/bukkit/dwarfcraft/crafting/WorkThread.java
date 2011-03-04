@@ -18,13 +18,9 @@ import com.smartaleq.bukkit.dwarfcraft.Skill;
 public class WorkThread implements Runnable {
 	private CraftPlayer craftPlayer;
 	private EntityPlayer entityPlayer;
-	private Block block;
-	
 	public WorkThread(Player p, Block b) {
 		this.craftPlayer = (CraftPlayer) p;
 		this.entityPlayer = craftPlayer.getHandle();
-		this.block = b;
-		
 		try {
 			Thread.sleep(250);
 			System.out.println(entityPlayer.activeContainer.toString()+" test 1 "+entityPlayer.defaultContainer.toString());

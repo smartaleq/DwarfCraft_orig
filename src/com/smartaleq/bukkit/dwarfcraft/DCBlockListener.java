@@ -5,8 +5,10 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockDamageLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockRightClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +26,7 @@ public class DCBlockListener extends BlockListener {
   /**
    * onBlockDamage used to accelerate how quickly blocks are destroyed. setDamage() not implemented yet
    */
-/*	public void onBlockDamage(BlockDamageEvent event) {
+	public void onBlockDamage(BlockDamageEvent event) {
     	if (DwarfCraft.disableEffects) return;
     //General information
     	Player player = event.getPlayer();
@@ -39,12 +41,26 @@ public class DCBlockListener extends BlockListener {
     	}
     	boolean correctTool = false;
     	int materialId = event.getBlock().getTypeId();	
-    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: damage level = " + event.getDamageLevel() +
-    			" damage amount = " + event.getDamageLevel());
+    	if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: damage level = " + event.getDamageLevel());
+    	if(event.getDamageLevel() != BlockDamageLevel.STARTED) return;
+    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: started instamine check");
+    	for(Skill s:skills){
+    		for (Effect e:s.effects){
+    			if (e.effectType == EffectType.DIGTIME && e.initiatorId == materialId){
+        			correctTool = false;
+    	    		for(int id:e.tools)	if(id == toolId)correctTool = true;
+    	    		if(correctTool || !e.toolRequired){
+    	    			if(Util.randomAmount(e.getEffectAmount(dwarf)) == 0) return;
+    	    			new BlockBreakEvent(event.getBlock(), player);
+    	    			
+    	    		}
+    			}
+    		}
+    	}
 //    	event.setDamageLevel(event.getDamageLevel() + effectAmount);
 //		event.setCancelled(true);
     }
-*/
+
 
     /**
      * Called when a player right clicks a block, used for hoe-ing grass.
@@ -158,14 +174,15 @@ public class DCBlockListener extends BlockListener {
 		    			blockDropChange = true;
 	    			}
 	   			}
-    			
-    			//Check if durability change happens   			
+    		}
+    			//Check if durability change happens   		
+			for(Effect e:s.effects){
     			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
-		    				if(blockDropChange) tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
+		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    			//if you use the tool on a non-dropping block it doesn't take special durability damage
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
 		    				Util.toolChecker(player);
