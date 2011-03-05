@@ -41,13 +41,13 @@ public class DCBlockListener extends BlockListener {
     	}
     	boolean correctTool = false;
     	int materialId = event.getBlock().getTypeId();	
-    	if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: damage level = " + event.getDamageLevel());
+    	if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("DC-1: damage level = " + event.getDamageLevel());
     	if(event.getDamageLevel() != BlockDamageLevel.STARTED) return;
-    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: started instamine check");
     	for(Skill s:skills){
     		for (Effect e:s.effects){
     			if (e.effectType == EffectType.DIGTIME && e.initiatorId == materialId){
-        			correctTool = false;
+    				if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC2: started instamine check");
+    				correctTool = false;
     	    		for(int id:e.tools)	if(id == toolId)correctTool = true;
     	    		if(correctTool || !e.toolRequired){
     	    			if(Util.randomAmount(e.getEffectAmount(dwarf)) == 0) return;
@@ -103,9 +103,9 @@ public class DCBlockListener extends BlockListener {
     				for(int id:e.tools){
     					if(id == toolId && (material == Material.DIRT || material == Material.GRASS)) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - old:"+durability);
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC2: affected durability of a hoe - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a hoe - new:"+tool.getDurability());
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: affected durability of a hoe - new:"+tool.getDurability());
 		    				Util.toolChecker(player);
 		    				block.setTypeId(60);
 //		    				durabilityChange = true;
@@ -116,7 +116,7 @@ public class DCBlockListener extends BlockListener {
 					for(int id:e.tools){
 						if(id == toolId && material == Material.GRASS){
 		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: hoed some ground:"+e.getEffectAmount(dwarf));
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: hoed some ground:"+e.getEffectAmount(dwarf));
 //			    			blockDropChange = true;
 						}
 					}
@@ -134,7 +134,7 @@ public class DCBlockListener extends BlockListener {
     public void onBlockBreak(BlockBreakEvent event) {
     	if (DwarfCraft.disableEffects) return;
     	if (event.isCancelled()) return;
-    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: on block break called");
+    	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC0: on block break called");
     //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = Dwarf.find(player);
@@ -168,7 +168,7 @@ public class DCBlockListener extends BlockListener {
 	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
 	    			//Crops special line:
 	    			if (e.initiatorId == 59) if(meta != 7) continue;
-		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("Debug Message: Effect:" +e.id + " tool: " + toolId+" and toolRequired:"+e.toolRequired );
+		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("DC4: Effect:" +e.id + " tool: " + toolId+" and toolRequired:"+e.toolRequired );
 		    		if(correctTool || !e.toolRequired){
 		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 		    			blockDropChange = true;
@@ -181,10 +181,10 @@ public class DCBlockListener extends BlockListener {
 	    			for(int id:e.tools){
 		    			if(id == toolId) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - old:"+durability);
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC2: affected durability of a tool - old:"+durability);
 		    				tool.setDurability((short) (durability + Util.randomAmount(effectAmount)));
 		    			//if you use the tool on a non-dropping block it doesn't take special durability damage
-		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: affected durability of a tool - new:"+tool.getDurability());
+		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: affected durability of a tool - new:"+tool.getDurability());
 		    				Util.toolChecker(player);
 		    			}
 		    		}

@@ -84,7 +84,7 @@ public class Dwarf {
 		int i = 0;
 		
 		//Creates an ordered list of skill levels and finds where in that list the skill is (what quartile)
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skill ordering for quartiles");
+		if (DwarfCraft.debugMessagesThreshold < 0) System.out.println("DC0: starting skill ordering for quartiles");
 		for (Skill s:skills){
 			if(s==null)continue;
 			if (s.level > 5){

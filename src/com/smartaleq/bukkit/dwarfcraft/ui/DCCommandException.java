@@ -43,7 +43,7 @@ public class DCCommandException extends Throwable{
 		else if (type == Type.TOOFEWARGS) Out.sendMessage(sender, "You gave too few arguments, use:");
 		else if (type == Type.TOOMANYARGS) Out.sendMessage(sender, "You gave too many arguments");
 		else if (type == Type.TOOMANYARGS) Out.sendMessage(sender, "You gave too many arguments");
-		else System.out.println(type);
+		else System.out.println("Unhandled DCCommandException: " +type);
 	}
 	
 }

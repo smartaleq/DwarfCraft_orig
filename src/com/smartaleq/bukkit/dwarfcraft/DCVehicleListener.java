@@ -26,14 +26,14 @@ public class DCVehicleListener extends VehicleListener{
     
     public void onVehicleEnter(VehicleEnterEvent event) {
     	DataManager.vehicleList.add(new DwarfVehicle(event.getVehicle()));
-    	System.out.println("Added DwarfVehicle to vehicleList");
+    	if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6:Added DwarfVehicle to vehicleList");
     }
        
     public void onVehicleExit(VehicleExitEvent event) {
     	for ( DwarfVehicle i : DataManager.vehicleList ) {
     		if ( i.vehicle.equals(event.getVehicle())) {
     			DataManager.vehicleList.remove(i);
-    			System.out.println("Removed DwarfVehicle from vehicleList");
+    			if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("DC5:Removed DwarfVehicle from vehicleList");
     		}
     	}
     }

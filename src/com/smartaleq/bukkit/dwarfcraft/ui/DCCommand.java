@@ -23,7 +23,7 @@ public class DCCommand extends Command{
 	 * 
 	 */
 	public boolean execute(CommandSender sender, String commandLabel, String[] args){
-		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started execute");
+		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started execute");
 		String commandName = getName();
 		this.sender = sender;
 		
@@ -40,27 +40,27 @@ public class DCCommand extends Command{
 		List<Object> outputList = null;
 		try {
 			if (commandName.equalsIgnoreCase("debug")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'debug'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'debug'");
 				if(!sender.isOp()) throw new DCCommandException(Type.NEEDPERMISSIONS);
 				Integer i = 0;
 				desiredArguments.add(i);
 				outputList = parser.parse(desiredArguments, false);
 				debug((Integer) outputList.get(0));	return true;
 			} else if (commandName.equalsIgnoreCase("dchelp")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'help'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'help'");
 				//put in parser for command string in arg[0]
 				Out.sendMessage(sender, Messages.GeneralInfo); 
 				return true;
 			} else if (commandName.equalsIgnoreCase("info")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'info'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'info'");
 				outputList = parser.parse(desiredArguments, false);
 				Out.info(sender); return true;
 			} else if (commandName.equalsIgnoreCase("rules")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'rules'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'rules'");
 				outputList = parser.parse(desiredArguments, false);
 				Out.rules(sender); return true;
 			} else if (commandName.equalsIgnoreCase("tutorial")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'tutorial'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'tutorial'");
 				int page = 0;
 				desiredArguments.add(page);
 				try{
@@ -75,10 +75,10 @@ public class DCCommand extends Command{
 				Out.tutorial(sender, page); return true;
 			} 
 //			else if (commandName.equalsIgnoreCase("commandlist")) {
-//				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'commandlist'");
+//				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'commandlist'");
 //				outputList = parser.parse(desiredArguments);} 
 			else if (commandName.equalsIgnoreCase("skillsheet")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'skillsheet'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'skillsheet'");
 				boolean printFull = false;
 				if (args.length == 0 && sender instanceof Player) {
 					Out.printSkillSheet(Dwarf.find((Player) sender), sender, ((Player) sender).getName() , printFull);
@@ -110,7 +110,7 @@ public class DCCommand extends Command{
 				Out.printSkillSheet(dwarf, sender, displayName, printFull);
 				return true;
 			} else if (commandName.equalsIgnoreCase("skillinfo")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'skillinfo'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'skillinfo'");
 				Dwarf dwarf = new Dwarf(null);
 				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0, 0, null, 0, 0, null);
 				desiredArguments.add(dwarf);
@@ -134,7 +134,7 @@ public class DCCommand extends Command{
 				Out.printSkillInfo(sender, skill, dwarf, 31);
 				return true;
 			} else if (commandName.equalsIgnoreCase("effectinfo")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'effectinfo'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'effectinfo'");
 				Dwarf dwarf = new Dwarf(null);
 				Effect effect = new Effect(0, 0, 0, 0, 0, 0, false, false, 0, 0, 0, 0, null, 0, 0, false, null);
 				desiredArguments.add(dwarf);
@@ -158,7 +158,7 @@ public class DCCommand extends Command{
 				Out.effectInfo(sender, dwarf, effect);
 				return true;
 			} else if (commandName.equalsIgnoreCase("race")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'race'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1#: started command 'race'");
 				if(args.length==0 && sender instanceof Player) Out.race((Player)sender);
 				Dwarf dwarf = new Dwarf(null);
 				String newRace = "newRace";
@@ -189,24 +189,24 @@ public class DCCommand extends Command{
 				}
 				race(isElf, confirmed, dwarf);
 			} else if (commandName.equalsIgnoreCase("setskill")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'setskill'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'setskill'");
 				setSkill(null, commandName, null, 0);
 				return true;
 			} else if (commandName.equalsIgnoreCase("creategreeter")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'creategreeter'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'creategreeter'");
 				
 				if(!(sender.isOp())) throw new DCCommandException(Type.NEEDPERMISSIONS);
 				String uniqueId= "UniqueIdAdd";
 				String name= "Name";
 				String greeterMessage = "GreeterMessage";
-				Player player = null;
-				desiredArguments.add(player); 
+				Dwarf dwarf = new Dwarf(null);
+				desiredArguments.add(dwarf); 
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(greeterMessage);
 				try{
 					outputList = parser.parse(desiredArguments, false);
-					player = (Player) outputList.get(0);
+					dwarf = (Dwarf) outputList.get(0);
 					uniqueId = (String) outputList.get(1);
 					name = (String) outputList.get(2);
 					greeterMessage = (String) outputList.get(3);
@@ -219,27 +219,29 @@ public class DCCommand extends Command{
 						uniqueId = (String) outputList.get(0);
 						name = (String) outputList.get(1);
 						greeterMessage = (String) outputList.get(2);
-						player = (Player) sender;
+						dwarf = (Dwarf) sender;
 					}else throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(player, uniqueId, name, null, null, greeterMessage, true);
+				DwarfTrainer d = new DwarfTrainer(dwarf.player, uniqueId, name, null, null, greeterMessage, true);
 				DataManager.insertTrainer(d);
 				return true;
 			} else if (commandName.equalsIgnoreCase("createtrainer")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'createtrainer'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'createtrainer'");
 				if(!(sender.isOp())) throw new DCCommandException(Type.NEEDPERMISSIONS);
-				String uniqueId= null;
-				String name = null;
+				String uniqueId= "UniqueIdAdd";
+				String name = "Name";
 				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0, 0, null, 0, 0, null);
-				Integer maxSkill = 0;
-				Player player = null;
-				desiredArguments.add(player); 
+				Integer maxSkill = 1;
+				Dwarf dwarf = new Dwarf(null);
+				desiredArguments.add(dwarf); 
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
+				desiredArguments.add(skill);
 				desiredArguments.add(maxSkill);
+				if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("DC4: Command looking for argument count:" + desiredArguments.size());
 				try{
 					outputList = parser.parse(desiredArguments, false);
-					player = (Player) outputList.get(0);
+					dwarf = (Dwarf) outputList.get(0);
 					uniqueId = (String) outputList.get(1);
 					name = (String) outputList.get(2);
 					skill = (Skill) outputList.get(3);
@@ -254,22 +256,22 @@ public class DCCommand extends Command{
 						name = (String) outputList.get(1);
 						skill = (Skill) outputList.get(2);
 						maxSkill = (Integer) outputList.get(3);
-						player = (Player) sender;
+						dwarf = Dwarf.find((Player)sender);
 					} else throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(player, uniqueId, name, skill.getId(), maxSkill, null, false);
+				DwarfTrainer d = new DwarfTrainer(dwarf.player, uniqueId, name, skill.getId(), maxSkill, null, false);
 				DataManager.insertTrainer(d);
 				return true;
 			} else if (commandName.equalsIgnoreCase("removetrainer")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'removetrainer'");
-				String trainerId = null;
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'removetrainer'");
+				String trainerId = "UniqueIDRmv";
 				desiredArguments.add(trainerId);
 				outputList = parser.parse(desiredArguments, false);
 				trainerId = (String) outputList.get(0);
 				DataManager.removeTrainer(trainerId); 
 				return true;
 			} else if (commandName.equalsIgnoreCase("listtrainers")) {
-				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("Debug Message: started command 'listtrainers'");
+				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'listtrainers'");
 				outputList = parser.parse(desiredArguments, false);
 				Out.printTrainerList(sender); 
 				return true;
