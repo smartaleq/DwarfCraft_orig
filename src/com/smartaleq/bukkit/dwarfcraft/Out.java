@@ -1,4 +1,4 @@
-package com.smartaleq.bukkit.dwarfcraft.ui;
+package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.Iterator;
 import java.util.List;
@@ -7,14 +7,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import com.smartaleq.bukkit.dwarfcraft.ConfigManager;
-import com.smartaleq.bukkit.dwarfcraft.DataManager;
-import com.smartaleq.bukkit.dwarfcraft.Dwarf;
-import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
-import com.smartaleq.bukkit.dwarfcraft.DwarfTrainer;
-import com.smartaleq.bukkit.dwarfcraft.Effect;
-import com.smartaleq.bukkit.dwarfcraft.Skill;
-import com.smartaleq.bukkit.dwarfcraft.Util;
 
 public class Out {
 	

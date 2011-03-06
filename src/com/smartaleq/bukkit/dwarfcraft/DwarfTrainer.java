@@ -9,7 +9,6 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.World;
-import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.*;
 

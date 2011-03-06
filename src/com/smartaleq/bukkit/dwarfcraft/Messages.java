@@ -1,4 +1,4 @@
-package com.smartaleq.bukkit.dwarfcraft.ui;
+package com.smartaleq.bukkit.dwarfcraft;
 
 public class Messages {
 	

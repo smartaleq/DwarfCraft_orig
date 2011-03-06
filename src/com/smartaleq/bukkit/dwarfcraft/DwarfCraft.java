@@ -10,8 +10,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
-import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
-import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package com.smartaleq.bukkit.dwarfcraft.ui;
+package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.smartaleq.bukkit.dwarfcraft.ConfigManager;
-import com.smartaleq.bukkit.dwarfcraft.DataManager;
-import com.smartaleq.bukkit.dwarfcraft.Dwarf;
-import com.smartaleq.bukkit.dwarfcraft.Effect;
-import com.smartaleq.bukkit.dwarfcraft.Skill;
-import com.smartaleq.bukkit.dwarfcraft.ui.DCCommandException.Type;
-import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
+import com.smartaleq.bukkit.dwarfcraft.DCCommandException.Type;
 
 public class CommandParser {
 	private final DwarfCraft plugin;

@@ -1,7 +1,6 @@
-package com.smartaleq.bukkit.dwarfcraft.ui;
+package com.smartaleq.bukkit.dwarfcraft;
 
 import org.bukkit.command.CommandSender;
-import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 
 public class DCCommandException extends Throwable{
 	

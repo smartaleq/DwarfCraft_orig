@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
-import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
 
 public class ConfigManager {
 
