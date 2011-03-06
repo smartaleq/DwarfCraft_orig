@@ -19,8 +19,10 @@ import org.bukkit.inventory.ItemStack;
  * 
  */
 public class DCBlockListener extends BlockListener {
-	 
+	private final DwarfCraft plugin;
+	
 	public DCBlockListener(final DwarfCraft plugin) {
+		this.plugin = plugin;
 	}
  
   /**
@@ -30,7 +32,7 @@ public class DCBlockListener extends BlockListener {
     	if (DwarfCraft.disableEffects) return;
     //General information
     	Player player = event.getPlayer();
-    	Dwarf dwarf = Dwarf.find(player);
+    	Dwarf dwarf = plugin.getDataManager().find(player);
     	List<Skill> skills = dwarf.skills;
     	
    	//Effect Specific information
@@ -72,7 +74,7 @@ public class DCBlockListener extends BlockListener {
     	if (DwarfCraft.disableEffects) return;
      //General information
     	Player player = event.getPlayer();
-    	Dwarf dwarf = Dwarf.find(player);
+    	Dwarf dwarf = plugin.getDataManager().find(player);
     	List<Skill> skills = dwarf.skills;
     	
    	//Effect Specific information
@@ -138,7 +140,7 @@ public class DCBlockListener extends BlockListener {
     	if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC0: on block break called");
     //General information
     	Player player = event.getPlayer();
-    	Dwarf dwarf = Dwarf.find(player);
+    	Dwarf dwarf = plugin.getDataManager().find(player);
     	List<Skill> skills = dwarf.skills;
     	
    	//Effect Specific information

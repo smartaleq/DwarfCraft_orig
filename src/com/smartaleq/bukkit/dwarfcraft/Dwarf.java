@@ -10,53 +10,26 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class Dwarf {
-
+	private final DwarfCraft plugin;
 	public List <Skill> skills;
-	public boolean isElf;
+	private boolean isElf;
 	public Player player;
 		
-	public Dwarf(Player whoami) {
+	public Dwarf(final DwarfCraft plugin, Player whoami) {
+		this.plugin = plugin;
 		player = whoami;
+		isElf = false;
 	}
 	
-	/**
-	 * Finds a dwarf from the server's static list based on player's name
-	 * @param player
-	 * @return dwarf or null
-	 */
-	public static Dwarf find(Player player) {
-		for(Dwarf d:DataManager.getDwarves()) {
-			if (d != null)
-				if (d.player != null)
-					if (d.player.getName().equalsIgnoreCase(player.getName()))
-						return d;
-		}
-		return null;
-	}
-
-	public static Dwarf findOffline(String name) {
-		Dwarf dwarf = createDwarf(null);
-		if(DataManager.getDwarfData(dwarf, name)) return dwarf;
-		else{
-			//No dwarf or data found
-			return null;
-		}
-	}
-
-	public static Dwarf createDwarf(Player player){
-		Dwarf newDwarf = new Dwarf(player);
-		newDwarf.isElf = false;
-		newDwarf.skills = ConfigManager.getAllSkills();
-		for (Skill skill:newDwarf.skills) if(skill != null) skill.level = 0;
-		if(player!=null) DataManager.dwarves.add(newDwarf);
-		return newDwarf;
-	}
-
 	/** 
 	 * Removes a Dwarf from the database. Only used for debugging/banning.
 	 */
 	void remove(){
-		DataManager.removeDwarf(this);
+		plugin.getDataManager().removeDwarf(this);
+	}
+	
+	protected void setElf(boolean elf) {
+		isElf = elf;
 	}
 	
 	/**
@@ -142,7 +115,7 @@ public class Dwarf {
 		if (isElf) return false;
 		isElf = true;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this);
+		plugin.getDataManager().saveDwarfData(this);
 		return isElf;
 	}
 	
@@ -152,7 +125,7 @@ public class Dwarf {
 	public boolean makeElfIntoDwarf(){
 		isElf = false;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this);
+		plugin.getDataManager().saveDwarfData(this);
 		return true;
 	}
 	

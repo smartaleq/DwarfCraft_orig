@@ -78,7 +78,7 @@ public class Effect {
 		double effectAmount = baseValue;
 		int skillLevel;
 		skillLevel = dwarf.skillLevel(this.id/10);
-		if (dwarf.isElf || skillLevel == -1) skillLevel = this.elfEffectLevel;
+		if (dwarf.isElf() || skillLevel == -1) skillLevel = this.elfEffectLevel;
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
 		if (floorResult) effectAmount = Math.floor(effectAmount);

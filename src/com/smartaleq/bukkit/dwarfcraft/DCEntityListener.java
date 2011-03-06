@@ -20,9 +20,10 @@ import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
 
 
 public class DCEntityListener extends EntityListener {
+	private final DwarfCraft plugin;
 
-
-	public DCEntityListener(final DwarfCraft plugin) {
+	public DCEntityListener(DwarfCraft plugin) {
+		this.plugin = plugin;
 	}
 
 	public void onEntityDamage(EntityDamageEvent event){
@@ -64,7 +65,7 @@ public class DCEntityListener extends EntityListener {
         //General information
        	if(!(event.getEntity() instanceof Player)) return;
        	Player player = (Player) event.getEntity();
-       	Dwarf dwarf = Dwarf.find(player);
+       	Dwarf dwarf = plugin.getDataManager().find(player);
        	List<Skill> skills = dwarf.skills;
        	
        	int damage = event.getDamage();
@@ -109,7 +110,7 @@ public class DCEntityListener extends EntityListener {
     	}
     	int damage = event.getDamage();
     	int hp = victim.getHealth();    	
-    	if(damager instanceof Player) attacker = Dwarf.find((Player)damager);
+    	if(damager instanceof Player) attacker = plugin.getDataManager().find((Player)damager);
     	//EvP no effects, EvE no effects
     	else {
     		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("DC4: EVP "+damager.getClass().getSimpleName() + " attacked "  + victim.getClass().getSimpleName() +" for " + damage + " of "+ hp);
@@ -164,7 +165,7 @@ public class DCEntityListener extends EntityListener {
     public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
     	if (DwarfCraft.disableEffects) return;
     	if(!(event.getDamager() instanceof Player)) return;
-    	Dwarf dwarf = Dwarf.find((Player) event.getDamager());
+    	Dwarf dwarf = plugin.getDataManager().find((Player) event.getDamager());
     	LivingEntity hitThing = ((LivingEntity) event.getEntity());
     	int hp = hitThing.getHealth();
     	double damage;
@@ -245,7 +246,7 @@ public class DCEntityListener extends EntityListener {
     
     public boolean checkDwarfTrainer(EntityDamageByEntityEvent event) {
     	// all we know right now is that event.entity instanceof HumanEntity
-    	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity());
+    	DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getEntity());
    		if ( trainer != null ) {
    			if ( event.getDamager() instanceof Player ) {
    				// 	in business, left click
@@ -255,10 +256,10 @@ public class DCEntityListener extends EntityListener {
    				else {
    					trainer.lookAt(event.getDamager());
    					Player player = (Player) event.getDamager();
-   					Dwarf dwarf = Dwarf.find(player);
+   					Dwarf dwarf = plugin.getDataManager().find(player);
    					Skill skill = dwarf.getSkill(trainer.getSkillTrained());
    					int maxSkill = trainer.getMaxSkill();
-   					Out.printSkillInfo(player, skill, dwarf, maxSkill);
+   					plugin.getOut().printSkillInfo(player, skill, dwarf, maxSkill);
    				}
    			}
 			return true;
@@ -268,8 +269,8 @@ public class DCEntityListener extends EntityListener {
     
     public boolean checkDwarfTrainer(NpcEntityTargetEvent event) { // will be used for right clicks, move, touch, etc
     	try {
-    		Dwarf dwarf = Dwarf.find(((Player)event.getTarget()));
-    	   	DwarfTrainer trainer = DataManager.getTrainer(event.getEntity()); 
+    		Dwarf dwarf = plugin.getDataManager().find(((Player)event.getTarget()));
+    	   	DwarfTrainer trainer = plugin.getDataManager().getTrainer(event.getEntity()); 
        		if ( trainer != null ) {
     			if ( event.getTarget() instanceof Player ) {
     				// in business

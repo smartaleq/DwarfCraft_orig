@@ -15,8 +15,8 @@ import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 public class DCPlayerListener extends PlayerListener {
 	private final DwarfCraft plugin;
 	
-	public DCPlayerListener(final DwarfCraft instance) {
-		plugin = instance;
+	public DCPlayerListener(final DwarfCraft plugin) {
+		this.plugin = plugin;
 	}
    	
 /**
@@ -33,14 +33,14 @@ public class DCPlayerListener extends PlayerListener {
 	 */
 	public void onPlayerJoin(PlayerEvent event){
 		Player player = event.getPlayer();
-		Dwarf dwarf = Dwarf.find(player);
+		Dwarf dwarf = plugin.getDataManager().find(player);
 		if (dwarf == null) {
-			dwarf = Dwarf.createDwarf(player);
+			dwarf = plugin.getDataManager().createDwarf(player);
 		}
-		if (!DataManager.getDwarfData(dwarf)) {
-			DataManager.createDwarfData(dwarf);
+		if (!plugin.getDataManager().getDwarfData(dwarf)) {
+			plugin.getDataManager().createDwarfData(dwarf);
 		}
-		Out.welcome(plugin.getServer(), dwarf);
+		plugin.getOut().welcome(plugin.getServer(), dwarf);
 	}
 	
     /**
@@ -52,7 +52,7 @@ public class DCPlayerListener extends PlayerListener {
     public void onPlayerItem(PlayerItemEvent event) {
     	 //General information
     	Player player = event.getPlayer();
-    	Dwarf dwarf = Dwarf.find(player);
+    	Dwarf dwarf = plugin.getDataManager().find(player);
     	List<Skill> skills = dwarf.skills;
     	boolean hadEffect = false;
    	//Effect Specific information

@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
 import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
+import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 /**
  * 
@@ -33,9 +34,11 @@ private final DCBlockListener	blockListener 	= new DCBlockListener(this);
 private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
-private final DCWorldListener 	worldListener 	= new DCWorldListener();
+private final DCWorldListener 	worldListener 	= new DCWorldListener(this);
 private final DCCraftListener	craftListener	= new DCCraftListener(this);
-
+private ConfigManager cm;
+private DataManager dm; 
+private Out out;
 public static int debugMessagesThreshold = 0;
 public static boolean disableEffects = false;
 
@@ -68,18 +71,21 @@ public static boolean disableEffects = false;
 		
 		pm.registerEvent(Event.Type.BLOCK_INTERACT, craftListener, Priority.Normal, this);
 				
-		ConfigManager cm = new ConfigManager("./plugins/DwarfCraft/", "DwarfCraft.config");
+		cm = new ConfigManager(this, "./plugins/DwarfCraft/", "DwarfCraft.config");
+		dm = new DataManager(this, cm);
+		out = new Out(this);
+		
 		cm.readConfigFile();
 		if(!cm.readSkillsFile() || !cm.readEffectsFile() || !cm.readMessagesFile() || !cm.readGreeterMessagesfile()){
 			System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			pm.disablePlugin(this); //TODO failed to init skills
 		
 		}
-		DataManager.dbInitialize();
+		dm.dbInitialize();
 		
 		for ( Iterator<World> i = getServer().getWorlds().iterator(); i.hasNext(); ) {
 			World w = i.next();
-			DataManager.populateTrainers(w);
+			dm.populateTrainers(w);
 		}	
 				
 	    PluginDescriptionFile pdfFile = this.getDescription();
@@ -96,9 +102,14 @@ public static boolean disableEffects = false;
 		 */
 	}
 	
+	// TODO: make these protected
+	public Out getOut() { return out; }
+	public DataManager getDataManager() { return dm; }
+	public ConfigManager getConfigManager() { return cm; }
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args){
-		DCCommand cmd = new DCCommand(command.getName());
+		DCCommand cmd = new DCCommand(this, command.getName());
 		return cmd.execute(sender, commandLabel, args);
 	}
 	

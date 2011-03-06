@@ -10,24 +10,26 @@ import com.smartaleq.bukkit.dwarfcraft.ui.Messages;
 
 public class ConfigManager {
 
-	public ConfigManager(String directory, String paramsFileName){
+	private DwarfCraft plugin;
+	
+	public ConfigManager(DwarfCraft plugin, String directory, String paramsFileName){
+		this.plugin = plugin; 
 		configDirectory = directory;
 		configMainFileName = paramsFileName;
 	}
 	
 	private String configDirectory;
 	private String configMainFileName;
-	
 	private String configSkillsFileName;
-	public static int configSkillsVersion;
+	private int configSkillsVersion;
 	private String configEffectsFileName;
-	public static int configEffectsVersion;
+	private int configEffectsVersion;
 	private String configMessagesFileName;
 	private String configGreeterMessagesFileName;
-	static String dbpath;
+	private String dbpath;
+	private List<Skill> skillsArray = new ArrayList<Skill>();
 	
-	
-	private static List<Skill> skillsArray = new ArrayList<Skill>();
+	protected int getConfigSkillsVersion() { return configSkillsVersion; }
 	
 	private void getDefaultValues() {
 		if (configSkillsVersion == 0) configSkillsVersion = 100;
@@ -78,6 +80,8 @@ public class ConfigManager {
 		}
 		return true;
 	}
+	
+	public String getDbPath() { return dbpath; }
 	
 	public boolean readSkillsFile(){
 		String line = "";
@@ -240,7 +244,7 @@ public class ConfigManager {
 				leftClick = br.readLine().trim();
 				rightClick = br.readLine().trim();
 
-				DataManager.insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
+				plugin.getDataManager().insertGreeterMessage(messageId, new GreeterMessage(leftClick, rightClick));
 				messageId = br.readLine();
 			}
 		}
@@ -256,7 +260,7 @@ public class ConfigManager {
 
 	}
 	
-	public static List<Skill> getAllSkills() {
+	public List<Skill> getAllSkills() {
 		List<Skill> newSkillsArray = new ArrayList<Skill>();
 		for (Skill s: skillsArray){
 			newSkillsArray.add(s.clone());

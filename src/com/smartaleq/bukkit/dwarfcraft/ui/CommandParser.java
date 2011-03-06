@@ -12,13 +12,16 @@ import com.smartaleq.bukkit.dwarfcraft.Dwarf;
 import com.smartaleq.bukkit.dwarfcraft.Effect;
 import com.smartaleq.bukkit.dwarfcraft.Skill;
 import com.smartaleq.bukkit.dwarfcraft.ui.DCCommandException.Type;
+import com.smartaleq.bukkit.dwarfcraft.DwarfCraft;
 
 public class CommandParser {
-	
+	private final DwarfCraft plugin;
 	private CommandSender sender;
 	private String[] input;
 	private Dwarf target = null;
-	public CommandParser(CommandSender sender, String[] args){
+	
+	public CommandParser(final DwarfCraft plugin, CommandSender sender, String[] args){
+		this.plugin = plugin;
 		this.sender = sender;
 		this.input = args;
 	}
@@ -45,18 +48,18 @@ public class CommandParser {
 			}
 		}
 		catch (ArrayIndexOutOfBoundsException e){
-			throw new DCCommandException(Type.TOOFEWARGS);
+			throw new DCCommandException(plugin, Type.TOOFEWARGS);
 		}
-		if (input.length>output.size()&&!ignoreSize) throw new DCCommandException(Type.TOOMANYARGS);
-		if (input.length<output.size()&&!ignoreSize) throw new DCCommandException(Type.TOOFEWARGS);
-		for(Object o:output) if (o==null) throw new DCCommandException();
+		if (input.length>output.size()&&!ignoreSize) throw new DCCommandException(plugin, Type.TOOMANYARGS);
+		if (input.length<output.size()&&!ignoreSize) throw new DCCommandException(plugin, Type.TOOFEWARGS);
+		for(Object o:output) if (o==null) throw new DCCommandException(plugin);
 		return output;
 	}
 	
 	private Boolean parseRace(int arrayIterator) throws DCCommandException {
 		if (input[arrayIterator].equalsIgnoreCase("elf")) return true;
 		else if (input[arrayIterator].equalsIgnoreCase("dwarf")) return false;
-		else throw new DCCommandException(Type.PARSERACEFAIL);
+		else throw new DCCommandException(plugin, Type.PARSERACEFAIL);
 	}
 
 	private Object parseConfirm(int arrayIterator) {
@@ -67,14 +70,14 @@ public class CommandParser {
 
 	private Object parsePlayer(int arrayIterator) throws DCCommandException {
 		Player player = sender.getServer().getPlayer(input[arrayIterator]);
-		if (player == null) throw new DCCommandException(Type.PARSEPLAYERFAIL);
+		if (player == null) throw new DCCommandException(plugin, Type.PARSEPLAYERFAIL);
 		return null;
 	}
 
 	private Object parseUniqueId(int arrayIterator, boolean add) throws DCCommandException {
 		String uniqueId = input[arrayIterator];
-		if ( DataManager.getTrainer(uniqueId) != null && add ) throw new DCCommandException(Type.NPCIDINUSE);
-		if ( DataManager.getTrainer(uniqueId) == null && !add ) throw new DCCommandException(Type.NPCIDNOTFOUND);
+		if ( plugin.getDataManager().getTrainer(uniqueId) != null && add ) throw new DCCommandException(plugin, Type.NPCIDINUSE);
+		if ( plugin.getDataManager().getTrainer(uniqueId) == null && !add ) throw new DCCommandException(plugin, Type.NPCIDNOTFOUND);
 		return uniqueId;
 	}
 
@@ -84,7 +87,7 @@ public class CommandParser {
 	}
 
 	private String parseGreeterId(int arrayIterator) throws DCCommandException {
-		if ( DataManager.getGreeterMessage(input[arrayIterator]) == null ) throw new DCCommandException(Type.NOGREETERMESSAGE);
+		if ( plugin.getDataManager().getGreeterMessage(input[arrayIterator]) == null ) throw new DCCommandException(plugin, Type.NOGREETERMESSAGE);
 		String greeterMessage = input[arrayIterator];
 		return greeterMessage;
 	}
@@ -95,7 +98,7 @@ public class CommandParser {
 			i = Integer.parseInt(input[argNumber]);
 		}
 		catch(NumberFormatException nfe){
-			throw new DCCommandException(Type.PARSEINTFAIL);
+			throw new DCCommandException(plugin, Type.PARSEINTFAIL);
 		}		
 		return i;
 	}
@@ -107,11 +110,11 @@ public class CommandParser {
 			String dwarfName = input[argNumber];
 			player = sender.getServer().getPlayer(dwarfName);
 			if (player != null && player.isOnline())
-				dwarf = Dwarf.find(player);
+				dwarf = plugin.getDataManager().find(player);
 			else if(player == null || !player.isOnline())
-				dwarf = Dwarf.findOffline(dwarfName);
+				dwarf = plugin.getDataManager().findOffline(dwarfName);
 			if (dwarf == null) {
-				throw new DCCommandException(Type.PARSEDWARFFAIL);
+				throw new DCCommandException(plugin, Type.PARSEDWARFFAIL);
 			}
 			this.target = dwarf;
 			return dwarf;
@@ -121,10 +124,10 @@ public class CommandParser {
 				String[] fakeInput = new String[input.length+1];
 				for(int i = 0; i<input.length;i++) fakeInput[i]= input[i];
 				input = fakeInput;
-				this.target = Dwarf.find((Player) sender);
+				this.target = plugin.getDataManager().find((Player) sender);
 				return target;
 			}
-			else throw new DCCommandException(Type.CONSOLECANNOTUSE);
+			else throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
 		}
 		
 	}
@@ -136,10 +139,10 @@ public class CommandParser {
 			level = Integer.parseInt(inputString);
 		}
 		catch(NumberFormatException nfe) {
-			throw new DCCommandException(Type.PARSELEVELFAIL);
+			throw new DCCommandException(plugin, Type.PARSELEVELFAIL);
 		}
 		if (level >30 || level <-1){
-			throw new DCCommandException(Type.LEVELOUTOFBOUNDS);
+			throw new DCCommandException(plugin, Type.LEVELOUTOFBOUNDS);
 		}
 		return level;
 	}
@@ -149,19 +152,19 @@ public class CommandParser {
 		String inputString = input[argNumber];
 		int skillID;
 		if (!(sender instanceof Player)) {
-			for(Skill s:ConfigManager.getAllSkills()){
+			for(Skill s:plugin.getConfigManager().getAllSkills()){
 				try{
 					skillID = Integer.parseInt(inputString);
 					if (s.id == skillID) return s;
 				}
 				catch(NumberFormatException nfe){
-					if (inputString.length()<5) throw new DCCommandException(Type.PARSESKILLFAIL);
+					if (inputString.length()<5) throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
 					if (s.displayName.regionMatches(0, inputString, 0, 5)) return s;
 				}
 			}
-			throw new DCCommandException(Type.PARSESKILLFAIL);
+			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
 		}
-		if (target == null) target = Dwarf.find((Player)sender);
+		if (target == null) target = plugin.getDataManager().find((Player)sender);
 		try{				
 			try{
 				skillID = Integer.parseInt(inputString);
@@ -172,9 +175,9 @@ public class CommandParser {
 			}
 		}
 		catch (NullPointerException npe){
-			throw new DCCommandException(Type.EMPTYPLAYER);
+			throw new DCCommandException(plugin, Type.EMPTYPLAYER);
 		}		
-		if (skill == null) throw new DCCommandException(Type.PARSESKILLFAIL);
+		if (skill == null) throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
 		return skill;
 	}
 	
@@ -188,12 +191,12 @@ public class CommandParser {
 			effect = target.getEffect(effectId);
 		}
 		catch (NullPointerException npe){
-			throw new DCCommandException(Type.EMPTYPLAYER);
+			throw new DCCommandException(plugin, Type.EMPTYPLAYER);
 		}
 		catch(NumberFormatException nfe){
-			throw new DCCommandException(Type.PARSEEFFECTFAIL);
+			throw new DCCommandException(plugin, Type.PARSEEFFECTFAIL);
 		}		
-		if (effect==null) throw new DCCommandException(Type.PARSEEFFECTFAIL);
+		if (effect==null) throw new DCCommandException(plugin, Type.PARSEEFFECTFAIL);
 		return effect;
 	}
 }

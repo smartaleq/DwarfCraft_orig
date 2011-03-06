@@ -15,35 +15,39 @@ import java.util.Map;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.Material;
+import org.bukkit.entity.Vehicle;
 
 
 import redecouverte.npcspawner.NpcSpawner;
 
 public class DataManager {
 
-	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
-	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	public static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
-	static HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
+	private List <Dwarf> dwarves = new ArrayList <Dwarf>();
+	private List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
+	public HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
+	private HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
+	private final ConfigManager configManager;
+	private final DwarfCraft plugin;
 	
-	private static DwarfCraft plugin;
-	public DataManager(final DwarfCraft plugin) {
-		DataManager.plugin = plugin;
+	public DataManager(DwarfCraft plugin, ConfigManager cm) {
+		this.plugin = plugin;
+		this.configManager = cm;
 	}
  
 	
-	public static void dbInitialize() {
+	public void dbInitialize() {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+		      DriverManager.getConnection("jdbc:sqlite:" + configManager.getDbPath());
 		    Statement statement = conn.createStatement();
 		    ResultSet rs;
-		   	rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+ConfigManager.configSkillsVersion+"';");
+		   	rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+ configManager.getConfigSkillsVersion()+ "';");
 			rs.next();
 			if (rs.isClosed()) { //if current version table doesn't exist
-				for(int versionNumber=ConfigManager.configSkillsVersion-1;versionNumber>=100;versionNumber--){ // a is number of past versions to look for
+				for(int versionNumber=configManager.getConfigSkillsVersion()-1;versionNumber>=100;versionNumber--){ // a is number of past versions to look for
 					rs = statement.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"+versionNumber+"';");
 					rs.next();
 					if (!rs.isClosed()){ //if there is a recent past table, use it to build the new table
@@ -72,11 +76,11 @@ public class DataManager {
 	 * Just praying it works - joey
 	 * @param oldVersion
 	 */
-	public static void buildDB(int oldVersion) {
+	public void buildDB(int oldVersion) {
     	try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			  DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+			  DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 			Statement statement = conn.createStatement();
 			ResultSet rs1;
 			ResultSet rs2;
@@ -89,8 +93,8 @@ public class DataManager {
 			rs1.close();
 			//Create the new table based on current version of skills file
 			String skillTableCreater = "";
-			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
-			String tableCreateSQL = "create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");";
+			for (Skill s:configManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
+			String tableCreateSQL = "create table dwarfs"+configManager.getConfigSkillsVersion()+" (playername,iself" + skillTableCreater + ");";
 			statement.executeUpdate(tableCreateSQL);
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}
@@ -101,10 +105,10 @@ public class DataManager {
 			
 			rs3 = statement.executeQuery("select * from dwarfs"+oldVersion);
 			
-			String sqlLine1 = "insert into dwarfs"+ConfigManager.configSkillsVersion+" (playername, iself";
+			String sqlLine1 = "insert into dwarfs"+configManager.getConfigSkillsVersion()+" (playername, iself";
 			String sqlLine2=") values (?,?";
 	    	
-			List<Skill> tempSkills = ConfigManager.getAllSkills();
+			List<Skill> tempSkills = configManager.getAllSkills();
 			for (Skill s: tempSkills ){
 				if (schema.contains(s.toString())){
 					s.level = 1;
@@ -140,21 +144,75 @@ public class DataManager {
 		}
 	}
 	
-	public static void updateDwarfsTable(){
+	public void updateDwarfsTable(){
 		//TODO when table is not right size, resize it
 		//add columns or:
 		
 		//remove columns
 	}
 	
-	public static void createDwarfData(Dwarf dwarf) {
+	/**
+	 * Finds a dwarf from the server's static list based on player's name
+	 * @param player
+	 * @return dwarf or null
+	 */
+	public Dwarf find(Player player) {
+		for(Dwarf d:plugin.getDataManager().getDwarves()) {
+			if (d != null)
+				if (d.player != null)
+					if (d.player.getName().equalsIgnoreCase(player.getName()))
+						return d;
+		}
+		return null;
+	}
+
+	protected void addVehicle(DwarfVehicle v) { 
+		vehicleList.add(v);
+	}
+	
+	protected void removeVehicle(Vehicle v) {
+		for ( DwarfVehicle i : vehicleList ) {
+    		if ( i.equals(v)) {
+    			plugin.getDataManager().vehicleList.remove(i);
+    			if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("DC5:Removed DwarfVehicle from vehicleList");
+    		}
+		}
+	}
+	
+	protected DwarfVehicle getVehicle(Vehicle v) {
+		for ( DwarfVehicle i : vehicleList ) {
+    		if ( i.equals(v)) {
+    			return i;
+    		}
+		}
+		return null;
+	}
+	
+	public Dwarf findOffline(String name) {
+		Dwarf dwarf = createDwarf(null);
+		if(getDwarfData(dwarf, name)) return dwarf;
+		else{
+			//No dwarf or data found
+			return null;
+		}
+	}
+
+	public Dwarf createDwarf(Player player){
+		Dwarf newDwarf = new Dwarf(plugin, player);
+		newDwarf.skills = plugin.getConfigManager().getAllSkills();
+		for (Skill skill:newDwarf.skills) if(skill != null) skill.level = 0;
+		if(player!=null) dwarves.add(newDwarf);
+		return newDwarf;
+	}
+	
+	public void createDwarfData(Dwarf dwarf) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+	    		DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 	    	Statement statement = conn.createStatement();
-	    	String sql = "insert into dwarfs"+ConfigManager.configSkillsVersion+" (playername, iself";
-	    	List<Skill> allSkills = ConfigManager.getAllSkills();
+	    	String sql = "insert into dwarfs"+configManager.getConfigSkillsVersion()+" (playername, iself";
+	    	List<Skill> allSkills = configManager.getAllSkills();
 	    	for (Skill skill: allSkills){
 				if (skill != null) sql = sql.concat("," + skill.toString());
 			}
@@ -172,13 +230,13 @@ public class DataManager {
 	    }	    
 	}
 	
-	public static boolean saveDwarfData(Dwarf dwarf){
+	public boolean saveDwarfData(Dwarf dwarf){
 		try{
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+		      DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 		    Statement statement = conn.createStatement();
-	    	String sqlsend = "UPDATE dwarfs"+ConfigManager.configSkillsVersion+" SET iself='" + dwarf.isElf + "', "; 
+	    	String sqlsend = "UPDATE dwarfs"+configManager.getConfigSkillsVersion()+" SET iself='" + dwarf.isElf()+ "', "; 
 	    	for (Skill skill: dwarf.skills) 
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
@@ -193,19 +251,19 @@ public class DataManager {
 		}
 	}
 	
-	public static boolean getDwarfData(Dwarf dwarf){
+	public boolean getDwarfData(Dwarf dwarf){
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
-		      DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+		      DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 		    Statement statement = conn.createStatement();
 		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
-		    String query = "select * from dwarfs"+ConfigManager.configSkillsVersion+" WHERE playername = '" + dwarf.player.getName() + "';";
+		    String query = "select * from dwarfs"+configManager.getConfigSkillsVersion()+" WHERE playername = '" + dwarf.player.getName() + "';";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
 			System.out.println("DC: PlayerJoin success for " + dwarf.player.getName());
-			dwarf.isElf = rs.getBoolean("iself");
+			dwarf.setElf(rs.getBoolean("iself"));
 			for (Skill skill: dwarf.skills){
 				if (skill!=null) skill.level = rs.getInt(skill.toString());
 			}
@@ -224,15 +282,15 @@ public class DataManager {
 	 * @param dwarf
 	 * @param name
 	 */
-	public static boolean getDwarfData(Dwarf dwarf, String name){
+	public boolean getDwarfData(Dwarf dwarf, String name){
 		try {
 			String sanitizedName;			
 			sanitizedName = Util.sanitize(name);
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+			DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 			Statement statement = conn.createStatement();
-			ResultSet rs = statement.executeQuery("select * from dwarfs"+ConfigManager.configSkillsVersion+" where playername='" + sanitizedName + "';");
+			ResultSet rs = statement.executeQuery("select * from dwarfs"+configManager.getConfigSkillsVersion()+" where playername='" + sanitizedName + "';");
 		    if(rs == null) {
 		    	conn.close();
 		    	return false;
@@ -242,7 +300,7 @@ public class DataManager {
 				conn.close();
 				return false;
 			}
-			dwarf.isElf = rs.getBoolean("iself");
+			dwarf.setElf(rs.getBoolean("iself"));
 			for (Skill skill: dwarf.skills) {
 				if (skill!=null) skill.level = rs.getInt(skill.toString());
 			}
@@ -255,15 +313,15 @@ public class DataManager {
 			return false;
 		}
 	}
-	public static void removeDwarf(Dwarf dwarf) {
+	public void removeDwarf(Dwarf dwarf) {
 		// TODO removedwarf
 		
 	}
 
-	public static HashMap<String, DwarfTrainer> populateTrainers(World world) {
+	public HashMap<String, DwarfTrainer> populateTrainers(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
-		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 		    Statement statement = conn.createStatement();
 		    String query = "select * from trainers Where world='"+world.getName()+"';";
 			ResultSet rs = statement.executeQuery(query);
@@ -275,6 +333,7 @@ public class DataManager {
 					//if (DwarfCraft.debugMessagesThreshold < 7)
 						if(DwarfCraft.debugMessagesThreshold < 5) System.out.println("DC5: trainer:"+rs.getString("name")+" in world: "+world.getName());
 					DwarfTrainer trainer = new DwarfTrainer(
+						plugin,
 						world,							rs.getString("uniqueId"),
 						rs.getString("name"),			rs.getInt("skill"), 
 						rs.getInt("maxSkill"),			Material.getMaterial(rs.getInt("material")),
@@ -294,11 +353,11 @@ public class DataManager {
 		return trainerList;
 	}
 
-	public static List<Dwarf> getDwarves() {
+	public List<Dwarf> getDwarves() {
 		return dwarves;
 	}
 	
-	public static DwarfTrainer getTrainer(Entity entity) {
+	public DwarfTrainer getTrainer(Entity entity) {
 		// kind of ugly, could replace this with a hashmap, but i dont think the perf. gains will be very significant
 		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, DwarfTrainer> pairs = i.next();
@@ -309,18 +368,18 @@ public class DataManager {
 		return null;
 	}
 	
-	public static DwarfTrainer getTrainer(String str) {
+	public DwarfTrainer getTrainer(String str) {
 		return (trainerList.get(str)); // can return null
 	}
 	
-	public static void insertTrainer( DwarfTrainer d ) {
+	public void insertTrainer( DwarfTrainer d ) {
 		assert(d != null);
 		trainerList.put(d.getUniqueId(), d);
     	// SCHEMA(world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
-	    		DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+	    		DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 	    	PreparedStatement prep = conn.prepareStatement("insert into trainers values (?,?,?,?,?,?,?,?,?,?,?,?,?);");
 	    	prep.setString(1, d.getWorld().getName());
 	    	prep.setString(2, d.getUniqueId());
@@ -354,7 +413,7 @@ public class DataManager {
 		return;
 	}
 	
-	public static void removeTrainer( String str ) {
+	public void removeTrainer( String str ) {
 		DwarfTrainer d;
 		d = trainerList.remove(str);
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
@@ -362,7 +421,7 @@ public class DataManager {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
-			DriverManager.getConnection("jdbc:sqlite:"+ConfigManager.dbpath);
+			DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 			Statement statement = conn.createStatement();
 			statement.execute("delete from trainers where uniqueId='" + d.getUniqueId() + "';");
 			statement.close();
@@ -373,7 +432,7 @@ public class DataManager {
 		}
 	}
 	
-	public static void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
+	public void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
 		try {
 			greeterMessageList.put(messageId, greeterMessage);
 		}
@@ -382,7 +441,7 @@ public class DataManager {
 		}
 	}
 	
-	public static boolean checkTrainersInChunk(Chunk chunk) {
+	public boolean checkTrainersInChunk(Chunk chunk) {
 		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, DwarfTrainer> pairs = i.next();
 			DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
@@ -393,7 +452,7 @@ public class DataManager {
 		return false;
 	}
 	
-	public static GreeterMessage getGreeterMessage(String messageId) {
+	public GreeterMessage getGreeterMessage(String messageId) {
 		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
 	}

@@ -14,12 +14,15 @@ import ca.xshade.bukkit.towny.object.TownyIConomyObject;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 
 
-public class DCTowny extends TownyPlayerListener{
+public class DCTowny extends TownyPlayerListener {
 	
-	private final Towny plugin;
-	public DCTowny(Towny instance) {
-		super(instance);
-		plugin = instance;
+	private final Towny townyPlugin;
+	private final DwarfCraft dwarfCraftPlugin;
+	
+	public DCTowny(final Towny townyPlugin, final DwarfCraft dwarfCraftPlugin) {
+		super(townyPlugin);
+		this.townyPlugin = townyPlugin;
+		this.dwarfCraftPlugin = dwarfCraftPlugin;
 	}
 
 	public void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, int blockCost, boolean force) throws TownyException {
@@ -32,7 +35,7 @@ public class DCTowny extends TownyPlayerListener{
 		if (owner instanceof Town) {
 			Town town = (Town)owner;
 			int available = getDCMaxTownBlocks(town) - town.getTownBlocks().size();
-			plugin.sendDebugMsg("Claim Check Available: " + available);
+			townyPlugin.sendDebugMsg("Claim Check Available: " + available);
 			if (available - selection.size() < 0)
 				throw new TownyException("Not enough available town blocks to claim this selection.");
 		}
@@ -46,16 +49,16 @@ public class DCTowny extends TownyPlayerListener{
 		}
 	}
 	
-	public static int getDCMaxTownBlocks(Town town) {
+	public int getDCMaxTownBlocks(Town town) {
 		int residentTotal = 0;
 		int mayorMax = 5;
 		Resident mayor = town.getMayor();
-		Dwarf mayorDwarf = Dwarf.findOffline(mayor.getName());
+		Dwarf mayorDwarf = dwarfCraftPlugin.getDataManager().findOffline(mayor.getName());
 		mayorMax = (int) mayorDwarf.getEffect(920).getEffectAmount(mayorDwarf);
 		List<Resident> residentList = town.getResidents();
 		for(Resident r: residentList){
 			String residentName = r.getName();
-			Dwarf dwarf = Dwarf.findOffline(residentName);
+			Dwarf dwarf = dwarfCraftPlugin.getDataManager().findOffline(residentName);
 			residentTotal += dwarf.getEffect(910).getEffectAmount(dwarf);
 		}
 		

@@ -9,9 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.Location;
 
 public class DCVehicleListener extends VehicleListener{
+	private final DwarfCraft plugin;
 	
-    public DCVehicleListener(final DwarfCraft plugin) {
-
+    protected DCVehicleListener(final DwarfCraft plugin) {
+    	this.plugin = plugin;
     }
      
     /**
@@ -25,18 +26,13 @@ public class DCVehicleListener extends VehicleListener{
     }
     
     public void onVehicleEnter(VehicleEnterEvent event) {
-    	DataManager.vehicleList.add(new DwarfVehicle(event.getVehicle()));
+    	plugin.getDataManager().addVehicle(new DwarfVehicle(event.getVehicle()));
     	if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6:Added DwarfVehicle to vehicleList");
     }
        
     public void onVehicleExit(VehicleExitEvent event) {
-    	for ( DwarfVehicle i : DataManager.vehicleList ) {
-    		if ( i.vehicle.equals(event.getVehicle())) {
-    			DataManager.vehicleList.remove(i);
-    			if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("DC5:Removed DwarfVehicle from vehicleList");
-    		}
-    	}
-    }
+    	plugin.getDataManager().removeVehicle(event.getVehicle());
+   	}
     
 //	public void onVehicleDestroyed(VehicleDestroyedEvent event)
     
@@ -48,7 +44,7 @@ public class DCVehicleListener extends VehicleListener{
     public void onVehicleMove(VehicleMoveEvent event) { 	
     	if ( event.getVehicle().getPassenger() == null ) return;
     	
-    	Dwarf dwarf = Dwarf.find((Player)event.getVehicle().getPassenger()); // this will break when zombies ride boats.
+    	Dwarf dwarf = plugin.getDataManager().find((Player)event.getVehicle().getPassenger()); // this will break when zombies ride boats.
      	double effectAmount = 1.0;
     	
     	for(Skill s: dwarf.skills){
@@ -60,17 +56,16 @@ public class DCVehicleListener extends VehicleListener{
     			}
     		}
     	}
-    	
-    	for ( DwarfVehicle i : DataManager.vehicleList ) {
-    		if ( i.vehicle.equals(event.getVehicle())) {
-    			Location location = new Location(event.getVehicle().getWorld(), 
-    					event.getVehicle().getLocation().getX(),
-    					event.getVehicle().getLocation().getY(),
-    					event.getVehicle().getLocation().getZ());
-    			location.setX(location.getX()+event.getVehicle().getVelocity().getX()*effectAmount);
-    			location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*effectAmount);
-    			event.getVehicle().teleportTo(location);
-    		}
+
+    	DwarfVehicle dv = plugin.getDataManager().getVehicle(event.getVehicle());
+    	if ( dv != null ) {
+    		Location location = new Location(event.getVehicle().getWorld(), 
+    				event.getVehicle().getLocation().getX(),
+    				event.getVehicle().getLocation().getY(),
+    				event.getVehicle().getLocation().getZ());
+    		location.setX(location.getX()+event.getVehicle().getVelocity().getX()*effectAmount);
+    		location.setZ(location.getZ()+event.getVehicle().getVelocity().getZ()*effectAmount);
+    		event.getVehicle().teleportTo(location);
     	}
     }
 }
