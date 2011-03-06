@@ -67,7 +67,7 @@ public class DCPlayerListener extends PlayerListener {
     		for(Effect e:s.effects){
     			if (e==null) continue;
     			if(e.effectType == EffectType.EAT && e.initiatorId==itemId){
-    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("Debug Message: ate food:"+item.getType().toString()+" for "+e.getEffectAmount(dwarf));
+    				if (DwarfCraft.debugMessagesThreshold < 8) System.out.println("DC8: ate food:"+item.getType().toString()+" for "+e.getEffectAmount(dwarf));
     				player.setHealth((int) (player.getHealth()+e.getEffectAmount(dwarf)));
     				player.getInventory().removeItem(item);
     				hadEffect = true;

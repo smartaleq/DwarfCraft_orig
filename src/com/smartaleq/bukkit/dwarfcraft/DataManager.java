@@ -16,9 +16,9 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.Material;
 
-import com.smartaleq.bukkit.dwarfcraft.ui.Out;
 
 import redecouverte.npcspawner.NpcSpawner;
 
@@ -26,8 +26,14 @@ public class DataManager {
 
 	static List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	static List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
-	static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
+	public static HashMap <String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	static HashMap <String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
+	
+	private static DwarfCraft plugin;
+	public DataManager(final DwarfCraft plugin) {
+		DataManager.plugin = plugin;
+	}
+ 
 	
 	public static void dbInitialize() {
 	    try{
@@ -88,14 +94,11 @@ public class DataManager {
 			for (Skill s:ConfigManager.getAllSkills()) skillTableCreater = skillTableCreater.concat("," + s.toString());
 			String tableCreateSQL = "create table dwarfs"+ConfigManager.configSkillsVersion+" (playername,iself" + skillTableCreater + ");";
 			statement.executeUpdate(tableCreateSQL);
-			System.out.println(tableCreateSQL);
 			//Update this new table with old data if old data exists
 			if(oldVersion == 0){conn.close();return;}
 			rs2 = statement.executeQuery("select sql from sqlite_master WHERE name='dwarfs"+oldVersion+"';");
-			System.out.println("select sql from sqlite_master WHERE name='dwarfs"+oldVersion+"';");
 			rs2.next();
 			String schema = rs2.getString(1);
-			System.out.println(schema);
 			rs2.close();
 			
 			rs3 = statement.executeQuery("select * from dwarfs"+oldVersion);
@@ -106,17 +109,12 @@ public class DataManager {
 			List<Skill> tempSkills = ConfigManager.getAllSkills();
 			for (Skill s: tempSkills ){
 				if (schema.contains(s.toString())){
-					System.out.println(s.displayName+" is in schema");//
 					s.level = 1;
 				}
 				sqlLine1 = sqlLine1.concat(","+s.toString());
 				sqlLine2 = sqlLine2.concat(",?");
 			}
 			sqlLine2 = sqlLine2.concat(");");
-			
-			System.out.println(sqlLine1);//
-	    	System.out.println(sqlLine2);//
-			
 	    	PreparedStatement prep = conn.prepareStatement(sqlLine1+sqlLine2);
 			while(rs3.next()){
 				prep.setString(1,rs3.getString("playername"));
@@ -129,7 +127,6 @@ public class DataManager {
 					else prep.setInt(i, 0);
 					i++;
 				}
-				System.out.println(prep.toString());//
 				prep.addBatch();
 			}
 			rs3.close();
@@ -137,8 +134,9 @@ public class DataManager {
 			conn.close();
 		} 
 		catch (SQLException e) {
-	    	System.out.println("DB not built successfully");
+	    	System.out.println("[SEVERE]DB not built successfully");
 			e.printStackTrace();
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -176,7 +174,7 @@ public class DataManager {
 	    }	    
 	}
 	
-	public static boolean saveDwarfData(Dwarf dwarf, String name){
+	public static boolean saveDwarfData(Dwarf dwarf){
 		try{
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
@@ -187,7 +185,6 @@ public class DataManager {
 	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
 	    		+ " WHERE playername = '" + dwarf.player.getName()+ "';";
-	    	System.out.println(sqlsend);
 	    	statement.execute(sqlsend);
 	    	conn.close();
 			return true;
@@ -209,7 +206,7 @@ public class DataManager {
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
-			System.out.println("got dwarf data for " + dwarf.player.getName());
+			System.out.println("DC: PlayerJoin success for " + dwarf.player.getName());
 			dwarf.isElf = rs.getBoolean("iself");
 			for (Skill skill: dwarf.skills){
 				if (skill!=null) skill.level = rs.getInt(skill.toString());
@@ -278,7 +275,7 @@ public class DataManager {
 				if ( world.getName().equals(rs.getString("world")) ) {
 					// create trainer in this world
 					//if (DwarfCraft.debugMessagesThreshold < 7)
-						System.out.println("Debug Message: trainer:"+rs.getString("name")+" in world: "+world.getName());
+						if(DwarfCraft.debugMessagesThreshold < 5) System.out.println("DC5: trainer:"+rs.getString("name")+" in world: "+world.getName());
 					DwarfTrainer trainer = new DwarfTrainer(
 						world,							rs.getString("uniqueId"),
 						rs.getString("name"),			rs.getInt("skill"), 
@@ -340,7 +337,7 @@ public class DataManager {
 	    	}
 	    	prep.setInt(6, d.getMaterial());
 	    	prep.setBoolean(7, d.isGreeter());
-	    	prep.setString(8, d.getMessageId());
+	    	prep.setString(8, d.getMessage());
 	    	prep.setDouble(9, d.getLocation().getX());
 	    	prep.setDouble(10, d.getLocation().getY());
 	    	prep.setDouble(11, d.getLocation().getZ());
@@ -359,11 +356,9 @@ public class DataManager {
 		return;
 	}
 	
-	public static boolean removeTrainer( String str ) {
+	public static void removeTrainer( String str ) {
 		DwarfTrainer d;
-		if ( (d = trainerList.remove(str)) == null ) {
-			return false;
-		}
+		d = trainerList.remove(str);
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
 
 		try {
@@ -378,7 +373,6 @@ public class DataManager {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
 	}
 	
 	public static void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
@@ -404,27 +398,6 @@ public class DataManager {
 	public static GreeterMessage getGreeterMessage(String messageId) {
 		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
-	}
-	
-	public static void printTrainerList(Player player) {
-		if ( trainerList.isEmpty() ) {
-			Out.sendMessage(player, "There are currently no trainers.");
-			System.out.println("There are currently no trainers.");
-		}
-		else { 
-			for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
-				Map.Entry<String, DwarfTrainer> pairs = i.next();
-				DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
-				if ( d.isGreeter() ) {
-					Out.sendMessage(player, "Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
-					System.out.println("Greeter ID: " + d.getUniqueId() + " Name: " + d.getName());
-				}
-				else {
-					Out.sendMessage(player, "Trainer ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-					System.out.println("ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + Dwarf.find(player).getSkill(d.getSkillTrained()).displayName);
-				}
-			}
-		}
 	}
 
 }

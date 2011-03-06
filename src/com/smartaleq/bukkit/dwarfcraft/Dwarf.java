@@ -84,7 +84,7 @@ public class Dwarf {
 		int i = 0;
 		
 		//Creates an ordered list of skill levels and finds where in that list the skill is (what quartile)
-		if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: starting skill ordering for quartiles");
+		if (DwarfCraft.debugMessagesThreshold < 0) System.out.println("DC0: starting skill ordering for quartiles");
 		for (Skill s:skills){
 			if(s==null)continue;
 			if (s.level > 5){
@@ -143,7 +143,7 @@ public class Dwarf {
 		if (isElf) return false;
 		isElf = true;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this, player.getName());
+		DataManager.saveDwarfData(this);
 		return isElf;
 	}
 	
@@ -153,7 +153,7 @@ public class Dwarf {
 	public boolean makeElfIntoDwarf(){
 		isElf = false;
 		for (Skill skill: skills) if(skill!=null) skill.level = 0;
-		DataManager.saveDwarfData(this, player.getName());
+		DataManager.saveDwarfData(this);
 		return true;
 	}
 	
@@ -238,23 +238,24 @@ public class Dwarf {
 		Inventory inventory = player.getInventory();
 		ItemStack[] items = inventory.getContents();
 		int amountLeft = amount;
-			for(int i=0; i<40; i++){
-				if(items[i].getTypeId() == itemId){
-					if(items[i].getAmount() > amountLeft){
-						items[i].setAmount(items[i].getAmount()-amountLeft);
-						break;
-						
-					}
-					else if(items[i].getAmount() == amountLeft){
-						inventory.removeItem(items[i]);
-						break;
-					}
-					else {
-						amountLeft = amountLeft - items[i].getAmount();
-						inventory.removeItem(items[i]);
-					}
+		for(int i=0; i<40; i++){
+			if(items[i].getTypeId() == itemId){
+				if(items[i].getAmount() > amountLeft){
+					ItemStack newItem = new ItemStack(items[i].getTypeId(),items[i].getAmount()-amountLeft);
+					inventory.setItem(i,newItem);
+					break;
+					
+				}
+				else if(items[i].getAmount() == amountLeft){
+					inventory.removeItem(items[i]);
+					break;
+				}
+				else {
+					amountLeft = amountLeft - items[i].getAmount();
+					inventory.removeItem(items[i]);
 				}
 			}
+		}
 	}
 
 	public int countSkills() {
