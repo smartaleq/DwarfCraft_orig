@@ -15,8 +15,6 @@ import java.util.Map;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.Material;
 
 

@@ -11,9 +11,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
-
-import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
-import com.smartaleq.bukkit.dwarfcraft.ui.DCCommandException;
 import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
 
 /**
@@ -38,8 +35,7 @@ private final DCPlayerListener	playerListener	= new DCPlayerListener(this);
 private final DCEntityListener	entityListener	= new DCEntityListener(this);
 private final DCVehicleListener	vehicleListener	= new DCVehicleListener(this);
 private final DCWorldListener 	worldListener 	= new DCWorldListener();
-
-private final CraftListener	craftListener	= new CraftListener(this);
+private final DCCraftListener	craftListener	= new DCCraftListener(this);
 
 public static int debugMessagesThreshold = 0;
 public static boolean disableEffects = false;
@@ -71,7 +67,6 @@ public static boolean disableEffects = false;
 		pm.registerEvent(Event.Type.CHUNK_UNLOADED, worldListener, Priority.Low, this);
 		pm.registerEvent(Event.Type.WORLD_LOADED, worldListener, Priority.Low, this);
 		
-		//Cookbook
 		pm.registerEvent(Event.Type.BLOCK_INTERACT, craftListener, Priority.Normal, this);
 				
 		ConfigManager cm = new ConfigManager("./plugins/DwarfCraft/", "DwarfCraft.config");
