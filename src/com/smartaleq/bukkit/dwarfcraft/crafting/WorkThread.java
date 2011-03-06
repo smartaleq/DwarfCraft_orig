@@ -32,7 +32,7 @@ public class WorkThread implements Runnable {
 	@SuppressWarnings("unused")
 	@Override
 	public void run() {
-		while (!Thread.interrupted()) {
+		here: while (!Thread.interrupted()) {
 			if (entityPlayer == null
 					|| entityPlayer.activeContainer == entityPlayer.defaultContainer) {
 				kill();
@@ -43,16 +43,18 @@ public class WorkThread implements Runnable {
 			try {
 				containerBench = (ContainerWorkbench) entityPlayer.activeContainer;
 			} catch (Exception ex) {
-				System.out.println("about to kill thread");
+				System.out.println("1 about to kill thread");
 				kill();
+				break here;
 			}
 			ItemStack result = ((InventoryCraftResult) containerBench.b)
 					.getContents()[0];
-			// ((ContainerWorkbench) ep.activeContainer).b.getContents()[0];
 			boolean a = false;
 			if (CraftResults.getInstance().getResult(containerBench.a) != null) {
 				ItemStack outputStack = CraftResults.getInstance().getResult(
 						containerBench.a);
+				System.out.println("a "+containerBench);
+				System.out.println("a "+(InventoryCraftResult) containerBench.b);
 				if (outputStack != null) {
 					//New DwarfCraft Code
 					Dwarf dwarf = Dwarf.find(craftPlayer);
@@ -67,14 +69,18 @@ public class WorkThread implements Runnable {
 							}
 						}
 					}
+					System.out.println("b "+a);
+					System.out.println("b "+(InventoryCraftResult) containerBench.b);
+					System.out.println("b "+outputStack);
 					containerBench.b.a(0, outputStack); // i believe this sets the output stack on the crafting bench. this will not update client side.
 				}
 			}
 			try {
 				Thread.sleep(100);
 				if (!craftPlayer.isOnline())
+					System.out.println("2 about to kill thread");
 					kill();
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

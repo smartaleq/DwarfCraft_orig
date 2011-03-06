@@ -150,12 +150,12 @@ public class DCEntityListener extends EntityListener {
     					deadThingDrop(victim, attacker);
     				}
     				event.setDamage(damage);
-    				if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
+    				if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6: PVE "+attacker.player.getName()+" attacked " + victim.getClass().getSimpleName() +" for " + e.getEffectAmount(attacker)+ " of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
     			}
     			if(e.effectType == EffectType.PVPDAMAGE && isPVP && sword){
     				damage = (int) Util.randomAmount((e.getEffectAmount(attacker)) * damage);
     				event.setDamage(damage);
-       				if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(attacker)+ "% of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
+       				if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("DC6: PVP "+attacker.player.getName()+" attacked " + ((Player) victim).getName() +" for " + e.getEffectAmount(attacker)+ " of "+ event.getDamage()+" doing "+ damage + " dmg of "+ hp + "hp"+" effect called:"+e.id);
        			}
     		}
     	}    	

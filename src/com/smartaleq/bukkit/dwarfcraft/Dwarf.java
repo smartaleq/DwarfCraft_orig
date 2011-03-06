@@ -97,7 +97,7 @@ public class Dwarf {
 		if (skill.level < 5) quartileNumber = 1;   //low skills train full speed
 		
 		//calculate quartile penalties for 2nd/3rd/4th quartile
-		double multiplier = Math.min(1, Math.pow(1.072,(skill.level-5)));
+		double multiplier = Math.max(1, Math.pow(1.072,(skill.level-5)));
 		if (quartileNumber == 2) multiplier *= (1 + 1* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 3) multiplier *= (1 + 2* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 4) multiplier *= (1 + 3* dwarfLevel/(100 + 3*dwarfLevel));
@@ -107,8 +107,7 @@ public class Dwarf {
 				skill.TrainingItem1Mat, 
 				(int) Math.min(
 						Math.ceil((skill.level+1)*skill.TrainingItem1BaseCost*multiplier-.01), //fudge factor for icky multiplication
-						skill.TrainingItem1MaxAmount)));
-		
+						skill.TrainingItem1MaxAmount)));		
 		if (skill.TrainingItem2Mat != Material.AIR)
 			trainingStack.add(new ItemStack(
 					skill.TrainingItem2Mat, 

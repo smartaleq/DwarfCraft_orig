@@ -1,7 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.Iterator;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,9 +10,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.World;
-
 import com.smartaleq.bukkit.dwarfcraft.crafting.CraftListener;
-import com.smartaleq.bukkit.dwarfcraft.ui.DCCommandException;
 import com.smartaleq.bukkit.dwarfcraft.ui.DCCommand;
 
 /**

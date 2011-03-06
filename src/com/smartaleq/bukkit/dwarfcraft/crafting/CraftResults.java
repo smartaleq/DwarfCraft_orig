@@ -77,7 +77,7 @@ public class CraftResults {
 				Character.valueOf('#'), Item.SUGAR_CANE });
 		this.addShaped(new ItemStack(Block.WOOD, 4), new Object[] { "#",
 				Character.valueOf('#'), Block.LOG });
-		this.addShaped(new ItemStack(Item.STICK, 4), new Object[] { "#", "#",
+		this.addShaped(new ItemStack(Item.STICK, 7), new Object[] { "#", "#", //////// changed.
 				Character.valueOf('#'), Block.WOOD });
 		this.addShaped(new ItemStack(Block.TORCH, 4), new Object[] { "X", "#",
 				Character.valueOf('X'), Item.COAL, Character.valueOf('#'),
