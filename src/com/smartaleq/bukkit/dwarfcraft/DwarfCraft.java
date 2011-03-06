@@ -1,7 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.Iterator;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

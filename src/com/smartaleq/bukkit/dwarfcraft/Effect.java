@@ -204,7 +204,7 @@ public class Effect {
 			}
 		}
 		else if (effectType.equals(EffectType.BLOCKDROP)){
-			description = String.format("&6When you break a &2%s &6approx. %s%.2f &2%s&6 are created",
+			description = String.format("&6Break a &2%s &6 and %s%.2f &2%s&6 are created",
 				initiator,
 				effectLevelColor,
 				effectAmount,
@@ -216,7 +216,7 @@ public class Effect {
 				effectAmount);
 		}
 		else if (effectType.equals(EffectType.CITIZENBLOCKS)){
-			description = String.format("&6As a town resident you contribute %s%.2f &6to max town size",
+			description = String.format("&6You contribute %s%.2f &6to max town size",
 				effectLevelColor,
 				effectAmount );
 		}
@@ -228,20 +228,20 @@ public class Effect {
 				elfAmount);
 		}
 		else if (effectType.equals(EffectType.DIGTIME)){
-			description = String.format("&a&6%d%% of the time &2%s &6break &2%s &6instantly ",
-					(effectAmount*100),
+			description = String.format("&a%.0f%%&6 of the time &2%s &6break &2%s &6instantly ",
+					effectAmount*100,
 					toolType,
 					Material.getMaterial(this.initiatorId).toString()
 					);
 		}
 		else if (effectType.equals(EffectType.TOOLDURABILITY)){
-			description = String.format("&6Each use of a &2%s &6removes approx. %s%.2f &6durability",
+			description = String.format("&6Using &2%s &6removes about %s%.2f &6durability",
 					toolType,
 					effectLevelColor,
 					effectAmount);
 		}
 		else if (effectType.equals(EffectType.EAT)){
-			description = String.format("&6You gain %s%.2f hearts instead of &e%.2f when you eat &2%s",
+			description = String.format("&6You gain %s%.2f hearts (not &e%.2f) when you eat &2%s",
 					effectLevelColor,
 					effectAmount,
 					elfAmount,
@@ -266,6 +266,11 @@ public class Effect {
 					effectLevelColor,
 					(int)(effectAmount*100 - 100));
 			}
+		}
+		else if (effectType.equals(EffectType.FALLTHRESHOLD)){
+			description = String.format("&6You ",
+					effectLevelColor,
+					(int)(effectAmount*100 - 100));
 		}
 		else if (effectType.equals(EffectType.FIREDAMAGE)){
 			if (moreThanOne){description = String.format("&6You take %s%d%% more &6damage from fire",

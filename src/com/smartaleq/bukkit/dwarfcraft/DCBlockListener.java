@@ -51,6 +51,7 @@ public class DCBlockListener extends BlockListener {
     	    		for(int id:e.tools)	if(id == toolId)correctTool = true;
     	    		if(correctTool || !e.toolRequired){
     	    			if(Util.randomAmount(e.getEffectAmount(dwarf)) == 0) return;
+    	    			if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: Insta-mine occured. Block:"+materialId);
     	    			new BlockBreakEvent(event.getBlock(), player);
     	    			
     	    		}

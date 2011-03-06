@@ -190,6 +190,27 @@ public class DCCommand extends Command{
 				race(isElf, confirmed, dwarf);
 			} else if (commandName.equalsIgnoreCase("setskill")) {
 				if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started command 'setskill'");
+				Dwarf dwarf = new Dwarf(null);
+				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0, 0, null, 0, 0, null);
+				int level = 0;
+				desiredArguments.add(dwarf);
+				desiredArguments.add(skill);
+				desiredArguments.add(level);
+				try{
+					outputList = parser.parse(desiredArguments, false);
+					dwarf = (Dwarf) outputList.get(0);
+					skill = (Skill) outputList.get(1);
+					level = (Integer) outputList.get(2);
+				}catch (DCCommandException e) { 
+					if (e.type == Type.TOOFEWARGS) {
+						desiredArguments.remove(0);
+						desiredArguments.add(dwarf);
+						outputList = parser.parse(desiredArguments, true);
+						dwarf = (Dwarf) outputList.get(2);
+						skill = (Skill) outputList.get(0);
+						level = (Integer) outputList.get(1);
+					}
+				}
 				setSkill(null, commandName, null, 0);
 				return true;
 			} else if (commandName.equalsIgnoreCase("creategreeter")) {

@@ -7,7 +7,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import com.smartaleq.bukkit.dwarfcraft.ConfigManager;
 import com.smartaleq.bukkit.dwarfcraft.DataManager;
 import com.smartaleq.bukkit.dwarfcraft.Dwarf;
@@ -299,7 +298,7 @@ public class Out {
 	private static void messagePrinter(CommandSender sender, String message, String prefix){
 		String[] lines = message.split("/n");
 		String lastColor = "";
-		for (String line:lines) lastColor = consoleLinePrinter(sender, line, prefix);
+		for (String line:lines) lastColor = consoleLinePrinter(sender, lastColor.concat(line), prefix);
 	}
 
 
