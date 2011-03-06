@@ -28,7 +28,6 @@ public class CommandParser {
 		int arrayIterator = 0;
 		try{
 			for(Object o:desiredArguments){
-				System.out.println("looking for" + o.getClass());
 				if (o instanceof Dwarf) output.add(parseDwarf(arrayIterator));
 				else if (o instanceof Player) output.add(parsePlayer(arrayIterator));
 				else if (o instanceof Skill) output.add(parseSkill(arrayIterator));

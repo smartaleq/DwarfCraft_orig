@@ -12,11 +12,11 @@ public class ConfigManager {
 
 	public ConfigManager(String directory, String paramsFileName){
 		configDirectory = directory;
-		configParamsFileName = paramsFileName;
+		configMainFileName = paramsFileName;
 	}
 	
 	private String configDirectory;
-	private String configParamsFileName;
+	private String configMainFileName;
 	
 	private String configSkillsFileName;
 	public static int configSkillsVersion;
@@ -46,9 +46,9 @@ public class ConfigManager {
 	
 	public boolean readConfigFile(){
 		try {
-			System.out.println("Reading config file");
+			System.out.println("DC Init: Reading Config File: " + configDirectory + configMainFileName);
 			getDefaultValues();
-			FileReader fr = new FileReader(configDirectory + configParamsFileName);
+			FileReader fr = new FileReader(configDirectory + configMainFileName);
 			BufferedReader br = new BufferedReader(fr);
 			String line = br.readLine();
 			while (line!= null) {
@@ -81,7 +81,7 @@ public class ConfigManager {
 	
 	public boolean readSkillsFile(){
 		String line = "";
-		System.out.println("Reading skills file");
+		System.out.println("DC Init: Reading skills file: " + configDirectory + configSkillsFileName);
 		try {
 			FileReader fr = new FileReader(configDirectory + configSkillsFileName);
 			BufferedReader br = new BufferedReader(fr);
@@ -133,7 +133,7 @@ public class ConfigManager {
 	}
 
 	public boolean readEffectsFile(){
-		System.out.println("Reading effects file");
+		System.out.println("DC Init: Reading effects file: " + configDirectory + configEffectsFileName);
 		String line = "";
 		try {
 			FileReader fr = new FileReader(configDirectory + configEffectsFileName);
@@ -192,7 +192,7 @@ public class ConfigManager {
 	}
 	
 	public boolean readMessagesFile() {
-		System.out.println("Reading messages file");
+		System.out.println("DC Init: Reading general messages file: " + configDirectory + configMessagesFileName);
 		try {
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configMessagesFileName);
@@ -226,7 +226,7 @@ public class ConfigManager {
 	}
 	
 	public boolean readGreeterMessagesfile() {
-		System.out.println("Reading greeter messages file");
+		System.out.println("DC Init: Reading greeter messages file: " + configDirectory + configGreeterMessagesFileName);
 		try {
 			getDefaultValues();
 			FileReader fr = new FileReader(configDirectory + configGreeterMessagesFileName);

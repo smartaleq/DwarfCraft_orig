@@ -85,8 +85,7 @@ public class Out {
 	}
 	
 	public static void generalInfo(CommandSender sender) {
-		if(sender instanceof Player) Out.sendMessage((Player)sender, "&d" + Messages.GeneralInfo, "&6[&d?&6] ");
-		else System.out.println(Messages.GeneralInfo);
+		Out.sendMessage(sender, "&d" + Messages.GeneralInfo, "&6[&d?&6] ");
 	}
 		
 	// need to learn how to do this in current command structure
@@ -367,10 +366,10 @@ public class Out {
 	 */
 	static String parseColors(String message){	
 		if (message == null){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: parsing null message!");
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC2: parsing null message!");
 			return null;
 		}
-		if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: parsing colors for: "+ message);
+		if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("DC-1: parsing colors for: "+ message);
 		for(int i =0; i<message.length();i++){
 			if(message.charAt(i)=='&'){
 				if (message.charAt(i+1)=='0') message = message.replace("&0", "§0");
@@ -402,10 +401,10 @@ public class Out {
 	
 	private static String stripColors(String message) {
 		if (message == null){
-			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("Debug Message: stripping colors from null message!");
+			if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC2: stripping colors from null message!");
 			return null;
 		}
-		if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("Debug Message: stripping colors from: "+ message);
+		if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("DC-1: stripping colors from: "+ message);
 		for(int i =0; i<message.length();i++){
 			if(message.charAt(i)=='&'){
 				if (message.charAt(i+1)=='0') message = message.replace("&0", "§0");
@@ -454,7 +453,6 @@ public class Out {
 	public static void printTrainerList(CommandSender sender) {
 		if ( DataManager.trainerList.isEmpty() ) {
 			sendMessage(sender, "There are currently no trainers.");
-			System.out.println("There are currently no trainers.");
 		}
 		else { 
 			for ( Iterator<Map.Entry<String, DwarfTrainer>> i = DataManager.trainerList.entrySet().iterator(); i.hasNext(); ) {

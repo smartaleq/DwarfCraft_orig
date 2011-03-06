@@ -19,7 +19,7 @@ public class DwarfTrainer {
 	private Integer skillId;
 	private Integer maxSkill;
 	private boolean greeter;
-	private String greeterMessage;
+	private String messageId;
 	private World world;
 	private ItemStack itemStack;	
 	private double x, y, z;
@@ -32,7 +32,7 @@ public class DwarfTrainer {
 		skillId = newSkillId;
 		maxSkill = newMaxSkill;
 		greeter = newIsGreeter;
-		greeterMessage = newGreeterMessage;
+		messageId = newGreeterMessage;
 		x = newX;
 		y = newY;
 		z = newZ;
@@ -64,7 +64,7 @@ public class DwarfTrainer {
 	public DwarfTrainer (Player player, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter) {
 		this.skillId = skillId; 
 		this.maxSkill = maxSkill;
-		this.greeterMessage = greeterMessage;
+		this.messageId = greeterMessage;
 		greeter = isGreeter;
 		world = player.getWorld();
 		x = player.getLocation().getX();
@@ -119,7 +119,7 @@ public class DwarfTrainer {
 	public Integer getMaxSkill() { return maxSkill; }
 	public boolean isGreeter() { return greeter; }
 	public int getMaterial() { if (itemStack != null) return itemStack.getTypeId(); else return (int)(Material.AIR.getId()); }
-	public String getMessage() { return greeterMessage; }
+	public String getMessage() { return messageId; }
 	
 	public Location getLocation() {
 		return basicHumanNpc.getBukkitEntity().getLocation();
@@ -153,36 +153,30 @@ public class DwarfTrainer {
 		return;
 	}
 	
-	public void printSkillInfo(Player player){
-		Out.printSkillInfo(player, Dwarf.find(player).getSkill(this.skillId), Dwarf.find(player), maxSkill);
-	}
-	
 	public void printLeftClick(Player player) {
-		GreeterMessage msg = DataManager.getGreeterMessage(greeterMessage);
+		GreeterMessage msg = DataManager.getGreeterMessage(messageId);
 		if ( msg != null ) {
 			Out.sendMessage(player, msg.getLeftClickMessage());
 		}
 		else { 
-			System.out.println("[DC] Error: Greeter " + basicHumanNpc.getUniqueId() + " has no left click message. Check your configuration file for message ID " + greeterMessage);
+			System.out.println("[DC] Error: Greeter " + basicHumanNpc.getUniqueId() + " has no left click message. Check your configuration file for message ID " + messageId);
 		}
 		return;
 	}
 	
 	public void printRightClick(Player player) {
-		GreeterMessage msg = DataManager.getGreeterMessage(greeterMessage);
+		GreeterMessage msg = DataManager.getGreeterMessage(messageId);
 		if ( msg != null ) {
 			Out.sendMessage(player, msg.getRightClickMessage());
 		}
 		return;
 	}
 	
-	public void trainSkill(Player player){
+	public void trainSkill(Dwarf dwarf){
 		boolean soFarSoGood = true;
-		Dwarf dwarf = (Dwarf.find(player));
-		assert(dwarf != null);
 		Skill skill = dwarf.getSkill(this.skillId);
 		assert(skill != null);
-		
+		Player player = dwarf.player;
 		List <ItemStack> trainingCosts = dwarf.calculateTrainingCost(skill); 
 		
 		//Must be a dwarf, not an elf

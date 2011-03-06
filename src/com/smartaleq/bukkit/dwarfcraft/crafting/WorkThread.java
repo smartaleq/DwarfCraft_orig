@@ -23,7 +23,6 @@ public class WorkThread implements Runnable {
 		this.entityPlayer = craftPlayer.getHandle();
 		try {
 			Thread.sleep(250);
-			System.out.println(entityPlayer.activeContainer.toString()+" test 1 "+entityPlayer.defaultContainer.toString());
 		} catch (InterruptedException e) {
 			kill();
 		}
@@ -33,39 +32,30 @@ public class WorkThread implements Runnable {
 	@SuppressWarnings("unused")
 	@Override
 	public void run() {
-		System.out.println(entityPlayer.activeContainer.toString()+" test 1.5 "+entityPlayer.defaultContainer.toString());
 		while (!Thread.interrupted()) {
 			if (entityPlayer == null
 					|| entityPlayer.activeContainer == entityPlayer.defaultContainer) {
-				System.out.println(entityPlayer.activeContainer.toString()+" test 2 "+entityPlayer.defaultContainer.toString());
 				kill();
 			}
 			ContainerWorkbench containerBench = null;
 			
 			
 			try {
-				System.out.println(entityPlayer.activeContainer.toString()+" test 3 "+entityPlayer.defaultContainer.toString());
 				containerBench = (ContainerWorkbench) entityPlayer.activeContainer;
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				System.out.println("about to kill thread");
-				System.out.println(entityPlayer.activeContainer.toString()+" test 4 "+entityPlayer.defaultContainer.toString());
 				kill();
 			}
-			System.out.println(entityPlayer.activeContainer.toString()+" test 5 "+entityPlayer.defaultContainer.toString());
-			
 			ItemStack result = ((InventoryCraftResult) containerBench.b)
 					.getContents()[0];
 			// ((ContainerWorkbench) ep.activeContainer).b.getContents()[0];
 			boolean a = false;
 			if (CraftResults.getInstance().getResult(containerBench.a) != null) {
-				System.out.println(entityPlayer.activeContainer.toString());
-				System.out.println(entityPlayer.defaultContainer.toString());
 				ItemStack outputStack = CraftResults.getInstance().getResult(
 						containerBench.a);
 				if (outputStack != null) {
 					//New DwarfCraft Code
-					Dwarf dwarf = Dwarf.find((Player) entityPlayer);
+					Dwarf dwarf = Dwarf.find(craftPlayer);
 					int materialId = outputStack.id;
 					for (Skill s:dwarf.skills){
 						for (Effect e:s.effects){
