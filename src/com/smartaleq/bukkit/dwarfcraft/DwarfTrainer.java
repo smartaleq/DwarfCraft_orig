@@ -27,7 +27,7 @@ final class DwarfTrainer {
 	private final DwarfCraft plugin;
 
 	// constructor only for *trainers*
-	protected DwarfTrainer(final DwarfCraft plugin, Player player,
+	protected DwarfTrainer(final DwarfCraft plugin, Location location,
 			String uniqueId, String name, Integer skillId, Integer maxSkill,
 			String greeterMessage, boolean isGreeter) {
 		this.plugin = plugin;
@@ -35,25 +35,25 @@ final class DwarfTrainer {
 		this.maxSkill = maxSkill;
 		this.messageId = greeterMessage;
 		greeter = isGreeter;
-		world = player.getWorld();
-		x = player.getLocation().getX();
-		y = player.getLocation().getY();
-		z = player.getLocation().getZ();
-		yaw = player.getLocation().getYaw();
-		pitch = player.getLocation().getPitch();
+		world = location.getWorld();
+		x = location.getX();
+		y = location.getY();
+		z = location.getZ();
+		yaw = location.getYaw();
+		pitch = location.getPitch();
 		basicNpcUniqueId = uniqueId;
 		basicNpcName = name;
 
-		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(uniqueId, name, player
-				.getWorld(), player.getLocation().getX(), player.getLocation()
-				.getY(), player.getLocation().getZ(), player.getLocation()
-				.getYaw(), player.getLocation().getPitch());
+		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(uniqueId, name, location
+				.getWorld(), location.getX(), location
+				.getY(), location.getZ(), location
+				.getYaw(), location.getPitch());
 
 		Material material;
 		if (greeter)
 			material = Material.AIR;
 		else
-			material = plugin.getDataManager().find(player).getSkill(skillId)
+			material = plugin.getConfigManager().getGenericSkill(skillId)
 					.getTrainerHeldMaterial();
 		assert (material != null);
 		if (material != Material.AIR) {

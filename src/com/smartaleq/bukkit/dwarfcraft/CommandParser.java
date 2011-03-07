@@ -50,8 +50,8 @@ class CommandParser {
 						&& ((String) o).equalsIgnoreCase("Name"))
 					output.add(parseName(arrayIterator));
 				else if (o instanceof String
-						&& ((String) o).equalsIgnoreCase("GreeterId"))
-					output.add(parseGreeterId(arrayIterator));
+						&& ((String) o).equalsIgnoreCase("GreeterMessage"))
+					output.add(parseGreeterMessage(arrayIterator));
 				else if (o instanceof String
 						&& ((String) o).equalsIgnoreCase("newRace"))
 					output.add(parseRace(arrayIterator));
@@ -131,7 +131,7 @@ class CommandParser {
 		return effect;
 	}
 
-	private String parseGreeterId(int arrayIterator) throws DCCommandException {
+	private String parseGreeterMessage(int arrayIterator) throws DCCommandException {
 		if (plugin.getDataManager().getGreeterMessage(input[arrayIterator]) == null)
 			throw new DCCommandException(plugin, Type.NOGREETERMESSAGE);
 		String greeterMessage = input[arrayIterator];

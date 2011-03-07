@@ -132,14 +132,6 @@ public class Dwarf {
 		return countItem(material.getId());
 	}
 
-	private int countSkills() {
-		int count = 0;
-		for (Skill s : getSkills())
-			if (s != null)
-				count++;
-		return count;
-	}
-
 	/**
 	 * Calculates the dwarf's total level for display/e-peening. Value is the
 	 * total of all skill level above 5, or the highest skill level when none
@@ -342,10 +334,6 @@ public class Dwarf {
 				}
 			}
 		}
-	}
-
-	private void sendMessage(String string) {
-		player.sendMessage(string);
 	}
 
 	protected void setElf(boolean elf) {

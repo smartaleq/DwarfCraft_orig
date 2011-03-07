@@ -29,7 +29,7 @@ class ConfigManager {
 		configMainFileName = paramsFileName;
 
 		if (!readConfigFile() || !readSkillsFile() || !readEffectsFile()
-				|| !readMessagesFile() || !readGreeterMessagesfile()) {
+				|| !readGreeterMessagesfile() || !readMessagesFile()) {
 			System.out
 					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -53,6 +53,13 @@ class ConfigManager {
 			newSkillsArray.add(s.clone());
 		}
 		return newSkillsArray;
+	}
+	
+	protected Skill getGenericSkill(int skillId){
+		for (Skill s:skillsArray){
+			if(s.getId() == skillId) return s.clone(); 
+		}
+		return null;
 	}
 
 	protected int getConfigSkillsVersion() {
@@ -238,6 +245,7 @@ class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String messageId = br.readLine();
 			while (messageId != null) {
+				System.out.println("Counter Mark");
 				messageId = messageId.trim();
 				String leftClick, rightClick;
 				if (messageId.length() == 0) {

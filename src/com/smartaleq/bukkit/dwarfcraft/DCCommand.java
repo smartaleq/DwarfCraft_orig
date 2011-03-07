@@ -3,6 +3,7 @@ package com.smartaleq.bukkit.dwarfcraft;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -194,20 +195,16 @@ class DCCommand extends Command {
 				desiredArguments.add(effect);
 				try {
 					outputList = parser.parse(desiredArguments, false);
-					if (args.length > outputList.size())
-						throw new DCCommandException(plugin, Type.TOOMANYARGS);
 					effect = (Effect) outputList.get(1);
 					dwarf = (Dwarf) outputList.get(0);
 				} catch (DCCommandException dce) {
 					if (dce.getType() == Type.PARSEDWARFFAIL
 							|| dce.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
+						desiredArguments.add(dwarf);
 						outputList = parser.parse(desiredArguments, true);
 						effect = (Effect) outputList.get(0);
-						if (!(sender instanceof Player))
-							throw new DCCommandException(plugin,
-									Type.CONSOLECANNOTUSE);
-						dwarf = plugin.getDataManager().find((Player) sender);
+						dwarf = (Dwarf) outputList.get(1);
 					} else
 						throw dce;
 				}
@@ -307,7 +304,7 @@ class DCCommand extends Command {
 					} else
 						throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer(),
+				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer().getLocation(),
 						uniqueId, name, null, null, greeterMessage, true);
 				plugin.getDataManager().insertTrainer(d);
 				return true;
@@ -353,7 +350,8 @@ class DCCommand extends Command {
 					} else
 						throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer(),
+				Location location = dwarf.getPlayer().getLocation();
+				DwarfTrainer d = new DwarfTrainer(plugin, location,
 						uniqueId, name, skill.getId(), maxSkill, null, false);
 				plugin.getDataManager().insertTrainer(d);
 				return true;

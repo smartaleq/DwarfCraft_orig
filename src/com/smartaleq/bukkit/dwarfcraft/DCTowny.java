@@ -24,7 +24,7 @@ public class DCTowny extends TownyPlayerListener {
 		this.dwarfCraftPlugin = dwarfCraftPlugin;
 	}
 
-	private void checkIfSelectionIsValid(TownBlockOwner owner,
+	 public void checkIfSelectionIsValid(TownBlockOwner owner,
 			List<WorldCoord> selection, boolean attachedToEdge, int blockCost,
 			boolean force) throws TownyException {
 		if (force)
