@@ -21,7 +21,7 @@ import org.bukkit.entity.Vehicle;
 
 import redecouverte.npcspawner.NpcSpawner;
 
-class DataManager {
+final class DataManager {
 
 	private List<Dwarf> dwarves = new ArrayList<Dwarf>();
 	private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
@@ -38,15 +38,6 @@ class DataManager {
 				.hasNext();) {
 			World w = i.next();
 			populateTrainers(w);
-		}
-		// readGreeterMessagesfile() depends on datamanager existing, so this
-		// has to go here rather than in the constructor for configmanager,
-		// which gets instantiated first
-		if (!plugin.getConfigManager().readGreeterMessagesfile()) {
-			System.out
-					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
-			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			// TODO failed to init skills
 		}
 	}
 

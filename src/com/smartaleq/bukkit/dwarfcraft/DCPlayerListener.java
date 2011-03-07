@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class DCPlayerListener extends PlayerListener {
+class DCPlayerListener extends PlayerListener {
 	private final DwarfCraft plugin;
 
 	protected DCPlayerListener(final DwarfCraft plugin) {

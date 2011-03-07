@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import redecouverte.npcspawner.NpcEntityTargetEvent;
 import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
 
-public class DCEntityListener extends EntityListener {
+class DCEntityListener extends EntityListener {
 	private final DwarfCraft plugin;
 
 	protected DCEntityListener(DwarfCraft plugin) {
