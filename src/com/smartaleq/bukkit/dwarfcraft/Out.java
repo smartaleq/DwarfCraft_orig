@@ -54,7 +54,7 @@ public class Out {
 	/*
 	 * Messaging Statics
 	 */
-	private final int lineLength = 340; // pixels
+	private final int lineLength = 320; // pixels
 
 	private final int maxLines = 10;
 
@@ -69,12 +69,6 @@ public class Out {
 				"&6[DC] ");
 	}
 
-	// need to learn how to do this in current command structure
-	// public boolean commandHelp(CommandSender sender, CommandInfo c) {
-	// sendMessage(player, "&d" + c.helpText, "&6[&d?&6] " );
-	// return true;
-	// }
-
 	protected void becameDwarf(CommandSender sender, Dwarf dwarf) {
 		sendMessage(sender, Messages.Fixed.PRIMARYRACESUCCESS.getMessage(),
 				"&6[DC] ");
@@ -84,18 +78,6 @@ public class Out {
 		sendMessage(sender, Messages.Fixed.SECONDARYRACESUCCESS.getMessage(),
 				"&6[DC] ");
 	}
-
-	// public boolean commandList(CommandSender sender, int number) {
-	// if (number == 1) {
-	// sendMessage(sender, Messages.Fixed.COMMANDLIST1.message,"&6[&d?&6] " );
-	// return true;
-	// }
-	// if (number == 2){
-	// sendMessage(sender, Messages.Fixed.COMMANDLIST2.message,"&6[&d?&6] " );
-	// return true;
-	// }
-	// return false;
-	// }
 
 	protected void confirmBecomingDwarf(CommandSender sender, Dwarf dwarf) {
 		sendMessage(sender, Messages.Fixed.PRIMARYRACECONFIRM.getMessage(),

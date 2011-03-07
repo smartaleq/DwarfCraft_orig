@@ -102,11 +102,11 @@ final class Effect {
 		if (effectType.equals(EffectType.ARMORHIT)) {
 			if (moreThanOne) {
 				description = String
-						.format("&6When attacked your &2%s&6 takes %s%.2f &cMore &6damage",
+						.format("&6Your &2%s&6 takes %s%.2f &cMore &6damage",
 								initiator, effectLevelColor, effectAmount);
 			} else {
 				description = String
-						.format("&6When attacked your &2%s&6 takes %s%.2f &aLess &6 damage",
+						.format("&6Your &2%s&6 takes %s%.2f &aLess &6 damage",
 								initiator, effectLevelColor, effectAmount);
 			}
 		} else if (effectType.equals(EffectType.BLOCKDROP)) {
@@ -173,12 +173,12 @@ final class Effect {
 			}
 		} else if (effectType.equals(EffectType.MOBDROP)) {
 			description = String
-					.format("&6When you kill a mob that drops &2%s you get approx %s%.2f&6",
+					.format("&6Enemies that drop &2%s &6leave about %s%.2f&6",
 							output, effectLevelColor, effectAmount, output);
 			// special zombie exception
 			if (id == 850 || id == 851) {
 				description = String.format(
-						"&6When you kill a zombie you get approx %s%.2f &2%s",
+						"&6Zombies drop about %s%.2f &2%s",
 						effectLevelColor, effectAmount, output);
 			}
 		} else if (effectType.equals(EffectType.PLOW)) {

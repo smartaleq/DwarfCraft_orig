@@ -29,7 +29,7 @@ final class ConfigManager {
 		configMainFileName = paramsFileName;
 
 		if (!readConfigFile() || !readSkillsFile() || !readEffectsFile()
-				|| !readGreeterMessagesfile() || !readMessagesFile()) {
+				 || !readMessagesFile()) {
 			System.out
 					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -245,7 +245,6 @@ final class ConfigManager {
 			BufferedReader br = new BufferedReader(fr);
 			String messageId = br.readLine();
 			while (messageId != null) {
-				System.out.println("Counter Mark");
 				messageId = messageId.trim();
 				String leftClick, rightClick;
 				if (messageId.length() == 0) {
@@ -265,15 +264,7 @@ final class ConfigManager {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			// Default to enum values if not found
-			if (Messages.GeneralInfo == null)
-				Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE
-						.getMessage();
-			if (Messages.ServerRules == null)
-				Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE
-						.getMessage();
-		}
+		} 
 		return true;
 
 	}

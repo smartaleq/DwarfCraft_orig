@@ -295,11 +295,12 @@ class DCCommand extends Command {
 							throw new DCCommandException(plugin,
 									Type.CONSOLECANNOTUSE);
 						desiredArguments.remove(0);
+						desiredArguments.add(dwarf);
 						outputList = parser.parse(desiredArguments, false);
 						uniqueId = (String) outputList.get(0);
 						name = (String) outputList.get(1);
 						greeterMessage = (String) outputList.get(2);
-						dwarf = (Dwarf) sender;
+						dwarf = (Dwarf) outputList.get(3);;
 					} else
 						throw e;
 				}
@@ -378,11 +379,7 @@ class DCCommand extends Command {
 		}
 		return false;
 	}
-
-	// private void commands(int i) {
-	// return plugin.getOut().commandList(player, i);
-	// }
-
+	
 	private void race(boolean elf, boolean confirm, Dwarf dwarf) {
 		if (elf) {
 			if (dwarf.isElf())

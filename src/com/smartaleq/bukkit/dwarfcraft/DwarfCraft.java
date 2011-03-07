@@ -136,7 +136,7 @@ public class DwarfCraft extends JavaPlugin {
 		
 		// readGreeterMessagesfile() depends on datamanager existing, so this
 		// has to go here 
-		if (getConfigManager().readGreeterMessagesfile()) {
+		if (!getConfigManager().readGreeterMessagesfile()) {
 			System.out
 					.println("[SEVERE] Failed to read DwarfCraft Greeter Messages)");
 			getServer().getPluginManager().disablePlugin(this);
