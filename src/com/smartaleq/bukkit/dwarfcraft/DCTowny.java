@@ -13,55 +13,62 @@ import ca.xshade.bukkit.towny.object.TownBlockOwner;
 import ca.xshade.bukkit.towny.object.TownyIConomyObject;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 
-
 public class DCTowny extends TownyPlayerListener {
-	
+
 	private final Towny townyPlugin;
 	private final DwarfCraft dwarfCraftPlugin;
-	
+
 	protected DCTowny(final Towny townyPlugin, final DwarfCraft dwarfCraftPlugin) {
 		super(townyPlugin);
 		this.townyPlugin = townyPlugin;
 		this.dwarfCraftPlugin = dwarfCraftPlugin;
 	}
 
-	private void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, int blockCost, boolean force) throws TownyException {
+	private void checkIfSelectionIsValid(TownBlockOwner owner,
+			List<WorldCoord> selection, boolean attachedToEdge, int blockCost,
+			boolean force) throws TownyException {
 		if (force)
 			return;
-		
+
 		if (attachedToEdge && !isEdgeBlock(owner, selection))
 			throw new TownyException("Selected area not attached to edge.");
-		
+
 		if (owner instanceof Town) {
-			Town town = (Town)owner;
-			int available = getDCMaxTownBlocks(town) - town.getTownBlocks().size();
+			Town town = (Town) owner;
+			int available = getDCMaxTownBlocks(town)
+					- town.getTownBlocks().size();
 			townyPlugin.sendDebugMsg("Claim Check Available: " + available);
 			if (available - selection.size() < 0)
-				throw new TownyException("Not enough available town blocks to claim this selection.");
+				throw new TownyException(
+						"Not enough available town blocks to claim this selection.");
 		}
-		
+
 		try {
 			int cost = blockCost * selection.size();
 			if (TownySettings.isUsingIConomy() && !owner.canPay(cost))
-				throw new TownyException("Town cannot afford to claim "+selection.size() + " town blocks costing " + cost + TownyIConomyObject.getIConomyCurrency());
+				throw new TownyException("Town cannot afford to claim "
+						+ selection.size() + " town blocks costing " + cost
+						+ TownyIConomyObject.getIConomyCurrency());
 		} catch (IConomyException e1) {
 			throw new TownyException("Iconomy Error");
 		}
 	}
-	
+
 	private int getDCMaxTownBlocks(Town town) {
 		int residentTotal = 0;
 		int mayorMax = 5;
 		Resident mayor = town.getMayor();
-		Dwarf mayorDwarf = dwarfCraftPlugin.getDataManager().findOffline(mayor.getName());
+		Dwarf mayorDwarf = dwarfCraftPlugin.getDataManager().findOffline(
+				mayor.getName());
 		mayorMax = (int) mayorDwarf.getEffect(920).getEffectAmount(mayorDwarf);
 		List<Resident> residentList = town.getResidents();
-		for(Resident r: residentList){
+		for (Resident r : residentList) {
 			String residentName = r.getName();
-			Dwarf dwarf = dwarfCraftPlugin.getDataManager().findOffline(residentName);
+			Dwarf dwarf = dwarfCraftPlugin.getDataManager().findOffline(
+					residentName);
 			residentTotal += dwarf.getEffect(910).getEffectAmount(dwarf);
 		}
-		
-		return Math.min(Math.max(residentTotal,5), mayorMax);
+
+		return Math.min(Math.max(residentTotal, 5), mayorMax);
 	}
 }

@@ -12,10 +12,17 @@ class DCCraftListener extends BlockListener {
 		this.plugin = plugin;
 	}
 
+	@Override
 	public void onBlockInteract(BlockInteractEvent event) {
-		if ( event.getBlock().getType() == Material.WORKBENCH && event.isPlayer() ) {
+		if (event.getBlock().getType() == Material.WORKBENCH
+				&& event.isPlayer()) {
 			// schedule a *syncronous* task
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new DCCraftSchedule(plugin, plugin.getDataManager().find(((Player)(event.getEntity())))), 5);
+			plugin.getServer()
+					.getScheduler()
+					.scheduleSyncDelayedTask(
+							plugin,
+							new DCCraftSchedule(plugin, plugin.getDataManager()
+									.find(((Player) (event.getEntity())))), 5);
 		}
 	}
 }

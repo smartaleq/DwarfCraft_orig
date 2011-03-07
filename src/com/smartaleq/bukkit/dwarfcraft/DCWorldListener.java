@@ -6,11 +6,12 @@ import org.bukkit.Chunk;
 
 public class DCWorldListener extends WorldListener {
 	private final DwarfCraft plugin;
-	
+
 	protected DCWorldListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
-	
+
+	@Override
 	public void onChunkUnloaded(ChunkUnloadEvent event) {
 		Chunk chunk = event.getChunk();
 		event.setCancelled(plugin.getDataManager().checkTrainersInChunk(chunk));
