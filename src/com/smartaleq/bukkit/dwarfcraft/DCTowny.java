@@ -13,7 +13,7 @@ import ca.xshade.bukkit.towny.object.TownBlockOwner;
 import ca.xshade.bukkit.towny.object.TownyIConomyObject;
 import ca.xshade.bukkit.towny.object.WorldCoord;
 
-public class DCTowny extends TownyPlayerListener {
+class DCTowny extends TownyPlayerListener {
 
 	private final Towny townyPlugin;
 	private final DwarfCraft dwarfCraftPlugin;

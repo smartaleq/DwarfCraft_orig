@@ -11,7 +11,6 @@ import com.smartaleq.bukkit.dwarfcraft.DCCommandException.Type;
 
 class DCCommand extends Command {
 	private final DwarfCraft plugin;
-
 	private CommandSender sender;
 
 	protected DCCommand(final DwarfCraft plugin, String name) {

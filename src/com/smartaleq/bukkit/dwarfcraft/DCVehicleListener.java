@@ -8,7 +8,7 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.Location;
 
-public class DCVehicleListener extends VehicleListener {
+class DCVehicleListener extends VehicleListener {
 	private final DwarfCraft plugin;
 
 	protected DCVehicleListener(final DwarfCraft plugin) {

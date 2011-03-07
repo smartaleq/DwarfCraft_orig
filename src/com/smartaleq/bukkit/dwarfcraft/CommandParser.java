@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.smartaleq.bukkit.dwarfcraft.DCCommandException.Type;
 
-class CommandParser {
+final class CommandParser {
 	private final DwarfCraft plugin;
 	private CommandSender sender;
 	private String[] input;

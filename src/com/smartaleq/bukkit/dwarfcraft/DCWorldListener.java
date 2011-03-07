@@ -4,7 +4,7 @@ import org.bukkit.event.world.WorldListener;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.Chunk;
 
-public class DCWorldListener extends WorldListener {
+class DCWorldListener extends WorldListener {
 	private final DwarfCraft plugin;
 
 	protected DCWorldListener(final DwarfCraft plugin) {

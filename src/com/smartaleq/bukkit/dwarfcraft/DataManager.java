@@ -21,7 +21,7 @@ import org.bukkit.entity.Vehicle;
 
 import redecouverte.npcspawner.NpcSpawner;
 
-class DataManager {
+final class DataManager {
 
 	private List<Dwarf> dwarves = new ArrayList<Dwarf>();
 	private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();

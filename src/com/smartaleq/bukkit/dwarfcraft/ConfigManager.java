@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 
-class ConfigManager {
+final class ConfigManager {
 
-	private DwarfCraft plugin;
+	private final DwarfCraft plugin;
 
-	private String configDirectory;
+	private final String configDirectory;
 
 	private String configMainFileName;
 	private String configSkillsFileName;
@@ -235,7 +235,7 @@ class ConfigManager {
 		}
 	}
 
-	private boolean readGreeterMessagesfile() {
+	protected boolean readGreeterMessagesfile() {
 		System.out.println("DC Init: Reading greeter messages file: "
 				+ configDirectory + configGreeterMessagesFileName);
 		try {
