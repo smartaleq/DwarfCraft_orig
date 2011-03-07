@@ -11,20 +11,25 @@ import org.bukkit.inventory.ItemStack;
 
 public class Dwarf {
 	private final DwarfCraft plugin;
-	public List <Skill> skills;
+	private List <Skill> skills;
 	private boolean isElf;
-	public Player player;
+	private Player player;
 		
-	public Dwarf(final DwarfCraft plugin, Player whoami) {
+	protected Dwarf(final DwarfCraft plugin, Player whoami) {
 		this.plugin = plugin;
 		player = whoami;
 		isElf = false;
 	}
 	
+	protected Player getPlayer() { return player; }
+	
+	@Deprecated 
+	protected List<Skill> getSkills() { return skills; }
+	
 	/** 
 	 * Removes a Dwarf from the database. Only used for debugging/banning.
 	 */
-	void remove(){
+	private void remove(){
 		plugin.getDataManager().removeDwarf(this);
 	}
 	
@@ -36,18 +41,18 @@ public class Dwarf {
 	 * Calculates the Dwarf's total Level
 	 * @return total level
 	 */
-	int level(){
+	private int level(){
 		int playerLevel = 5;
 		int highestSkill = 0;
-		for(Skill s:skills){
-			if(s.level > highestSkill) highestSkill = s.level;
-			if(s.level > 5) playerLevel += s.level - 5;;
+		for(Skill s:getSkills()){
+			if(s.getLevel() > highestSkill) highestSkill = s.getLevel();
+			if(s.getLevel() > 5) playerLevel += s.getLevel() - 5;;
 		}
 		if(playerLevel == 5) playerLevel = highestSkill;
 		return playerLevel;
 	}
 	
-	public List<ItemStack> calculateTrainingCost(Skill skill) {
+	protected List<ItemStack> calculateTrainingCost(Skill skill) {
 		int highSkills = countHighSkills();
 		int dwarfLevel = getDwarfLevel();
 		int quartileSize = Math.min(4,highSkills/4);
@@ -58,41 +63,41 @@ public class Dwarf {
 		
 		//Creates an ordered list of skill levels and finds where in that list the skill is (what quartile)
 		if (DwarfCraft.debugMessagesThreshold < 0) System.out.println("DC0: starting skill ordering for quartiles");
-		for (Skill s:skills){
+		for (Skill s:getSkills()){
 			if(s==null)continue;
-			if (s.level > 5){
-				levelList[i] = s.level;
+			if (s.getLevel() > 5){
+				levelList[i] = s.getLevel();
 				i++;}}
 		Arrays.sort(levelList);
-		if (levelList[highSkills - quartileSize]<=skill.level) quartileNumber = 1 ;
-		else if (levelList[highSkills - 2 * quartileSize]<=skill.level) quartileNumber = 2 ;
-		else if (levelList[highSkills - 3 * quartileSize]<=skill.level) quartileNumber = 3 ;
-		if (skill.level < 5) quartileNumber = 1;   //low skills train full speed
+		if (levelList[highSkills - quartileSize]<=skill.getLevel()) quartileNumber = 1 ;
+		else if (levelList[highSkills - 2 * quartileSize]<=skill.getLevel()) quartileNumber = 2 ;
+		else if (levelList[highSkills - 3 * quartileSize]<=skill.getLevel()) quartileNumber = 3 ;
+		if (skill.getLevel() < 5) quartileNumber = 1;   //low skills train full speed
 		
 		//calculate quartile penalties for 2nd/3rd/4th quartile
-		double multiplier = Math.max(1, Math.pow(1.072,(skill.level-5)));
+		double multiplier = Math.max(1, Math.pow(1.072,(skill.getLevel()-5)));
 		if (quartileNumber == 2) multiplier *= (1 + 1* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 3) multiplier *= (1 + 2* dwarfLevel/(100 + 3*dwarfLevel));
 		if (quartileNumber == 4) multiplier *= (1 + 3* dwarfLevel/(100 + 3*dwarfLevel));
 		
 		//create output item stack of new items
 		trainingStack.add(new ItemStack(
-				skill.TrainingItem1Mat, 
+				skill.getTrainingItem1Mat(), 
 				(int) Math.min(
-						Math.ceil((skill.level+1)*skill.TrainingItem1BaseCost*multiplier-.01), //fudge factor for icky multiplication
-						skill.TrainingItem1MaxAmount)));		
-		if (skill.TrainingItem2Mat != Material.AIR)
+						Math.ceil((skill.getLevel()+1)*skill.getTrainingItem1BaseCost()*multiplier-.01), //fudge factor for icky multiplication
+						skill.getTrainingItem1MaxAmount())));		
+		if (skill.getTrainingItem2Mat() != Material.AIR)
 			trainingStack.add(new ItemStack(
-					skill.TrainingItem2Mat, 
+					skill.getTrainingItem2Mat(), 
 					(int) Math.min(
-							Math.ceil((skill.level+1)*skill.TrainingItem2BaseCost*multiplier-.01), //fudge factor for icky multiplication
-							skill.TrainingItem2MaxAmount)));
-		if (skill.TrainingItem3Mat != Material.AIR)
+							Math.ceil((skill.getLevel()+1)*skill.getTrainingItem2BaseCost()*multiplier-.01), //fudge factor for icky multiplication
+							skill.getTrainingItem2MaxAmount())));
+		if (skill.getTrainingItem3Mat() != Material.AIR)
 			trainingStack.add(new ItemStack(
-					skill.TrainingItem3Mat, 
+					skill.getTrainingItem3Mat(), 
 					(int) Math.min(
-							Math.ceil((skill.level+1)*skill.TrainingItem3BaseCost*multiplier-.01), //fudge factor for icky multiplication
-							skill.TrainingItem3MaxAmount)));
+							Math.ceil((skill.getLevel()+1)*skill.getTrainingItem3BaseCost()*multiplier-.01), //fudge factor for icky multiplication
+							skill.getTrainingItem3MaxAmount())));
 		return trainingStack;
 	}
 
@@ -101,8 +106,8 @@ public class Dwarf {
 	 */
 	private int countHighSkills() {
 		int highCount = 0;
-		for (Skill s:skills) {
-			if (s!=null) if(s.level>5) highCount++;
+		for (Skill s:getSkills()) {
+			if (s!=null) if(s.getLevel()>5) highCount++;
 		}
 		return highCount;
 	}
@@ -111,10 +116,10 @@ public class Dwarf {
 	 * makes the Dwarf into an elf
 	 * @return
 	 */
-	public boolean makeElf(){
+	private boolean makeElf(){
 		if (isElf) return false;
 		isElf = true;
-		for (Skill skill: skills) if(skill!=null) skill.level = 0;
+		for (Skill skill: getSkills()) if(skill!=null) skill.setLevel(0);
 		plugin.getDataManager().saveDwarfData(this);
 		return isElf;
 	}
@@ -122,9 +127,9 @@ public class Dwarf {
 	/**
 	 * Makes an elf into a dwarf
 	 */
-	public boolean makeElfIntoDwarf(){
+	protected boolean makeElfIntoDwarf(){
 		isElf = false;
-		for (Skill skill: skills) if(skill!=null) skill.level = 0;
+		for (Skill skill: getSkills()) if(skill!=null) skill.setLevel(0);
 		plugin.getDataManager().saveDwarfData(this);
 		return true;
 	}
@@ -134,16 +139,16 @@ public class Dwarf {
 	 * @param skillName
 	 * @return Skill or null if none found
 	 */
-	public Skill getSkill(String skillName){
+	protected Skill getSkill(String skillName){
 		try{
 			return getSkill(Integer.parseInt(skillName));
 		}
 		catch (NumberFormatException n){
-			for (Skill skill: skills){
-				if (skill.displayName== null) continue;
-				if (skill.displayName.equalsIgnoreCase(skillName)) return skill;
+			for (Skill skill: getSkills()){
+				if (skill.getDisplayName()== null) continue;
+				if (skill.getDisplayName().equalsIgnoreCase(skillName)) return skill;
 				if (skill.toString().equalsIgnoreCase(skillName)) return skill;
-				if (skill.displayName.toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
+				if (skill.getDisplayName().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
 				if (skill.toString().toLowerCase().regionMatches(0, skillName.toLowerCase(), 0, 5)) return skill;
 			}
 			
@@ -156,9 +161,9 @@ public class Dwarf {
 	 * @param skillId
 	 * @return Skill or null if none found
 	 */
-	public Skill getSkill(int skillId){
-		for (Skill skill: skills){
-			if (skill.id == skillId) return skill;
+	protected Skill getSkill(int skillId){
+		for (Skill skill: getSkills()){
+			if (skill.getId() == skillId) return skill;
 		}
 		return null;
 		}
@@ -168,9 +173,9 @@ public class Dwarf {
 	 * @param effect (does not have to be this dwarf's effect, only used for ID#)
 	 * @return Skill or null if none found
 	 */
-	public Skill getSkill(Effect effect) {
-		for (Skill skill: skills){
-			if (skill.id == effect.id/10) return skill;
+	protected Skill getSkill(Effect effect) {
+		for (Skill skill: getSkills()){
+			if (skill.getId() == effect.getId()/10) return skill;
 		}
 		return null;
 	}
@@ -180,7 +185,7 @@ public class Dwarf {
 	 * @param itemId
 	 * @return total item count int
 	 */
-	public int countItem(int itemId) {
+	protected int countItem(int itemId) {
 		int itemCount = 0;
 		ItemStack[] items = player.getInventory().getContents();
 		for(ItemStack item: items){
@@ -196,7 +201,7 @@ public class Dwarf {
 	 * @param material
 	 * @return total item count int
 	 */
-	public int countItem(Material material) {
+	protected int countItem(Material material) {
 		return countItem(material.getId());
 	}
 
@@ -206,7 +211,7 @@ public class Dwarf {
 	 * @param itemId
 	 * @param amount
 	 */
-	public void removeInventoryItems(int itemId, int amount){
+	protected void removeInventoryItems(int itemId, int amount){
 		Inventory inventory = player.getInventory();
 		ItemStack[] items = inventory.getContents();
 		int amountLeft = amount;
@@ -230,9 +235,9 @@ public class Dwarf {
 		}
 	}
 
-	public int countSkills() {
+	private int countSkills() {
 		int count = 0;
-		for (Skill s:skills) if(s != null) count++;
+		for (Skill s:getSkills()) if(s != null) count++;
 		return count;
 	}
 
@@ -241,10 +246,10 @@ public class Dwarf {
 	 * @param effectId
 	 * @return
 	 */
-	public Effect getEffect(int effectId) {
+	protected Effect getEffect(int effectId) {
 		Skill skill = getSkill(effectId/10);
-		for(Effect effect:skill.effects){
-			if(effect.id == effectId) return effect;
+		for(Effect effect:skill.getEffects()){
+			if(effect.getId() == effectId) return effect;
 		}
 		return null;
 	}
@@ -254,31 +259,38 @@ public class Dwarf {
 	 * the highest skill level when none are above 5.
 	 * @return
 	 */
-	public int getDwarfLevel() {
+	protected int getDwarfLevel() {
 		if(isElf) return 0;
 		int playerLevel = 5;
 		int highestSkill = 0;
-		for(Skill s:skills){
+		for(Skill s:getSkills()){
 			if(s==null) continue;
-			if(s.level > highestSkill){highestSkill = s.level;};
-			if(s.level > 5){playerLevel = playerLevel + s.level - 5;};
+			if(s.getLevel() > highestSkill){highestSkill = s.getLevel();};
+			if(s.getLevel() > 5){playerLevel = playerLevel + s.getLevel() - 5;};
 		}
 		if(playerLevel == 5){playerLevel = highestSkill;};
 		return playerLevel;
 	}
 
-	public void sendMessage(String string) {
+	private void sendMessage(String string) {
 		player.sendMessage(string);
 	}
 
-	public boolean isElf() {
+	protected boolean isElf() {
 		if (isElf) return true;
 		return false;
 	}
 
-	public int skillLevel(int i) {
-		for (Skill s: skills) if (s.id == i) return s.level;
+	protected int skillLevel(int i) {
+		for (Skill s: getSkills()) if (s.getId() == i) return s.getLevel();
 		return 0;
+	}
+
+	/**
+	 * @param skills the skills to set
+	 */
+	protected void setSkills(List <Skill> skills) {
+		this.skills = skills;
 	}
 
 	

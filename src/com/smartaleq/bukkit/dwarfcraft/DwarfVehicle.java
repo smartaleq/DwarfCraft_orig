@@ -9,21 +9,23 @@ public class DwarfVehicle {
 	private Vector velocity;
 	private Location location;
 	
-	DwarfVehicle (Vehicle vehicle) {
+	protected DwarfVehicle (Vehicle vehicle) {
 		this.vehicle = vehicle;
 		this.velocity = vehicle.getVelocity().clone();
-		this.location =vehicle.getLocation().clone();
+		this.location = vehicle.getLocation().clone();
 	}
 	
-	protected Vehicle getVehicle() { return vehicle; }
-	protected Vector getVelocity() { return velocity; }
-	protected Location getLocation() { return location; }
+	private Vehicle getVehicle() { return vehicle; }
+	private Vector getVelocity() { return velocity; }
+	private Location getLocation() { return location; }
 	
-	protected boolean equals(Vehicle that) {
-		if ( that == vehicle )
-			return true;
-		else
-			return false;
+	@Override
+	public boolean equals(Object that) {
+		if ( that instanceof Vehicle ) {
+			if ( that == vehicle )
+				return true;
+		}
+		return false;
 	}
 	
 }

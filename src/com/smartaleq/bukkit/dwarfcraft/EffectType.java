@@ -26,7 +26,7 @@ public enum EffectType {
 	SPECIAL, // TODO forges 
 	;
 	
-	public static EffectType getEffectType(String name){
+	protected static EffectType getEffectType(String name){
 		for(EffectType effectType:EffectType.values()){
 			if(effectType.toString().equalsIgnoreCase(name)) return effectType;
 		}

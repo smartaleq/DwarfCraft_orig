@@ -6,22 +6,37 @@ import org.bukkit.Material;
 
 public class Skill implements Cloneable{
 	
-	public final int id;
-	public final String displayName;
-	public int level;
-	public final List <Effect> effects;
-	public final Material TrainingItem1Mat;
-	public final double TrainingItem1BaseCost;
-	public final int TrainingItem1MaxAmount;
-	public final Material TrainingItem2Mat;
-	public final double TrainingItem2BaseCost;
-	public final int TrainingItem2MaxAmount;
-	public final Material TrainingItem3Mat;
-	public final double TrainingItem3BaseCost;
-	public final int TrainingItem3MaxAmount;
+	private final int id;
+	private final String displayName;
+	private int level;
+	private final List <Effect> effects;
+	private final Material TrainingItem1Mat;
+	private final double TrainingItem1BaseCost;
+	private final int TrainingItem1MaxAmount;
+	private final Material TrainingItem2Mat;
+	private final double TrainingItem2BaseCost;
+	private final int TrainingItem2MaxAmount;
+	private final Material TrainingItem3Mat;
+	private final double TrainingItem3BaseCost;
+	private final int TrainingItem3MaxAmount;
 	private final Material trainerHeldMaterial;
-		
-	public Skill(
+	
+	protected void setLevel(int newLevel) { level = newLevel; }
+	protected String getDisplayName() { return displayName; }
+	protected int getLevel() { return level; }
+	@Deprecated
+	protected List<Effect> getEffects() { return effects; }
+	protected Material getTrainingItem1Mat() { return TrainingItem1Mat; }
+	protected double getTrainingItem1BaseCost() { return TrainingItem1BaseCost; }
+	protected final int getTrainingItem1MaxAmount() { return TrainingItem1MaxAmount; }
+	protected Material getTrainingItem2Mat() { return TrainingItem2Mat; }
+	protected double getTrainingItem2BaseCost() { return TrainingItem2BaseCost; }
+	protected final int getTrainingItem2MaxAmount() { return TrainingItem2MaxAmount; }
+	protected Material getTrainingItem3Mat() { return TrainingItem3Mat; }
+	protected double getTrainingItem3BaseCost() { return TrainingItem3BaseCost; }
+	protected final int getTrainingItem3MaxAmount() { return TrainingItem3MaxAmount; }
+	
+	protected Skill(
 			int id, 
 			String displayName,
 			int level,
@@ -61,15 +76,17 @@ public class Skill implements Cloneable{
 	 * 
 	 * Known issue: it does not clone the effects table or itemStack table. This is not a problem because effects are 100% final, and ItemStack is never modified.
 	 */
+	@Override
 	public Skill clone(){
 		Skill newSkill = new Skill(this.id, this.displayName, this.level, this.effects,this.TrainingItem1Mat,this.TrainingItem1BaseCost ,this.TrainingItem1MaxAmount,this.TrainingItem2Mat ,this.TrainingItem2BaseCost,this.TrainingItem2MaxAmount ,this.TrainingItem3Mat  ,this.TrainingItem3BaseCost   ,this.TrainingItem3MaxAmount, this.trainerHeldMaterial);
 		return newSkill;
 	}
 	
+	@Override
 	public String toString(){
 		return displayName.toUpperCase().replaceAll(" ", "_");
 	}
 	
-	public Material getTrainerHeldMaterial() { return this.trainerHeldMaterial; } 
-	public int getId() { return this.id; }
+	protected Material getTrainerHeldMaterial() { return trainerHeldMaterial; } 
+	protected int getId() { return id; }
 }

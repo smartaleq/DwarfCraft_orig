@@ -1,26 +1,26 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-public class Messages {
+final class Messages {
 	
 	
 	//String messages loaded from messages.config
-	public static String GeneralInfo = null;
-	public static String ServerRules = null;
+	protected static String GeneralInfo = null;
+	protected static String ServerRules = null;
 	
-	public static String primaryRaceName = "Dwarf";
-	public static String primaryRacePlural = "Dwarves";
-	public static String secondaryRaceName = "Elf";
-	public static String secondaryRacePlural = "Elves";
+	protected static String primaryRaceName = "Dwarf";
+	protected static String primaryRacePlural = "Dwarves";
+	protected static String secondaryRaceName = "Elf";
+	protected static String secondaryRacePlural = "Elves";
 	
-	public static String PRIMARYRACESUCCESS = null;
-	public static String PRIMARYRACECONFIRM = null;
-	public static String SECONDARYRACESUCCESS = null;
-	public static String SECONDARYRACECONFIRM = null;
-	public static String SECONDARYRACEALREADY = null;
+	protected static String PRIMARYRACESUCCESS = null;
+	protected static String PRIMARYRACECONFIRM = null;
+	protected static String SECONDARYRACESUCCESS = null;
+	protected static String SECONDARYRACECONFIRM = null;
+	protected static String SECONDARYRACEALREADY = null;
 	
 		
 	//String messages fixed for DwarfCraft, and backup messages when loading fails.
-	public enum Fixed{
+	protected enum Fixed{
 		INFO(
 				"This is a dummy General Help Message, please place a message in your messages.config"), 
 		SERVERRULESMESSAGE(
@@ -94,9 +94,11 @@ public class Messages {
 //		
 		;
 	
-		public String message;
+		private String message;
 	
-		Fixed(String message) {
+		protected String getMessage() { return message; }
+		
+		private Fixed(String message) {
 			this.message = message;
 		}
 	}

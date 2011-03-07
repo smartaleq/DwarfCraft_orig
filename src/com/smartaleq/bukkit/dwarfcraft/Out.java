@@ -17,7 +17,7 @@ public class Out {
 	private final int maxLines = 10;
 	private final DwarfCraft plugin;
 	
-	public Out(final DwarfCraft plugin) {
+	protected Out(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -78,7 +78,7 @@ public class Out {
 		}
 	}
 	
-	public void generalInfo(CommandSender sender) {
+	protected void generalInfo(CommandSender sender) {
 		sendMessage(sender, "&d" + Messages.GeneralInfo, "&6[&d?&6] ");
 	}
 		
@@ -88,12 +88,12 @@ public class Out {
 //		return true;
 //	}
 	
-	public void info(CommandSender sender) {
+	protected void info(CommandSender sender) {
 		sendMessage(sender, Messages.GeneralInfo, "&6[&dInfo&6] ");
 	}
 	
 
-	public void rules(CommandSender sender) {
+	protected void rules(CommandSender sender) {
 		sendMessage(sender, Messages.ServerRules, "&6[&dRules&6] ");
 	}
 
@@ -110,34 +110,34 @@ public class Out {
 //		return false;
 //	}
 
-	public void tutorial(CommandSender sender, int i) {
-		if (i == 1) sendMessage(sender, Messages.Fixed.TUTORIAL1.message,"&6[&dDC&6] ");
-		else if (i == 2) sendMessage(sender, Messages.Fixed.TUTORIAL2.message,"&6[&dDC&6] ");
-		else if (i == 3) sendMessage(sender, Messages.Fixed.TUTORIAL3.message,"&6[&dDC&6] ");
-		else if (i == 4) sendMessage(sender, Messages.Fixed.TUTORIAL4.message,"&6[&dDC&6] ");
-		else if (i == 5) sendMessage(sender, Messages.Fixed.TUTORIAL5.message,"&6[&dDC&6] ");
-		else if (i == 6) sendMessage(sender, Messages.Fixed.TUTORIAL6.message,"&6[&dDC&6] ");
+	protected void tutorial(CommandSender sender, int i) {
+		if (i == 1) sendMessage(sender, Messages.Fixed.TUTORIAL1.getMessage(),"&6[&dDC&6] ");
+		else if (i == 2) sendMessage(sender, Messages.Fixed.TUTORIAL2.getMessage(),"&6[&dDC&6] ");
+		else if (i == 3) sendMessage(sender, Messages.Fixed.TUTORIAL3.getMessage(),"&6[&dDC&6] ");
+		else if (i == 4) sendMessage(sender, Messages.Fixed.TUTORIAL4.getMessage(),"&6[&dDC&6] ");
+		else if (i == 5) sendMessage(sender, Messages.Fixed.TUTORIAL5.getMessage(),"&6[&dDC&6] ");
+		else if (i == 6) sendMessage(sender, Messages.Fixed.TUTORIAL6.getMessage(),"&6[&dDC&6] ");
 	}
 	
-	public boolean printSkillInfo(CommandSender sender,  Skill skill,Dwarf dwarf, int maxTrainLevel){
+	protected boolean printSkillInfo(CommandSender sender,  Skill skill,Dwarf dwarf, int maxTrainLevel){
 		//general line
-		sendMessage(sender, "&6  Skillinfo for &b"+skill.displayName+"&6 [&b"+skill.id+"&6] || Your level &3"+skill.level);
+		sendMessage(sender, "&6  Skillinfo for &b"+skill.getDisplayName()+"&6 [&b"+skill.getId()+"&6] || Your level &3"+skill.getLevel());
 		//effects lines
 		sendMessage(sender, "&6[&5EffectID&6]&f------&6[Effect]&f------" );
-		for(Effect effect:skill.effects){
+		for(Effect effect:skill.getEffects()){
 			if (effect != null)
-				sendMessage(sender, effect.describeLevel(dwarf), "&6[&5"+effect.id+"&6] ");
+				sendMessage(sender, effect.describeLevel(dwarf), "&6[&5"+effect.getId()+"&6] ");
 		}
 		//training lines	
-		if (skill.level == 30) {
+		if (skill.getLevel() == 30) {
 			sendMessage(sender, "&6---This skill is maximum level, no training available---");
 			return true;
 		}
-		if (skill.level > maxTrainLevel){
+		if (skill.getLevel() > maxTrainLevel){
 			sendMessage(sender, "&6---You're as skilled as me, you need a more advanced trainer!--");
 			return true;
 		}
-		sendMessage(sender, "&6---Train costs for level &3"+(skill.level+1));
+		sendMessage(sender, "&6---Train costs for level &3"+(skill.getLevel()+1));
 		List <ItemStack> costs = dwarf.calculateTrainingCost(skill);
 		for(ItemStack item:costs){
 			if (item != null) sendMessage(sender, " &2" +item.getAmount() + " " + item.getType()+ "&6  --" , " &6-- ");
@@ -145,13 +145,13 @@ public class Out {
 		return true;
 	}
 	
-	public void printSkillSheet(Dwarf dwarf, CommandSender sender, String displayName, boolean printFull) {
+	protected void printSkillSheet(Dwarf dwarf, CommandSender sender, String displayName, boolean printFull) {
 		String message1;
 		String message2 = "";
 		String prefix1 = "&6[&dSS&6] ";
 
 		String prefix2 = "&6[&dSS&6] ";	
-		message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? dwarf.player.getName() : displayName) + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
+		message1 = ("&6Printing Skill Sheet for &9" + (displayName == null ? dwarf.getPlayer().getName() : displayName) + " Dwarf &6Level is &3" + dwarf.getDwarfLevel());
 		sendMessage(sender, message1, prefix1);
 		
 		if(dwarf.isElf()){
@@ -160,20 +160,20 @@ public class Out {
 		}
 		boolean odd = true;
 		String untrainedSkills = "&6Untrained Skills: ";
-		for (Skill s:dwarf.skills){	
+		for (Skill s:dwarf.getSkills()){	
 			if(s == null) continue;
-			if(s.level == 0) {
-				untrainedSkills = untrainedSkills.concat("|&7" + s.displayName+"&6| ");
+			if(s.getLevel() == 0) {
+				untrainedSkills = untrainedSkills.concat("|&7" + s.getDisplayName()+"&6| ");
 				continue;
 			}
 			odd = !odd;
 			// the goal here is for every skill sheet line to be 60 characters long.
 			// each skill should take 30 characters - no more, no less
 			String interim;
-			if ( s.level < 10)
-				interim = String.format("&6[&30%d&6] &b%.18s", s.level, s.displayName);
+			if ( s.getLevel() < 10)
+				interim = String.format("&6[&30%d&6] &b%.18s", s.getLevel(), s.getDisplayName());
 			else 
-				interim = String.format("&6[&3%d&6] &b%.18s", s.level, s.displayName);
+				interim = String.format("&6[&3%d&6] &b%.18s", s.getLevel(), s.getDisplayName());
 			
 			if (!odd) { 
 				int interimLen = Util.msgLength(interim);
@@ -204,47 +204,47 @@ public class Out {
 		if(printFull)sendMessage(sender, untrainedSkills, prefix2);
 	}	
 		
-	public boolean effectInfo(CommandSender sender, Dwarf dwarf, Effect effect) {
-		sendMessage(sender, effect.describeLevel(dwarf), "&6[&5" +effect.id+"&6] ");
-		sendMessage(sender, effect.describeGeneral(), "&6[&5" +effect.id+"&6] ");
+	protected boolean effectInfo(CommandSender sender, Dwarf dwarf, Effect effect) {
+		sendMessage(sender, effect.describeLevel(dwarf), "&6[&5" +effect.getId()+"&6] ");
+		sendMessage(sender, effect.describeGeneral(), "&6[&5" +effect.getId()+"&6] ");
 		return true;
 	}
 		
-	public void becameDwarf(CommandSender sender,Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.PRIMARYRACESUCCESS.message, "&6[DC] ");
+	protected void becameDwarf(CommandSender sender,Dwarf dwarf) {
+		sendMessage(sender, Messages.Fixed.PRIMARYRACESUCCESS.getMessage(), "&6[DC] ");
 	}
-	public void confirmBecomingDwarf(CommandSender sender,Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.PRIMARYRACECONFIRM.message,"&6[DC] ");
+	protected void confirmBecomingDwarf(CommandSender sender,Dwarf dwarf) {
+		sendMessage(sender, Messages.Fixed.PRIMARYRACECONFIRM.getMessage(),"&6[DC] ");
 	}
-	public void becameElf(CommandSender sender,Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACESUCCESS.message, "&6[DC] ");
+	protected void becameElf(CommandSender sender,Dwarf dwarf) {
+		sendMessage(sender, Messages.Fixed.SECONDARYRACESUCCESS.getMessage(), "&6[DC] ");
 	}	
-	public void alreadyElf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACEALREADY.message, "&6[DC] ");
+	protected void alreadyElf(CommandSender sender, Dwarf dwarf) {
+		sendMessage(sender, Messages.Fixed.SECONDARYRACEALREADY.getMessage(), "&6[DC] ");
 	}
-	public void confirmBecomingElf(CommandSender sender,Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACECONFIRM.message,"&6[DC] ");
+	protected void confirmBecomingElf(CommandSender sender,Dwarf dwarf) {
+		sendMessage(sender, Messages.Fixed.SECONDARYRACECONFIRM.getMessage(),"&6[DC] ");
 	}
 	
 	/**
 	 * Used to send messages to one player or console
 	 */
-	public void sendMessage(CommandSender sender, String message) {
+	protected void sendMessage(CommandSender sender, String message) {
 		sendMessage(sender, message, "");
 	}
 	
 	/**
 	 * Dwarf version
 	 */
-	public void sendMessage(Dwarf dwarf, String message){
-		sendMessage(dwarf.player, message);
+	protected void sendMessage(Dwarf dwarf, String message){
+		sendMessage(dwarf.getPlayer(), message);
 	}
 
 	/**
 	 * Used to send messages to one player with a prefix
 	 * @return 
 	 */
-	public void sendMessage(CommandSender sender, String message, String prefix){
+	protected void sendMessage(CommandSender sender, String message, String prefix){
 		if (sender instanceof Player){
 			message = parseColors(message);
 			prefix = parseColors(prefix);
@@ -260,28 +260,28 @@ public class Out {
 	/**
 	 * Used to send messages to many players
 	 */
-	public void sendMessage(Player[] playerArray, String message){
+	protected void sendMessage(Player[] playerArray, String message){
 		sendMessage(playerArray, message, "");
 	}
 	
 	/**
 	 * Used to send messages to many players with a prefix
 	 */
-	public void sendMessage(Player[] playerArray, String message, String prefix ){
+	protected void sendMessage(Player[] playerArray, String message, String prefix ){
 		for (Player p: playerArray) sendMessage(p, message, prefix);
 	}
 	
 	/**
 	 * Used to send messages to all players on a server
 	 */
-	public void sendBroadcast(Server server, String message){
+	protected void sendBroadcast(Server server, String message){
 		sendBroadcast(server, message, "");
 	}
 	
 	/**
 	 * Used to send messages to all players on a server with a prefix
 	 */
-	public void sendBroadcast(Server server, String message, String prefix){
+	protected void sendBroadcast(Server server, String message, String prefix){
 		Player[] playerArray = server.getOnlinePlayers();
 		sendMessage(playerArray, message, prefix);
 	}
@@ -433,18 +433,18 @@ public class Out {
 	 * @param server
 	 * @param dwarf
 	 */
-	public void welcome(Server server, Dwarf dwarf) {
+	protected void welcome(Server server, Dwarf dwarf) {
 		try {
 			String raceName = "";
 			if(dwarf.isElf()) raceName = "&f&s";
 			else raceName = "&9&p";
-			sendBroadcast(server, "&fWelcome, "+raceName+" &6"+dwarf.player.getName() ,"&6[DC]         ");
+			sendBroadcast(server, "&fWelcome, "+raceName+" &6"+dwarf.getPlayer().getName() ,"&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void printTrainerList(CommandSender sender) {
+	protected void printTrainerList(CommandSender sender) {
 		if ( plugin.getDataManager().trainerList.isEmpty() ) {
 			sendMessage(sender, "There are currently no trainers.");
 		}
@@ -457,14 +457,14 @@ public class Out {
 				}
 				else {
 					String skillName = null;
-					for(Skill s:plugin.getConfigManager().getAllSkills()) if (s.id == d.getSkillTrained()) skillName = s.displayName;
+					for(Skill s:plugin.getConfigManager().getAllSkills()) if (s.getId() == d.getSkillTrained()) skillName = s.getDisplayName();
 					sendMessage(sender, "Trainer ID: " + d.getUniqueId() + " Name: " + d.getName() + " Trains: (" + d.getSkillTrained() + ") " + skillName);
 				}
 			}
 		}
 	}
 
-	public void race(Player player) {
+	protected void race(Player player) {
 		// TODO Auto-generated method stub
 		
 	}

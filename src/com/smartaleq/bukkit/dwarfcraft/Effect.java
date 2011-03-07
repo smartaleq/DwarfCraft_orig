@@ -3,30 +3,39 @@ package com.smartaleq.bukkit.dwarfcraft;
 import org.bukkit.Material;
 
 
-public class Effect {
+final class Effect {
 	
-	public int id;
+	final private int id;
 	
 	//effect value descriptors
-	final double baseValue;
-	final double levelUpMultiplier;
-	final double noviceLevelUpMultiplier;
-	final double minValue;
-	final double maxValue;
-	final boolean floorResult;
-	final boolean hasException;
-	final double exceptionLow;
-	final double exceptionHigh;
-	final double exceptionValue;
+	final private double baseValue;
+	final private double levelUpMultiplier;
+	final private double noviceLevelUpMultiplier;
+	final private double minValue;
+	final private double maxValue;
+	final private boolean floorResult;
+	final private boolean hasException;
+	final private double exceptionLow;
+	final private double exceptionHigh;
+	final private double exceptionValue;
 
-	final public int elfEffectLevel;
-	final public EffectType effectType;
-	final public int initiatorId;
-	final public int outputId;
-	final public boolean toolRequired;
-	final public int[] tools;
-		
-	public Effect(
+	final private int elfEffectLevel;
+	final private EffectType effectType;
+	final private int initiatorId;
+	final private int outputId;
+	final private boolean toolRequired;
+	final private int[] tools;
+	
+	protected int getElfEffectLevel() { return elfEffectLevel; }
+	protected EffectType getEffectType() { return effectType; }
+	protected int getInitiatorId() { return initiatorId; }
+	protected int getOutputId() { return outputId; }
+	protected boolean getToolRequired() { return toolRequired; }
+	protected int[] getTools() { return tools; }
+	
+	protected int getId() { return id; }
+	
+	protected Effect(
 			int id,
 			double baseValue,
 			double levelUpMultiplier,
@@ -65,6 +74,7 @@ public class Effect {
 		this.tools = tools;
 	}
 	
+	@Override
 	public String toString(){
 		return Integer.toString(id);
 	}
@@ -74,7 +84,7 @@ public class Effect {
 	 * @param dwarf
 	 * @return
 	 */
-	public double getEffectAmount(Dwarf dwarf){
+	protected double getEffectAmount(Dwarf dwarf){
 		double effectAmount = baseValue;
 		int skillLevel;
 		skillLevel = dwarf.skillLevel(this.id/10);
@@ -99,7 +109,7 @@ public class Effect {
 		return effectAmount;
 	}
 	
-	public String effectLevelColor(int skillLevel){
+	private String effectLevelColor(int skillLevel){
 		if (skillLevel > elfEffectLevel) return "&a";
 		else if (skillLevel == elfEffectLevel) return "&e";
 		else return "&c";
@@ -109,7 +119,7 @@ public class Effect {
 	 * Tool to string parser for effect descriptions
 	 * @return
 	 */
-	public String toolType(){
+	private String toolType(){
 		for (int toolId: tools){
 			if (toolId == 267) return "swords";
 			if (toolId == 292) return "hoes";
@@ -126,7 +136,7 @@ public class Effect {
 	 * General description of a benefit including minimum and maximum benefit
 	 * @return
 	 */
-	public String describeGeneral(){
+	protected String describeGeneral(){
 		String description;
 		String initiator = Material.getMaterial(initiatorId).toString();
 		if (initiator.equalsIgnoreCase("AIR")) initiator = "None";
@@ -179,7 +189,7 @@ public class Effect {
 	 * @param dwarf
 	 * @return
 	 */
-	public String describeLevel(Dwarf dwarf){
+	protected String describeLevel(Dwarf dwarf){
 		if (dwarf == null) return "Failed"; //TODO add failure code
 		String description = "no skill description";
 		// Variables used in skill descriptions
@@ -188,7 +198,7 @@ public class Effect {
 		double effectAmount = getEffectAmount(dwarf);
 		double elfAmount = getEffectAmount(elfEffectLevel);
 		boolean moreThanOne = (effectAmount > 1);
-		String effectLevelColor = effectLevelColor(dwarf.getSkill(this).level);
+		String effectLevelColor = effectLevelColor(dwarf.getSkill(this).getLevel());
 		String toolType = toolType();
 		
 		if (effectType.equals(EffectType.ARMORHIT)){

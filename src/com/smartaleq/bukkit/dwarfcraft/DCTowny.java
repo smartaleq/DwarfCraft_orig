@@ -19,13 +19,13 @@ public class DCTowny extends TownyPlayerListener {
 	private final Towny townyPlugin;
 	private final DwarfCraft dwarfCraftPlugin;
 	
-	public DCTowny(final Towny townyPlugin, final DwarfCraft dwarfCraftPlugin) {
+	protected DCTowny(final Towny townyPlugin, final DwarfCraft dwarfCraftPlugin) {
 		super(townyPlugin);
 		this.townyPlugin = townyPlugin;
 		this.dwarfCraftPlugin = dwarfCraftPlugin;
 	}
 
-	public void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, int blockCost, boolean force) throws TownyException {
+	private void checkIfSelectionIsValid(TownBlockOwner owner, List<WorldCoord> selection, boolean attachedToEdge, int blockCost, boolean force) throws TownyException {
 		if (force)
 			return;
 		
@@ -49,7 +49,7 @@ public class DCTowny extends TownyPlayerListener {
 		}
 	}
 	
-	public int getDCMaxTownBlocks(Town town) {
+	private int getDCMaxTownBlocks(Town town) {
 		int residentTotal = 0;
 		int mayorMax = 5;
 		Resident mayor = town.getMayor();

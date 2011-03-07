@@ -12,8 +12,8 @@ import org.bukkit.World;
 
 import redecouverte.npcspawner.*;
 
-public class DwarfTrainer {
-	// public static BasicHumanNpcList HumanNpcList;
+final class DwarfTrainer {
+	// protected static BasicHumanNpcList HumanNpcList;
 	private BasicHumanNpc basicHumanNpc;
 	private Integer skillId;
 	private Integer maxSkill;
@@ -28,7 +28,7 @@ public class DwarfTrainer {
 	
 	// only used by DB
 	// schema (world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
-	public DwarfTrainer (final DwarfCraft plugin, World newWorld, String newUniqueId, String newName, Integer newSkillId, Integer newMaxSkill, Material newMaterial, boolean newIsGreeter, String newGreeterMessage, double newX, double newY, double newZ, Float newYaw, Float newPitch ) {
+	protected DwarfTrainer (final DwarfCraft plugin, World newWorld, String newUniqueId, String newName, Integer newSkillId, Integer newMaxSkill, Material newMaterial, boolean newIsGreeter, String newGreeterMessage, double newX, double newY, double newZ, Float newYaw, Float newPitch ) {
 		this.plugin = plugin;
 		skillId = newSkillId;
 		maxSkill = newMaxSkill;
@@ -62,7 +62,7 @@ public class DwarfTrainer {
 	}
 
 	// constructor only for *trainers*
-	public DwarfTrainer (final DwarfCraft plugin, Player player, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter) {
+	protected DwarfTrainer (final DwarfCraft plugin, Player player, String uniqueId, String name, Integer skillId, Integer maxSkill, String greeterMessage, boolean isGreeter) {
 		this.plugin = plugin;
 		this.skillId = skillId; 
 		this.maxSkill = maxSkill;
@@ -101,6 +101,7 @@ public class DwarfTrainer {
 		}
 	}
 	
+	@Override
 	public boolean equals(Object that) {
 		if ( this == that ) {
 			return true;
@@ -113,21 +114,21 @@ public class DwarfTrainer {
 		return false;
 	}
 	
-	public String getUniqueId() { return basicHumanNpc.getUniqueId(); }
-	public String getName() { return basicHumanNpc.getName(); }
-	public BasicHumanNpc getBasicHumanNpc() { return basicHumanNpc; }
-	public Integer getSkillTrained() { return skillId; }
-	public World getWorld() { return world; }
-	public Integer getMaxSkill() { return maxSkill; }
-	public boolean isGreeter() { return greeter; }
-	public int getMaterial() { if (itemStack != null) return itemStack.getTypeId(); else return (int)(Material.AIR.getId()); }
-	public String getMessage() { return messageId; }
+	protected String getUniqueId() { return basicHumanNpc.getUniqueId(); }
+	protected String getName() { return basicHumanNpc.getName(); }
+	protected BasicHumanNpc getBasicHumanNpc() { return basicHumanNpc; }
+	protected Integer getSkillTrained() { return skillId; }
+	protected World getWorld() { return world; }
+	protected Integer getMaxSkill() { return maxSkill; }
+	protected boolean isGreeter() { return greeter; }
+	protected int getMaterial() { if (itemStack != null) return itemStack.getTypeId(); else return (int)(Material.AIR.getId()); }
+	protected String getMessage() { return messageId; }
 	
-	public Location getLocation() {
+	protected Location getLocation() {
 		return basicHumanNpc.getBukkitEntity().getLocation();
 	}
 	
-	public void spawn() {
+	private void spawn() {
 		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(
 				basicNpcUniqueId,
 				basicNpcName, 
@@ -139,7 +140,7 @@ public class DwarfTrainer {
 				pitch);
 	}
 	
-	public void lookAt(Entity target) {
+	protected void lookAt(Entity target) {
 		assert(target != null);
 		Location l;
 		l = target.getLocation().clone();
@@ -150,12 +151,12 @@ public class DwarfTrainer {
 		return;
 	}
 	
-	public void lookAt(Location l) {
+	protected void lookAt(Location l) {
 		assert(l != null);
 		return;
 	}
 	
-	public void printLeftClick(Player player) {
+	protected void printLeftClick(Player player) {
 		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(messageId);
 		if ( msg != null ) {
 			plugin.getOut().sendMessage(player, msg.getLeftClickMessage());
@@ -166,7 +167,7 @@ public class DwarfTrainer {
 		return;
 	}
 	
-	public void printRightClick(Player player) {
+	protected void printRightClick(Player player) {
 		GreeterMessage msg = plugin.getDataManager().getGreeterMessage(messageId);
 		if ( msg != null ) {
 			plugin.getOut().sendMessage(player, msg.getRightClickMessage());
@@ -174,25 +175,25 @@ public class DwarfTrainer {
 		return;
 	}
 	
-	public void trainSkill(Dwarf dwarf){
+	protected void trainSkill(Dwarf dwarf){
 		boolean soFarSoGood = true;
 		Skill skill = dwarf.getSkill(this.skillId);
 		assert(skill != null);
-		Player player = dwarf.player;
+		Player player = dwarf.getPlayer();
 		List <ItemStack> trainingCosts = dwarf.calculateTrainingCost(skill); 
 		
 		//Must be a dwarf, not an elf
 		if (dwarf.isElf()) {
-			plugin.getOut().sendMessage(player, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.id+"&6] ");
+			plugin.getOut().sendMessage(player, "&cYou are an &fElf &cnot a &9Dwarf&6!", "&6[Train &b"+skill.getId()+"&6] ");
 			soFarSoGood = false;
 		}
 		//Must have skill level between 0 and 29
-		if ( skill.level >= 30) {
-			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", "&6[Train &b"+skill.id+"&6] ");
+		if ( skill.getLevel() >= 30) {
+			plugin.getOut().sendMessage(player, "&cYour skill is max level (30)!", "&6[Train &b"+skill.getId()+"&6] ");
 			soFarSoGood = false;
 		}
-		if (skill.level> maxSkill) {
-			plugin.getOut().sendMessage(player, "&cI can't teach you any more, find a new trainer", "&6[Train &b"+skill.id+"&6] ");
+		if (skill.getLevel()> maxSkill) {
+			plugin.getOut().sendMessage(player, "&cI can't teach you any more, find a new trainer", "&6[Train &b"+skill.getId()+"&6] ");
 			soFarSoGood = false;
 		}
 		
@@ -201,19 +202,19 @@ public class DwarfTrainer {
 			if(itemStack == null) continue;
 			if(itemStack.getAmount() == 0) continue;
 			if(dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
-				plugin.getOut().sendMessage(player, "&cYou do not have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &crequired", "&6[Train &b"+skill.id+"&6] ");
+				plugin.getOut().sendMessage(player, "&cYou do not have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &crequired", "&6[Train &b"+skill.getId()+"&6] ");
 				soFarSoGood = false;
 			}
-			else plugin.getOut().sendMessage(player, "&aYou have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &arequired", "&6[Train &b"+skill.id+"&6] ");
+			else plugin.getOut().sendMessage(player, "&aYou have the &2"+itemStack.getAmount() + " " + itemStack.getType()+ " &arequired", "&6[Train &b"+skill.getId()+"&6] ");
 
 		}
 		
 		//If passed all the 'musts' successfully
 		if(soFarSoGood){
-			skill.level++;
+			skill.setLevel(skill.getLevel() + 1);
 			for (ItemStack itemStack: trainingCosts)
 				dwarf.removeInventoryItems(itemStack.getTypeId(), itemStack.getAmount());
-			plugin.getOut().sendMessage(player,"&6Training Successful!","&6[&b"+skill.id+"&6] ");
+			plugin.getOut().sendMessage(player,"&6Training Successful!","&6[&b"+skill.getId()+"&6] ");
 			plugin.getDataManager().saveDwarfData(dwarf);
 			return;
 		}

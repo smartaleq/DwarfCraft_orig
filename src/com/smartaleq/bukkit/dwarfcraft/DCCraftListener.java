@@ -6,9 +6,9 @@ import org.bukkit.event.block.BlockInteractEvent;
 import org.bukkit.event.block.BlockListener;
 
 class DCCraftListener extends BlockListener {
-	public final DwarfCraft plugin;
+	private final DwarfCraft plugin;
 
-	DCCraftListener(DwarfCraft plugin) {
+	protected DCCraftListener(DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
 

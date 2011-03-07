@@ -7,14 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Material;
 
-public class ConfigManager {
+class ConfigManager {
 
 	private DwarfCraft plugin;
 	
-	public ConfigManager(DwarfCraft plugin, String directory, String paramsFileName){
+	protected ConfigManager(DwarfCraft plugin, String directory, String paramsFileName){
 		this.plugin = plugin; 
 		configDirectory = directory;
 		configMainFileName = paramsFileName;
+		
+		if(!readConfigFile() || !readSkillsFile() || !readEffectsFile() || !readMessagesFile() || !readGreeterMessagesfile()){
+			System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
+			//TODO failed to init skills
+		}
+
 	}
 	
 	private String configDirectory;
@@ -38,14 +45,14 @@ public class ConfigManager {
 		if (configMessagesFileName == null) configMessagesFileName = "messages.config";
 		if (configGreeterMessagesFileName == null) configGreeterMessagesFileName = "greeters.config";
 		if (dbpath == null) dbpath = "./DwarfCraft/dwarfcraft.db";
-		if (Messages.PRIMARYRACECONFIRM == null) Messages.PRIMARYRACECONFIRM = Messages.Fixed.PRIMARYRACECONFIRM.message;
-		if (Messages.PRIMARYRACESUCCESS == null) Messages.PRIMARYRACESUCCESS = Messages.Fixed.PRIMARYRACESUCCESS.message;
-		if (Messages.SECONDARYRACEALREADY == null) Messages.SECONDARYRACEALREADY = Messages.Fixed.SECONDARYRACEALREADY.message;
-		if (Messages.SECONDARYRACECONFIRM == null) Messages.SECONDARYRACECONFIRM = Messages.Fixed.SECONDARYRACECONFIRM.message;
-		if (Messages.SECONDARYRACESUCCESS == null) Messages.SECONDARYRACESUCCESS = Messages.Fixed.SECONDARYRACESUCCESS.message;
+		if (Messages.PRIMARYRACECONFIRM == null) Messages.PRIMARYRACECONFIRM = Messages.Fixed.PRIMARYRACECONFIRM.getMessage();
+		if (Messages.PRIMARYRACESUCCESS == null) Messages.PRIMARYRACESUCCESS = Messages.Fixed.PRIMARYRACESUCCESS.getMessage();
+		if (Messages.SECONDARYRACEALREADY == null) Messages.SECONDARYRACEALREADY = Messages.Fixed.SECONDARYRACEALREADY.getMessage();
+		if (Messages.SECONDARYRACECONFIRM == null) Messages.SECONDARYRACECONFIRM = Messages.Fixed.SECONDARYRACECONFIRM.getMessage();
+		if (Messages.SECONDARYRACESUCCESS == null) Messages.SECONDARYRACESUCCESS = Messages.Fixed.SECONDARYRACESUCCESS.getMessage();
 	}
 	
-	public boolean readConfigFile(){
+	private boolean readConfigFile(){
 		try {
 			System.out.println("DC Init: Reading Config File: " + configDirectory + configMainFileName);
 			getDefaultValues();
@@ -80,9 +87,9 @@ public class ConfigManager {
 		return true;
 	}
 	
-	public String getDbPath() { return dbpath; }
+	protected String getDbPath() { return dbpath; }
 	
-	public boolean readSkillsFile(){
+	private boolean readSkillsFile(){
 		String line = "";
 		System.out.println("DC Init: Reading skills file: " + configDirectory + configSkillsFileName);
 		try {
@@ -135,7 +142,7 @@ public class ConfigManager {
 		return false;
 	}
 
-	public boolean readEffectsFile(){
+	private boolean readEffectsFile(){
 		System.out.println("DC Init: Reading effects file: " + configDirectory + configEffectsFileName);
 		String line = "";
 		try {
@@ -175,8 +182,8 @@ public class ConfigManager {
 			
 					
 				for(Skill skill:skillsArray){
-					if(effectId / 10 == skill.id){
-						skill.effects.add(new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable));
+					if(effectId / 10 == skill.getId()){
+						skill.getEffects().add(new Effect(effectId, baseValue, levelUpMultiplier, noviceLevelUpMultiplier, minValue, maxValue, floorResult, hasException, exceptionLow, exceptionHigh, exceptionValue, elfLevel, effectType, initiator, output, toolRequired, tooltable));
 						break;		
 					}
 				}
@@ -194,7 +201,7 @@ public class ConfigManager {
 		}
 	}
 	
-	public boolean readMessagesFile() {
+	private boolean readMessagesFile() {
 		System.out.println("DC Init: Reading general messages file: " + configDirectory + configMessagesFileName);
 		try {
 			getDefaultValues();
@@ -222,13 +229,13 @@ public class ConfigManager {
 		}
 		finally {
 			//Default to enum values if not found
-			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.message;
-			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
+			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.getMessage();
+			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.getMessage();
 		}
 		return true;
 	}
 	
-	public boolean readGreeterMessagesfile() {
+	private boolean readGreeterMessagesfile() {
 		System.out.println("DC Init: Reading greeter messages file: " + configDirectory + configGreeterMessagesFileName);
 		try {
 			getDefaultValues();
@@ -252,14 +259,14 @@ public class ConfigManager {
 		}
 		finally {
 			//Default to enum values if not found
-			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.message;
-			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.message;
+			if (Messages.GeneralInfo ==null) Messages.GeneralInfo = Messages.Fixed.GENERALHELPMESSAGE.getMessage();
+			if (Messages.ServerRules ==null) Messages.ServerRules = Messages.Fixed.SERVERRULESMESSAGE.getMessage();
 		}
 		return true;
 
 	}
 	
-	public List<Skill> getAllSkills() {
+	protected List<Skill> getAllSkills() {
 		List<Skill> newSkillsArray = new ArrayList<Skill>();
 		for (Skill s: skillsArray){
 			newSkillsArray.add(s.clone());
@@ -267,7 +274,7 @@ public class ConfigManager {
 		return newSkillsArray;
 	}
 
-	public int countSkills() {
+	protected int countSkills() {
 		int count = 0;
 		for (Skill s: skillsArray){
 			if (s != null) count++;

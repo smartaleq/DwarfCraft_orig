@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 import com.smartaleq.bukkit.dwarfcraft.*;
 import com.smartaleq.bukkit.dwarfcraft.DCCommandException.Type;
 
-public class DCCommand extends Command {
+class DCCommand extends Command {
 	private final DwarfCraft plugin;
 	
-	public DCCommand(final DwarfCraft plugin, String name) {
+	protected DCCommand(final DwarfCraft plugin, String name) {
 		super(name);
 		this.plugin = plugin;
 	}
@@ -21,7 +21,6 @@ public class DCCommand extends Command {
 
 	/**
 	 * This command parses all inputs for commands and sends appropriate objects to the action or output methods.
-	 * 
 	 */
 	public boolean execute(CommandSender sender, String commandLabel, String[] args){
 		if (DwarfCraft.debugMessagesThreshold < 1) System.out.println("DC1: started execute");
@@ -69,7 +68,7 @@ public class DCCommand extends Command {
 					page = (Integer) outputList.get(0);
 					}
 				catch(DCCommandException e) {
-					if (e.type == Type.TOOFEWARGS) page = 0;
+					if (e.getType() == Type.TOOFEWARGS) page = 0;
 					else throw e;
 				}
 				if (page<0 || page >6) throw new DCCommandException(plugin, Type.PAGENUMBERNOTFOUND);
@@ -96,10 +95,10 @@ public class DCCommand extends Command {
 					outputList = parser.parse(desiredArguments,false);
 					if (outputList.get(0) instanceof String) dwarf = (Dwarf) outputList.get(1);
 					else dwarf = (Dwarf) outputList.get(0);
-					displayName = dwarf.player.getDisplayName();
+					displayName = dwarf.getPlayer().getDisplayName();
 				}
 				catch(DCCommandException dce) {
-					if (dce.type == Type.PARSEDWARFFAIL) {
+					if (dce.getType() == Type.PARSEDWARFFAIL) {
 						if (sender instanceof Player) dwarf = plugin.getDataManager().find((Player)sender);
 						else throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);}
 					else throw dce;
@@ -123,7 +122,7 @@ public class DCCommand extends Command {
 					dwarf = (Dwarf) outputList.get(0);
 				}
 				catch(DCCommandException dce) {
-					if (dce.type == Type.PARSEDWARFFAIL || dce.type == Type.TOOFEWARGS) {
+					if (dce.getType() == Type.PARSEDWARFFAIL || dce.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
 						outputList = parser.parse(desiredArguments, true);
 						skill = (Skill) outputList.get(0);
@@ -147,7 +146,7 @@ public class DCCommand extends Command {
 					dwarf = (Dwarf) outputList.get(0);
 				}
 				catch(DCCommandException dce) {
-					if (dce.type == Type.PARSEDWARFFAIL || dce.type == Type.TOOFEWARGS) {
+					if (dce.getType() == Type.PARSEDWARFFAIL || dce.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
 						outputList = parser.parse(desiredArguments, true);
 						effect = (Effect) outputList.get(0);
@@ -175,7 +174,7 @@ public class DCCommand extends Command {
 					confirmed = (Boolean) outputList.get(2);
 					if(sender.isOp()) race(isElf, confirmed, dwarf);
 				}catch (DCCommandException e) { 
-					if (e.type == Type.TOOFEWARGS) {
+					if (e.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
 						desiredArguments.add(dwarf);
 						outputList = parser.parse(desiredArguments, true);
@@ -203,7 +202,7 @@ public class DCCommand extends Command {
 					skill = (Skill) outputList.get(1);
 					level = (Integer) outputList.get(2);
 				}catch (DCCommandException e) { 
-					if (e.type == Type.TOOFEWARGS) {
+					if (e.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
 						desiredArguments.add(dwarf);
 						outputList = parser.parse(desiredArguments, true);
@@ -234,7 +233,7 @@ public class DCCommand extends Command {
 					greeterMessage = (String) outputList.get(3);
 				}
 				catch (DCCommandException e) {
-					if (e.type == Type.TOOFEWARGS){
+					if (e.getType() == Type.TOOFEWARGS){
 						if(!(sender instanceof Player)) throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
 						desiredArguments.remove(0);
 						outputList = parser.parse(desiredArguments, false);
@@ -244,7 +243,7 @@ public class DCCommand extends Command {
 						dwarf = (Dwarf) sender;
 					}else throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.player, uniqueId, name, null, null, greeterMessage, true);
+				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer(), uniqueId, name, null, null, greeterMessage, true);
 				plugin.getDataManager().insertTrainer(d);
 				return true;
 			} else if (commandName.equalsIgnoreCase("createtrainer")) {
@@ -270,7 +269,7 @@ public class DCCommand extends Command {
 					maxSkill = (Integer) outputList.get(4);
 				}
 				catch (DCCommandException e) {
-					if (e.type == Type.TOOFEWARGS){
+					if (e.getType() == Type.TOOFEWARGS){
 						if(!(sender instanceof Player)) throw new DCCommandException(plugin, Type.CONSOLECANNOTUSE);
 						desiredArguments.remove(0);
 						outputList = parser.parse(desiredArguments, false);
@@ -281,7 +280,7 @@ public class DCCommand extends Command {
 						dwarf = plugin.getDataManager().find((Player)sender);
 					} else throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.player, uniqueId, name, skill.getId(), maxSkill, null, false);
+				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer(), uniqueId, name, skill.getId(), maxSkill, null, false);
 				plugin.getDataManager().insertTrainer(d);
 				return true;
 			} else if (commandName.equalsIgnoreCase("removetrainer")) {
@@ -329,8 +328,8 @@ public class DCCommand extends Command {
 	 * <level> is desired level in range 0-30
 	 */
 	private void setSkill(Dwarf dwarf, String name, Skill skill, int skillLevel) {
-		skill.level = skillLevel;
-		plugin.getOut().sendMessage(sender, "&aAdmin: &eset skill &b" + skill.displayName + "&e for player &9" + name +"&e to &3" + skillLevel);
+		skill.setLevel(skillLevel);
+		plugin.getOut().sendMessage(sender, "&aAdmin: &eset skill &b" + skill.getDisplayName() + "&e for player &9" + name +"&e to &3" + skillLevel);
 		plugin.getDataManager().saveDwarfData(dwarf);
 	}
 	

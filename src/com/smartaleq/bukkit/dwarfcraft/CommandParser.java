@@ -8,19 +8,19 @@ import org.bukkit.entity.Player;
 
 import com.smartaleq.bukkit.dwarfcraft.DCCommandException.Type;
 
-public class CommandParser {
+class CommandParser {
 	private final DwarfCraft plugin;
 	private CommandSender sender;
 	private String[] input;
 	private Dwarf target = null;
 	
-	public CommandParser(final DwarfCraft plugin, CommandSender sender, String[] args){
+	protected CommandParser(final DwarfCraft plugin, CommandSender sender, String[] args){
 		this.plugin = plugin;
 		this.sender = sender;
 		this.input = args;
 	}
 		
-	public List<Object> parse(List<Object> desiredArguments, boolean ignoreSize) throws DCCommandException {
+	protected List<Object> parse(List<Object> desiredArguments, boolean ignoreSize) throws DCCommandException {
 		List<Object> output = new ArrayList<Object> ();
 		int arrayIterator = 0;
 		try{
@@ -97,7 +97,7 @@ public class CommandParser {
 		return i;
 	}
 
-	protected Dwarf parseDwarf(int argNumber) throws DCCommandException{
+	private Dwarf parseDwarf(int argNumber) throws DCCommandException{
 		Player player;
 		Dwarf dwarf = null;
 		try{
@@ -126,7 +126,7 @@ public class CommandParser {
 		
 	}
 	
-	protected int parseSkillLevel(int argNumber)throws DCCommandException{
+	private int parseSkillLevel(int argNumber)throws DCCommandException{
 		String inputString = input[argNumber];
 		int level;
 		try{
@@ -141,7 +141,7 @@ public class CommandParser {
 		return level;
 	}
 	
-	protected Skill parseSkill (int argNumber) throws DCCommandException{
+	private Skill parseSkill (int argNumber) throws DCCommandException{
 		Skill skill = null;
 		String inputString = input[argNumber];
 		int skillID;
@@ -149,11 +149,11 @@ public class CommandParser {
 			for(Skill s:plugin.getConfigManager().getAllSkills()){
 				try{
 					skillID = Integer.parseInt(inputString);
-					if (s.id == skillID) return s;
+					if (s.getId() == skillID) return s;
 				}
 				catch(NumberFormatException nfe){
 					if (inputString.length()<5) throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
-					if (s.displayName.regionMatches(0, inputString, 0, 5)) return s;
+					if (s.getDisplayName().regionMatches(0, inputString, 0, 5)) return s;
 				}
 			}
 			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
@@ -175,7 +175,7 @@ public class CommandParser {
 		return skill;
 	}
 	
-	protected Effect parseEffect (int argNumber) throws DCCommandException{
+	private Effect parseEffect (int argNumber) throws DCCommandException{
 		String inputString = input[argNumber];
 		Effect effect;
 		int effectId;

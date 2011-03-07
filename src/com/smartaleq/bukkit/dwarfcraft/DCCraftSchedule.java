@@ -12,10 +12,10 @@ class DCCraftSchedule implements Runnable {
 	private final EntityPlayer entityPlayer;
 	private ContainerWorkbench workBench;
 
-	DCCraftSchedule(DwarfCraft newPlugin, Dwarf newDwarf) {
+	protected DCCraftSchedule(DwarfCraft newPlugin, Dwarf newDwarf) {
 		this.dwarf = newDwarf;
 		this.plugin = newPlugin;
-		this.entityPlayer = ((CraftPlayer)(dwarf.player)).getHandle();
+		this.entityPlayer = ((CraftPlayer)(dwarf.getPlayer())).getHandle();
 	}
 
 	@Override
@@ -28,9 +28,9 @@ class DCCraftSchedule implements Runnable {
 		ItemStack outputStack = CraftingManager.a().a(workBench.a);
 		if (outputStack != null) {
 			int materialId = outputStack.id;
-			for (Skill s:dwarf.skills){
-				for (Effect e:s.effects){
-					if(e.effectType == EffectType.CRAFT && materialId == e.outputId){
+			for (Skill s:dwarf.getSkills()){
+				for (Effect e:s.getEffects()){
+					if(e.getEffectType() == EffectType.CRAFT && materialId == e.getOutputId()){
 						outputStack.count = (int) e.getEffectAmount(dwarf);
 						//TODO: need code to check max stack size and if amount created > max stack size drop all count above 1 to ground/inventory.
 						//I'm not sure what the server ItemStack method is for is.getMaxStackSize()

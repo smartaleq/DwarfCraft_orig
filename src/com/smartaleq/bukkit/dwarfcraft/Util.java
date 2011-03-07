@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class Util {
 	
-	static int randomAmount(double input){
+	protected static int randomAmount(double input){
 		double rand = Math.random();
 		if (rand>input%1) return (int) Math.floor(input);
 		else return (int) Math.ceil(input);
@@ -33,7 +33,7 @@ public class Util {
     		return -1;    
     }
     
-    public static int msgLength(String str) {
+    protected static int msgLength(String str) {
     	int len = 0;
     	
     	for ( int i = 0; i < str.length(); i++ ) {
@@ -54,8 +54,8 @@ public class Util {
      * @param data 
      * @param loc Location of item drop
      */
-	public static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally, byte data) {
-		ItemStack item = new ItemStack(e.outputId, Util.randomAmount(effectAmount), (short) 0, data);
+	protected static void dropBlockEffect(Location loc, Effect e, double effectAmount, boolean dropNaturally, byte data) {
+		ItemStack item = new ItemStack(e.getOutputId(), Util.randomAmount(effectAmount), (short) 0, data);
 		if (item.getAmount() == 0){
 			if (DwarfCraft.debugMessagesThreshold < 6) System.out.println("Debug: dropped " + item.toString());
 			return;
@@ -65,7 +65,7 @@ public class Util {
 		if (DwarfCraft.debugMessagesThreshold < 5) System.out.println("Debug: dropped " + item.toString());	
 	}
 	
-	public static boolean toolChecker(Player player){
+	protected static boolean toolChecker(Player player){
 		Inventory inv = player.getInventory();
 		ItemStack[] contents = inv.getContents();
 		boolean removedSomething = false;
@@ -80,7 +80,7 @@ public class Util {
 		return removedSomething;
 	}
 
-	public static String sanitize(String str) {
+	protected static String sanitize(String str) {
 		String retval = "";
 		for ( int i=0; i < str.length(); i++ ) {
 			if ("abcdefghijlmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_".indexOf(str.charAt(i)) != -1 )

@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public class DCPlayerListener extends PlayerListener {
 	private final DwarfCraft plugin;
 	
-	public DCPlayerListener(final DwarfCraft plugin) {
+	protected DCPlayerListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
    	
@@ -52,7 +52,7 @@ public class DCPlayerListener extends PlayerListener {
     	 //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = plugin.getDataManager().find(player);
-    	List<Skill> skills = dwarf.skills;
+    	List<Skill> skills = dwarf.getSkills();
     	boolean hadEffect = false;
    	//Effect Specific information
     	ItemStack item = player.getItemInHand();
@@ -63,9 +63,9 @@ public class DCPlayerListener extends PlayerListener {
     	
     	for(Skill s: skills){
     		if (s==null)continue;
-    		for(Effect e:s.effects){
+    		for(Effect e:s.getEffects()){
     			if (e==null) continue;
-    			if(e.effectType == EffectType.EAT && e.initiatorId==itemId){
+    			if(e.getEffectType() == EffectType.EAT && e.getInitiatorId()==itemId){
     				if (DwarfCraft.debugMessagesThreshold < 8) System.out.println("DC8: ate food:"+item.getType().toString()+" for "+e.getEffectAmount(dwarf));
     				player.setHealth((int) (player.getHealth()+e.getEffectAmount(dwarf)));
     				player.getInventory().removeItem(item);

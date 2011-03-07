@@ -47,11 +47,11 @@ public class DCVehicleListener extends VehicleListener{
     	Dwarf dwarf = plugin.getDataManager().find((Player)event.getVehicle().getPassenger()); // this will break when zombies ride boats.
      	double effectAmount = 1.0;
     	
-    	for(Skill s: dwarf.skills){
+    	for(Skill s: dwarf.getSkills()){
     		if (s==null)continue;
-    		for(Effect e:s.effects){
+    		for(Effect e:s.getEffects()){
     			if (e==null) continue;
-    			if(e.effectType == EffectType.VEHICLEMOVE){
+    			if(e.getEffectType() == EffectType.VEHICLEMOVE){
     				effectAmount = e.getEffectAmount(dwarf);
     			}
     		}

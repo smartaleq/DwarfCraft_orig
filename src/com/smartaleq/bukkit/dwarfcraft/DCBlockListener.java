@@ -18,10 +18,10 @@ import org.bukkit.inventory.ItemStack;
  * This watches for broken blocks and reacts
  * 
  */
-public class DCBlockListener extends BlockListener {
+class DCBlockListener extends BlockListener {
 	private final DwarfCraft plugin;
 	
-	public DCBlockListener(final DwarfCraft plugin) {
+	protected DCBlockListener(final DwarfCraft plugin) {
 		this.plugin = plugin;
 	}
  
@@ -33,7 +33,7 @@ public class DCBlockListener extends BlockListener {
     //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = plugin.getDataManager().find(player);
-    	List<Skill> skills = dwarf.skills;
+    	List<Skill> skills = dwarf.getSkills();
     	
    	//Effect Specific information
     	ItemStack tool = player.getItemInHand();
@@ -46,12 +46,12 @@ public class DCBlockListener extends BlockListener {
     	if (DwarfCraft.debugMessagesThreshold < -1) System.out.println("DC-1: damage level = " + event.getDamageLevel());
     	if(event.getDamageLevel() != BlockDamageLevel.STARTED) return;
     	for(Skill s:skills){
-    		for (Effect e:s.effects){
-    			if (e.effectType == EffectType.DIGTIME && e.initiatorId == materialId){
+    		for (Effect e:s.getEffects()){
+    			if (e.getEffectType() == EffectType.DIGTIME && e.getInitiatorId() == materialId){
     				if (DwarfCraft.debugMessagesThreshold < 2) System.out.println("DC2: started instamine check");
     				correctTool = false;
-    	    		for(int id:e.tools)	if(id == toolId)correctTool = true;
-    	    		if(correctTool || !e.toolRequired){
+    	    		for(int id:e.getTools())	if(id == toolId)correctTool = true;
+    	    		if(correctTool || !e.getToolRequired()){
     	    			if(Util.randomAmount(e.getEffectAmount(dwarf)) == 0) return;
     	    			if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: Insta-mine occured. Block:"+materialId);
     	    			new BlockBreakEvent(event.getBlock(), player);
@@ -75,7 +75,7 @@ public class DCBlockListener extends BlockListener {
      //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = plugin.getDataManager().find(player);
-    	List<Skill> skills = dwarf.skills;
+    	List<Skill> skills = dwarf.getSkills();
     	
    	//Effect Specific information
     	ItemStack tool = player.getItemInHand();
@@ -100,10 +100,10 @@ public class DCBlockListener extends BlockListener {
     	
     	for(Skill s: skills){
     		if (s==null)continue;
-    		for(Effect e:s.effects){
+    		for(Effect e:s.getEffects()){
     			if (e==null) continue;
-    			if(e.effectType == EffectType.PLOWDURABILITY){
-    				for(int id:e.tools){
+    			if(e.getEffectType() == EffectType.PLOWDURABILITY){
+    				for(int id:e.getTools()){
     					if(id == toolId && (material == Material.DIRT || material == Material.GRASS)) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC2: affected durability of a hoe - old:"+durability);
@@ -115,8 +115,8 @@ public class DCBlockListener extends BlockListener {
 		    			}
     				}
     			}
-				if(e.effectType == EffectType.PLOW){
-					for(int id:e.tools){
+				if(e.getEffectType() == EffectType.PLOW){
+					for(int id:e.getTools()){
 						if(id == toolId && material == Material.GRASS){
 		    				Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC3: hoed some ground:"+e.getEffectAmount(dwarf));
@@ -141,7 +141,7 @@ public class DCBlockListener extends BlockListener {
     //General information
     	Player player = event.getPlayer();
     	Dwarf dwarf = plugin.getDataManager().find(player);
-    	List<Skill> skills = dwarf.skills;
+    	List<Skill> skills = dwarf.getSkills();
     	
    	//Effect Specific information
     	ItemStack tool = player.getItemInHand();
@@ -162,26 +162,26 @@ public class DCBlockListener extends BlockListener {
     	    	   
     	for(Skill s: skills){
     		if (s==null)continue;
-    		for(Effect e:s.effects){
+    		for(Effect e:s.getEffects()){
     			if (e==null) continue;
     			
     		    //Check if blockdrop change happens  	
-    			if(e.effectType == EffectType.BLOCKDROP && e.initiatorId == materialId){
+    			if(e.getEffectType() == EffectType.BLOCKDROP && e.getInitiatorId() == materialId){
     				correctTool = false;
-	    			for(int id:e.tools)	if(id == toolId)correctTool = true;
+	    			for(int id:e.getTools())	if(id == toolId)correctTool = true;
 	    			//Crops special line:
-	    			if (e.initiatorId == 59) if(meta != 7) continue;
-		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("DC4: Effect:" +e.id + " tool: " + toolId+" and toolRequired:"+e.toolRequired );
-		    		if(correctTool || !e.toolRequired){
+	    			if (e.getInitiatorId() == 59) if(meta != 7) continue;
+		    		if (DwarfCraft.debugMessagesThreshold < 4) System.out.println("DC4: Effect:" +e.getId() + " tool: " + toolId+" and toolRequired:"+e.getToolRequired() );
+		    		if(correctTool || !e.getToolRequired()){
 		    			Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf), true, (byte) 0);
 		    			blockDropChange = true;
 	    			}
 	   			}
     		}
     			//Check if durability change happens   		
-			for(Effect e:s.effects){
-    			if(e.effectType == EffectType.TOOLDURABILITY && durability != -1){
-	    			for(int id:e.tools){
+			for(Effect e:s.getEffects()){
+    			if(e.getEffectType() == EffectType.TOOLDURABILITY && durability != -1){
+	    			for(int id:e.getTools()){
 		    			if(id == toolId) {
 		    				double effectAmount = e.getEffectAmount(dwarf);
 		    				if (DwarfCraft.debugMessagesThreshold < 3) System.out.println("DC2: affected durability of a tool - old:"+durability);

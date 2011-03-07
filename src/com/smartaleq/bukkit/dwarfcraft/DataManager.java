@@ -22,7 +22,7 @@ import org.bukkit.entity.Vehicle;
 
 import redecouverte.npcspawner.NpcSpawner;
 
-public class DataManager {
+class DataManager {
 
 	private List <Dwarf> dwarves = new ArrayList <Dwarf>();
 	private List <DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
@@ -31,13 +31,18 @@ public class DataManager {
 	private final ConfigManager configManager;
 	private final DwarfCraft plugin;
 	
-	public DataManager(DwarfCraft plugin, ConfigManager cm) {
+	protected DataManager(DwarfCraft plugin, ConfigManager cm) {
 		this.plugin = plugin;
 		this.configManager = cm;
+		dbInitialize();
+		for ( Iterator<World> i = plugin.getServer().getWorlds().iterator(); i.hasNext(); ) {
+			World w = i.next();
+			populateTrainers(w);
+		}	
 	}
  
 	
-	public void dbInitialize() {
+	private void dbInitialize() {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
@@ -76,7 +81,7 @@ public class DataManager {
 	 * Just praying it works - joey
 	 * @param oldVersion
 	 */
-	public void buildDB(int oldVersion) {
+	private void buildDB(int oldVersion) {
     	try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn =
@@ -111,7 +116,7 @@ public class DataManager {
 			List<Skill> tempSkills = configManager.getAllSkills();
 			for (Skill s: tempSkills ){
 				if (schema.contains(s.toString())){
-					s.level = 1;
+					s.setLevel(1);
 				}
 				sqlLine1 = sqlLine1.concat(","+s.toString());
 				sqlLine2 = sqlLine2.concat(",?");
@@ -123,7 +128,7 @@ public class DataManager {
 				prep.setString(2,rs3.getString("iself"));
 				int i=3;
 				for (Skill s: tempSkills ){
-					if (s.level==1)	{
+					if (s.getLevel()==1)	{
 						prep.setInt(i, Integer.parseInt(rs3.getString(s.toString())));
 					}
 					else prep.setInt(i, 0);
@@ -144,7 +149,7 @@ public class DataManager {
 		}
 	}
 	
-	public void updateDwarfsTable(){
+	private void updateDwarfsTable(){
 		//TODO when table is not right size, resize it
 		//add columns or:
 		
@@ -156,11 +161,11 @@ public class DataManager {
 	 * @param player
 	 * @return dwarf or null
 	 */
-	public Dwarf find(Player player) {
+	protected Dwarf find(Player player) {
 		for(Dwarf d:plugin.getDataManager().getDwarves()) {
 			if (d != null)
-				if (d.player != null)
-					if (d.player.getName().equalsIgnoreCase(player.getName()))
+				if (d.getPlayer() != null)
+					if (d.getPlayer().getName().equalsIgnoreCase(player.getName()))
 						return d;
 		}
 		return null;
@@ -188,7 +193,7 @@ public class DataManager {
 		return null;
 	}
 	
-	public Dwarf findOffline(String name) {
+	protected Dwarf findOffline(String name) {
 		Dwarf dwarf = createDwarf(null);
 		if(getDwarfData(dwarf, name)) return dwarf;
 		else{
@@ -197,15 +202,15 @@ public class DataManager {
 		}
 	}
 
-	public Dwarf createDwarf(Player player){
+	protected Dwarf createDwarf(Player player){
 		Dwarf newDwarf = new Dwarf(plugin, player);
-		newDwarf.skills = plugin.getConfigManager().getAllSkills();
-		for (Skill skill:newDwarf.skills) if(skill != null) skill.level = 0;
+		newDwarf.setSkills(plugin.getConfigManager().getAllSkills());
+		for (Skill skill:newDwarf.getSkills()) if(skill != null) skill.setLevel(0);
 		if(player!=null) dwarves.add(newDwarf);
 		return newDwarf;
 	}
 	
-	public void createDwarfData(Dwarf dwarf) {
+	protected void createDwarfData(Dwarf dwarf) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 	    	Connection conn =
@@ -217,9 +222,9 @@ public class DataManager {
 				if (skill != null) sql = sql.concat("," + skill.toString());
 			}
 	    	sql = sql.concat(") values (");
-	    	sql = sql.concat("'"+dwarf.player.getName()+"'," + "'"+dwarf.isElf()+"'");
+	    	sql = sql.concat("'"+dwarf.getPlayer().getName()+"'," + "'"+dwarf.isElf()+"'");
 	    	for (Skill skill: allSkills){
-				if (skill != null) sql = sql.concat("," + skill.level);
+				if (skill != null) sql = sql.concat("," + skill.getLevel());
 			}
 	    	sql = sql.concat(");");
 	    	statement.executeUpdate(sql);
@@ -230,17 +235,17 @@ public class DataManager {
 	    }	    
 	}
 	
-	public boolean saveDwarfData(Dwarf dwarf){
+	protected boolean saveDwarfData(Dwarf dwarf){
 		try{
 			Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 		    Statement statement = conn.createStatement();
 	    	String sqlsend = "UPDATE dwarfs"+configManager.getConfigSkillsVersion()+" SET iself='" + dwarf.isElf()+ "', "; 
-	    	for (Skill skill: dwarf.skills) 
-	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.level + ", ");
+	    	for (Skill skill: dwarf.getSkills()) 
+	    		if (skill!=null) sqlsend = sqlsend.concat(skill.toString() + "=" + skill.getLevel() + ", ");
 	    	sqlsend = sqlsend.substring(0,sqlsend.length()-2)
-	    		+ " WHERE playername = '" + dwarf.player.getName()+ "';";
+	    		+ " WHERE playername = '" + dwarf.getPlayer().getName()+ "';";
 	    	statement.execute(sqlsend);
 	    	conn.close();
 			return true;
@@ -251,21 +256,21 @@ public class DataManager {
 		}
 	}
 	
-	public boolean getDwarfData(Dwarf dwarf){
+	protected boolean getDwarfData(Dwarf dwarf){
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn =
 		      DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
 		    Statement statement = conn.createStatement();
 		    //Unsanitized because no one has the player name Robert' Drop Table dwarfs;
-		    String query = "select * from dwarfs"+configManager.getConfigSkillsVersion()+" WHERE playername = '" + dwarf.player.getName() + "';";
+		    String query = "select * from dwarfs"+configManager.getConfigSkillsVersion()+" WHERE playername = '" + dwarf.getPlayer().getName() + "';";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed()) return false;
-			System.out.println("DC: PlayerJoin success for " + dwarf.player.getName());
+			System.out.println("DC: PlayerJoin success for " + dwarf.getPlayer().getName());
 			dwarf.setElf(rs.getBoolean("iself"));
-			for (Skill skill: dwarf.skills){
-				if (skill!=null) skill.level = rs.getInt(skill.toString());
+			for (Skill skill: dwarf.getSkills()){
+				if (skill!=null) skill.setLevel(rs.getInt(skill.toString()));
 			}
 			rs.close();
 	    	conn.close();
@@ -282,7 +287,7 @@ public class DataManager {
 	 * @param dwarf
 	 * @param name
 	 */
-	public boolean getDwarfData(Dwarf dwarf, String name){
+	private boolean getDwarfData(Dwarf dwarf, String name){
 		try {
 			String sanitizedName;			
 			sanitizedName = Util.sanitize(name);
@@ -301,8 +306,8 @@ public class DataManager {
 				return false;
 			}
 			dwarf.setElf(rs.getBoolean("iself"));
-			for (Skill skill: dwarf.skills) {
-				if (skill!=null) skill.level = rs.getInt(skill.toString());
+			for (Skill skill: dwarf.getSkills()) {
+				if (skill!=null) skill.setLevel(rs.getInt(skill.toString()));
 			}
 			rs.close();
 	    	conn.close();
@@ -313,12 +318,13 @@ public class DataManager {
 			return false;
 		}
 	}
-	public void removeDwarf(Dwarf dwarf) {
+	
+	protected void removeDwarf(Dwarf dwarf) {
 		// TODO removedwarf
 		
 	}
 
-	public HashMap<String, DwarfTrainer> populateTrainers(World world) {
+	private HashMap<String, DwarfTrainer> populateTrainers(World world) {
 	    try{
 	    	Class.forName("org.sqlite.JDBC");
 		    Connection conn = DriverManager.getConnection("jdbc:sqlite:"+configManager.getDbPath());
@@ -353,11 +359,13 @@ public class DataManager {
 		return trainerList;
 	}
 
-	public List<Dwarf> getDwarves() {
+	@Deprecated
+	// TODO: remove this and replace by other stuff
+	protected List<Dwarf> getDwarves() {
 		return dwarves;
 	}
 	
-	public DwarfTrainer getTrainer(Entity entity) {
+	protected DwarfTrainer getTrainer(Entity entity) {
 		// kind of ugly, could replace this with a hashmap, but i dont think the perf. gains will be very significant
 		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, DwarfTrainer> pairs = i.next();
@@ -368,11 +376,11 @@ public class DataManager {
 		return null;
 	}
 	
-	public DwarfTrainer getTrainer(String str) {
+	protected DwarfTrainer getTrainer(String str) {
 		return (trainerList.get(str)); // can return null
 	}
 	
-	public void insertTrainer( DwarfTrainer d ) {
+	protected void insertTrainer( DwarfTrainer d ) {
 		assert(d != null);
 		trainerList.put(d.getUniqueId(), d);
     	// SCHEMA(world,uniqueId,name,skill,maxSkill,material,isGreeter,messageId,x,y,z,yaw,pitch)
@@ -413,7 +421,7 @@ public class DataManager {
 		return;
 	}
 	
-	public void removeTrainer( String str ) {
+	protected void removeTrainer( String str ) {
 		DwarfTrainer d;
 		d = trainerList.remove(str);
 		NpcSpawner.RemoveBasicHumanNpc(d.getBasicHumanNpc());
@@ -432,7 +440,7 @@ public class DataManager {
 		}
 	}
 	
-	public void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
+	protected void insertGreeterMessage(String messageId, GreeterMessage greeterMessage) {
 		try {
 			greeterMessageList.put(messageId, greeterMessage);
 		}
@@ -441,7 +449,7 @@ public class DataManager {
 		}
 	}
 	
-	public boolean checkTrainersInChunk(Chunk chunk) {
+	protected boolean checkTrainersInChunk(Chunk chunk) {
 		for ( Iterator<Map.Entry<String, DwarfTrainer>> i = trainerList.entrySet().iterator(); i.hasNext(); ) {
 			Map.Entry<String, DwarfTrainer> pairs = i.next();
 			DwarfTrainer d = (DwarfTrainer)(pairs.getValue());
@@ -452,7 +460,7 @@ public class DataManager {
 		return false;
 	}
 	
-	public GreeterMessage getGreeterMessage(String messageId) {
+	protected GreeterMessage getGreeterMessage(String messageId) {
 		System.out.println(messageId);
 		return greeterMessageList.get(messageId);
 	}

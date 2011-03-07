@@ -37,8 +37,9 @@ private final DCCraftListener	craftListener	= new DCCraftListener(this);
 private ConfigManager cm;
 private DataManager dm; 
 private Out out;
-public static int debugMessagesThreshold = 0;
-public static boolean disableEffects = false;
+// TODO: remove statics
+protected static int debugMessagesThreshold = 0;
+protected static boolean disableEffects = false;
 
 	/**	
 	 * Called upon enabling the plugin
@@ -73,19 +74,6 @@ public static boolean disableEffects = false;
 		dm = new DataManager(this, cm);
 		out = new Out(this);
 		
-		cm.readConfigFile();
-		if(!cm.readSkillsFile() || !cm.readEffectsFile() || !cm.readMessagesFile() || !cm.readGreeterMessagesfile()){
-			System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
-			pm.disablePlugin(this); //TODO failed to init skills
-		
-		}
-		dm.dbInitialize();
-		
-		for ( Iterator<World> i = getServer().getWorlds().iterator(); i.hasNext(); ) {
-			World w = i.next();
-			dm.populateTrainers(w);
-		}	
-				
 	    PluginDescriptionFile pdfFile = this.getDescription();
 	    System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
 	}
@@ -100,10 +88,10 @@ public static boolean disableEffects = false;
 		 */
 	}
 	
-	// TODO: make these protected
-	public Out getOut() { return out; }
-	public DataManager getDataManager() { return dm; }
-	public ConfigManager getConfigManager() { return cm; }
+	// TODO: deprecate this, there has to be a better way - move Out to Dwarf?
+	protected Out getOut() { return out; }
+	protected DataManager getDataManager() { return dm; }
+	protected ConfigManager getConfigManager() { return cm; }
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args){
@@ -111,7 +99,9 @@ public static boolean disableEffects = false;
 		return cmd.execute(sender, commandLabel, args);
 	}
 	
-	public Player getPlayer(String playerName){
+	// this is never used, I don't think
+	@Deprecated
+	private Player getPlayer(String playerName){
 		Player[] players = this.getServer().getOnlinePlayers();
         for (Player player : players) {
             if (player.getName().equalsIgnoreCase(playerName)) return player;
