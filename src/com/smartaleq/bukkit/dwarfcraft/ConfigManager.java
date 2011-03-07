@@ -29,7 +29,7 @@ class ConfigManager {
 		configMainFileName = paramsFileName;
 
 		if (!readConfigFile() || !readSkillsFile() || !readEffectsFile()
-				|| !readMessagesFile() || !readGreeterMessagesfile()) {
+				|| !readMessagesFile() ) {
 			System.out
 					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
@@ -228,7 +228,7 @@ class ConfigManager {
 		}
 	}
 
-	private boolean readGreeterMessagesfile() {
+	protected boolean readGreeterMessagesfile() {
 		System.out.println("DC Init: Reading greeter messages file: "
 				+ configDirectory + configGreeterMessagesFileName);
 		try {
