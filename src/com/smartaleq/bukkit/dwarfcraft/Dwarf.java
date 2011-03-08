@@ -2,9 +2,11 @@ package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -65,29 +67,21 @@ class Dwarf {
 		// create output item stack of new items
 		trainingStack.add(new ItemStack(skill.getTrainingItem1Mat(), (int) Math
 				.min(Math.ceil((skill.getLevel() + 1)
-						* skill.getTrainingItem1BaseCost() * multiplier - .01), // fudge
-																				// factor
-																				// for
-																				// icky
-																				// multiplication
+						* skill.getTrainingItem1BaseCost() * multiplier - .01),
 				skill.getTrainingItem1MaxAmount())));
 		if (skill.getTrainingItem2Mat() != Material.AIR)
 			trainingStack.add(new ItemStack(skill.getTrainingItem2Mat(),
 					(int) Math.min(
 							Math.ceil((skill.getLevel() + 1)
 									* skill.getTrainingItem2BaseCost()
-									* multiplier - .01), // fudge factor for
-															// icky
-															// multiplication
+									* multiplier - .01), 
 							skill.getTrainingItem2MaxAmount())));
 		if (skill.getTrainingItem3Mat() != Material.AIR)
 			trainingStack.add(new ItemStack(skill.getTrainingItem3Mat(),
 					(int) Math.min(
 							Math.ceil((skill.getLevel() + 1)
 									* skill.getTrainingItem3BaseCost()
-									* multiplier - .01), // fudge factor for
-															// icky
-															// multiplication
+									* multiplier - .01),
 							skill.getTrainingItem3MaxAmount())));
 		return trainingStack;
 	}
