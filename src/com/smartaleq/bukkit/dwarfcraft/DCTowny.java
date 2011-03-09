@@ -68,7 +68,7 @@ class DCTowny extends TownyPlayerListener {
 					residentName);
 			residentTotal += dwarf.getEffect(910).getEffectAmount(dwarf);
 		}
-
+		System.out.println("got town max blocks");
 		return Math.min(Math.max(residentTotal, 5), mayorMax);
 	}
 }

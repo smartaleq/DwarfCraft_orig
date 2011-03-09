@@ -374,7 +374,7 @@ class DCEntityListener extends EntityListener {
 
 	protected double armorMitigation(EffectType type, Dwarf defendDwarf ){
 		double multiplier = 1;
-		Dwarf dwarf = plugin.getDataManager().find((Player) defendDwarf);
+		Dwarf dwarf = plugin.getDataManager().find(defendDwarf.getPlayer());
 		for (Skill s:dwarf.getSkills()){
 			for (Effect e: s.getEffects()){
 				if (e.getEffectType()==type){

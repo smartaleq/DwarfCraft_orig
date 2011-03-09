@@ -159,8 +159,8 @@ final class Effect {
 						effectLevelColor, (int) (effectAmount * 100 - 100));
 			}
 		} else if (effectType.equals(EffectType.FALLTHRESHOLD)) {
-			description = String.format("&6You ", effectLevelColor,
-					(int) (effectAmount * 100 - 100));
+			description = String.format("&6Fall damage less than %s%d &6does not affect you.", effectLevelColor,
+					(int) effectAmount);
 		} else if (effectType.equals(EffectType.FIREDAMAGE)) {
 			if (moreThanOne) {
 				description = String.format(
@@ -183,20 +183,19 @@ final class Effect {
 			}
 		} else if (effectType.equals(EffectType.PLOW)) {
 			description = String
-					.format("&6You gain %s%.2f seeds instead of &e%.2f when you plow grass",
+					.format("&6You gain %s%.2f &6seeds instead of &e%.2f &6when you plow grass",
 							effectLevelColor, effectAmount, elfAmount);
 		} else if (effectType.equals(EffectType.PVEDAMAGE)) {
 			description = String
-					.format("&6You do %s%d&6%% of normal &2%s damage when fighting mobs",
+					.format("&6You do %s%d&6%% &6of normal &2%s &6damage when fighting mobs",
 							effectLevelColor, (int) (effectAmount * 100),
 							toolType);
 		} else if (effectType.equals(EffectType.PVPDAMAGE)) {
 			description = String
-					.format("&6You do %s%d&6%% of normal &2%s damage when fighting players",
+					.format("&6You do %s%d&6%% &6of normal &2%s &6damage when fighting players",
 							effectLevelColor, (int) (effectAmount * 100),
 							toolType);
 		}
-
 		else if (effectType.equals(EffectType.TOWNBLOCKS)) {
 			description = String
 					.format("&6As a town mayor your town can claim no more than %s%.2f &6blocks, or the sum of your residents' citizen skills",
@@ -207,12 +206,10 @@ final class Effect {
 							initiator, effectLevelColor, effectAmount, output);
 		} else if (effectType.equals(EffectType.VEHICLEMOVE)) {
 			description = String.format(
-					"&6Your boat travels %s%d%% faster than normal",
+					"&6Your boat travels %s%d%% &6faster than normal",
 					effectLevelColor, (int) (effectAmount * 100 - 100));
-		} else if (effectType.equals(EffectType.SPECIAL)) {
-			description = String.format("special");
 		} else {
-			description = "This Effect is not yet implemented: "
+			description = "&6This Effect description is not yet implemented: "
 					+ effectType.toString();
 		}
 

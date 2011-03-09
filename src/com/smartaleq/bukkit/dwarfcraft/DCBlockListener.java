@@ -164,8 +164,8 @@ class DCBlockListener extends BlockListener {
 							System.out
 									.println("DC3: Insta-mine occured. Block:"
 											+ materialId);
-						new BlockBreakEvent(event.getBlock(), player);
-
+						BlockBreakEvent bbe = new BlockBreakEvent(event.getBlock(), player);
+						onBlockBreak(bbe);
 					}
 				}
 			}
