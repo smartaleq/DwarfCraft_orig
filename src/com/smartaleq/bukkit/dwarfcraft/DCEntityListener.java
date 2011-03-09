@@ -14,6 +14,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.smartaleq.bukkit.dwarfcraft.Dwarf.ArmorType;
+
 import redecouverte.npcspawner.NpcEntityTargetEvent;
 import redecouverte.npcspawner.NpcEntityTargetEvent.NpcTargetReason;
 
@@ -26,6 +28,43 @@ class DCEntityListener extends EntityListener {
 		killMap = new HashMap<Entity, Dwarf>();
 	}
 
+	@Override
+	public void onEntityDamage(EntityDamageEvent event) {
+		if (event instanceof EntityDamageByEntityEvent) {
+			if (event.getEntity() instanceof HumanEntity) {
+				if (checkDwarfTrainer((EntityDamageByEntityEvent) event)) { 
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
+		if (event.isCancelled())
+			return;
+		if (event.getCause() == DamageCause.BLOCK_EXPLOSION
+				|| event.getCause() == DamageCause.ENTITY_EXPLOSION
+				|| event.getCause() == DamageCause.FALL
+				|| event.getCause() == DamageCause.SUFFOCATION
+				|| event.getCause() == DamageCause.FIRE
+				|| event.getCause() == DamageCause.FIRE_TICK
+				|| event.getCause() == DamageCause.LAVA
+				|| event.getCause() == DamageCause.DROWNING) {
+			if (DwarfCraft.debugMessagesThreshold < -1)
+				System.out.println("DC-1: Damage Event: "+event.getCause());
+			onEntityDamagedByEnvirons(event);
+
+		} else if (event instanceof EntityDamageByProjectileEvent) {
+			EntityDamageByProjectileEvent sub = (EntityDamageByProjectileEvent) event;
+			if (DwarfCraft.debugMessagesThreshold < 2)
+				System.out.println("DC4: Damage Event: projectile");
+			onEntityDamageByProjectile(sub);
+		} else if (event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
+			if (DwarfCraft.debugMessagesThreshold < 2)
+				System.out.println("DC4: Damage Event: entity by entity");
+			onEntityAttack(sub);
+		} 
+	}
+	
 	private boolean checkDwarfTrainer(EntityDamageByEntityEvent event) {
 		// all we know right now is that event.entity instanceof HumanEntity
 		DwarfTrainer trainer = plugin.getDataManager().getTrainer(
@@ -181,129 +220,107 @@ class DCEntityListener extends EntityListener {
 		}
 	}
 
-	@Override
-	public void onEntityDamage(EntityDamageEvent event) {
-		if (event instanceof EntityDamageByEntityEvent) {
-			if (event.getEntity() instanceof HumanEntity) {
-				if (checkDwarfTrainer((EntityDamageByEntityEvent) event)) { 
-					event.setCancelled(true);
-					return;
-				}
-			}
-		}
-		if (event.isCancelled())
-			return;
-		if (event.getCause() == DamageCause.BLOCK_EXPLOSION
-				|| event.getCause() == DamageCause.ENTITY_EXPLOSION
-				|| event.getCause() == DamageCause.FALL
-				|| event.getCause() == DamageCause.SUFFOCATION
-				|| event.getCause() == DamageCause.FIRE
-				|| event.getCause() == DamageCause.FIRE_TICK) {
-			if (DwarfCraft.debugMessagesThreshold < -1)
-				System.out.println("DC-1: Damage Event: environment");
-			onEntityDamagedByEnvirons(event);
-
-		} else if (event instanceof EntityDamageByProjectileEvent) {
-			EntityDamageByProjectileEvent sub = (EntityDamageByProjectileEvent) event;
-			if (DwarfCraft.debugMessagesThreshold < 2)
-				System.out.println("DC4: Damage Event: projectile");
-			onEntityDamageByProjectile(sub);
-		} else if (event instanceof EntityDamageByEntityEvent) {
-			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent) event;
-			if (DwarfCraft.debugMessagesThreshold < 2)
-				System.out.println("DC4: Damage Event: entity by entity");
-			onEntityAttack(sub);
-		} else
-			return;
-	}
-
 	public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
 		if (DwarfCraft.disableEffects)
 			return;
-		if (!(event.getDamager() instanceof Player))
-			return;
-		Dwarf dwarf = plugin.getDataManager().find((Player) event.getDamager());
+		LivingEntity attacker = (LivingEntity) event.getDamager();
 		LivingEntity hitThing = ((LivingEntity) event.getEntity());
 		int hp = hitThing.getHealth();
 		if (hp <= 0) {
 			event.setCancelled(true);
 			return;
 		}
-		int damage;
-		for (Skill s : dwarf.getSkills()) {
-			if (s == null)
-				continue;
-			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
-				if (e.getEffectType() == EffectType.BOWATTACK) {
-					damage = Util.randomAmount((e.getEffectAmount(dwarf)));
-					event.setDamage(damage);
-					if (damage >= hp && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)){
-		                killMap.put(hitThing, dwarf);
+		double damage=event.getDamage();
+		double mitigation = 1;
+		Dwarf attackDwarf = null;
+		Dwarf defendDwarf = null;
+		if(attacker instanceof Player){
+			attackDwarf = plugin.getDataManager().find((Player) attacker);
+			for (Skill s : attackDwarf.getSkills()) {
+				for (Effect e : s.getEffects()) {
+					if (e.getEffectType() == EffectType.BOWATTACK) {
+						damage = event.getDamage() * e.getEffectAmount(attackDwarf);
 					}
-					if (DwarfCraft.debugMessagesThreshold < 7)
-						System.out.println("DC7: PVP "
-								+ dwarf.getPlayer().getName() + " shot "
-								+ hitThing.getClass().getSimpleName() + " for "
-								+ damage + " of " + hp + " eventdmg:"
-								+ event.getDamage() + " effect called:"
-								+ e.getId());
-
 				}
 			}
+		}
+		if(hitThing instanceof Player){
+			defendDwarf = plugin.getDataManager().find((Player) hitThing);
+			for (Skill s : defendDwarf.getSkills()) {
+				for (Effect e : s.getEffects()) {
+					if (e.getEffectType() == EffectType.BOWDEFEND) {
+						mitigation = armorMitigation(EffectType.BOWDEFEND, defendDwarf);
+					}
+				}
+			}
+		}
+		
+		damage = Util.randomAmount(damage*mitigation);
+		event.setDamage((int) damage);
+		if (damage >= hp && attacker instanceof Player && !killMap.containsKey(hitThing) && !(hitThing instanceof Player)){
+	        killMap.put(hitThing, attackDwarf);
 		}
 	}
 
 	public void onEntityDamagedByEnvirons(EntityDamageEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
 		if (!(event.getEntity() instanceof Player))
 			return;
-		Player player = (Player) event.getEntity();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		List<Skill> skills = dwarf.getSkills();
-		int damage = event.getDamage();
-		for (Skill s : skills) {
-			if (s == null)
-				continue;
+		Dwarf dwarf = plugin.getDataManager().find((Player) event.getEntity());
+		double damage = event.getDamage();
+		for (Skill s : dwarf.getSkills()) {
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
-				if ((e.getEffectType() == EffectType.FALLDAMAGE && event
-						.getCause() == DamageCause.FALL)
-						|| (e.getEffectType() == EffectType.FALLDAMAGE && event
-								.getCause() == DamageCause.SUFFOCATION)
-						|| (e.getEffectType() == EffectType.FIREDAMAGE && event
-								.getCause() == DamageCause.FIRE)
-						|| (e.getEffectType() == EffectType.FIREDAMAGE && event
-								.getCause() == DamageCause.FIRE_TICK)
-						|| (e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event
-								.getCause() == DamageCause.ENTITY_EXPLOSION)
-						|| (e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event
-								.getCause() == DamageCause.BLOCK_EXPLOSION)) {
-					damage = (int) Math
-							.floor((e.getEffectAmount(dwarf) * damage));
-					if (DwarfCraft.debugMessagesThreshold < 1)
-						System.out.println("DC1: environment damage type:"
-								+ event.getCause() + " base damage:"
-								+ event.getDamage() + " new damage:" + damage
-								+ " effect called:"
-								+ e.getId());
-					event.setDamage(damage);
+				if (e.getEffectType() == EffectType.FALLDAMAGE && event
+						.getCause() == DamageCause.FALL){
+					damage = Util.randomAmount(e.getEffectAmount(dwarf) * damage);
 				}
-			}
-			for (Effect e : s.getEffects()) {
-				if (e.getEffectType() == EffectType.FALLTHRESHOLD
-						&& event.getCause() == DamageCause.FALL) {
-					if (event.getDamage() <= e.getEffectAmount(dwarf)){
-						if (DwarfCraft.debugMessagesThreshold < 1)
-							System.out.println("DC1: Damage less than fall threshold");
-						event.setCancelled(true);
+				else if(e.getEffectType() == EffectType.SUFFOCATEDEFEND && event
+								.getCause() == DamageCause.SUFFOCATION) {
+					damage = Util.randomAmount(damage * armorMitigation(e.getEffectType(), dwarf));
+				}
+				else if	(e.getEffectType() == EffectType.FIREDAMAGE && event
+							.getCause() == DamageCause.FIRE){
+					damage = Util.randomAmount(e.getEffectAmount(dwarf) * damage);
+				}
+				else if		(e.getEffectType() == EffectType.FIREDAMAGE && event
+						.getCause() == DamageCause.FIRE_TICK){
+					damage = Util.randomAmount(e.getEffectAmount(dwarf) * damage);
+				}
+				else if	(e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event
+					.getCause() == DamageCause.ENTITY_EXPLOSION){
+					damage = Util.randomAmount(e.getEffectAmount(dwarf) * damage);
+				}
+				else if	(e.getEffectType() == EffectType.EXPLOSIONDAMAGE && event
+				.getCause() == DamageCause.BLOCK_EXPLOSION) {
+					damage = Util.randomAmount(e.getEffectAmount(dwarf) * damage);
+				}
+				else if	(e.getEffectType() == EffectType.LAVADEFEND && event
+						.getCause() == DamageCause.LAVA) {
+					damage = Util.randomAmount(damage * armorMitigation(e.getEffectType(), dwarf));
+				}
+				else if	(e.getEffectType() == EffectType.DROWNDEFEND && event
+						.getCause() == DamageCause.DROWNING) {
+					damage = Util.randomAmount(damage * armorMitigation(e.getEffectType(), dwarf));
+				}
+				
+				}
+			if (event.getCause() == DamageCause.FALL){
+				for (Effect e : s.getEffects()) {
+					if (e.getEffectType() == EffectType.FALLTHRESHOLD){
+						if(event.getDamage() <= e.getEffectAmount(dwarf)){
+							if (DwarfCraft.debugMessagesThreshold < 1)
+								System.out.println("DC1: Damage less than fall threshold");
+							event.setCancelled(true);
+						}
 					}
 				}
 			}
 		}
+		if (DwarfCraft.debugMessagesThreshold < 1)
+					System.out.println("DC1: environment damage type:"
+							+ event.getCause() + " base damage:"
+							+ event.getDamage() + " new damage:" + damage);
+		event.setDamage((int) damage);
+		if (damage==0) event.setCancelled(true);
 	}
 
 	@Override
@@ -354,4 +371,30 @@ class DCEntityListener extends EntityListener {
 		}
 		return;
 	}
+
+	protected double armorMitigation(EffectType type, Dwarf defendDwarf ){
+		double multiplier = 1;
+		Dwarf dwarf = plugin.getDataManager().find((Player) defendDwarf);
+		for (Skill s:dwarf.getSkills()){
+			for (Effect e: s.getEffects()){
+				if (e.getEffectType()==type){
+					if (type == EffectType.BOWDEFEND)
+						multiplier = dwarf.countArmorPieces(ArmorType.LEATHER)/4 * e.getEffectAmount(dwarf);
+					if (type == EffectType.SUFFOCATEDEFEND)
+						multiplier = dwarf.countArmorPieces(ArmorType.IRON)/4 * e.getEffectAmount(dwarf);
+					if (type == EffectType.LAVADEFEND)
+						multiplier = dwarf.countArmorPieces(ArmorType.GOLD)/4 * e.getEffectAmount(dwarf);
+					if (type == EffectType.DROWNDEFEND)
+						multiplier = dwarf.countArmorPieces(ArmorType.DIAMOND)/4 * e.getEffectAmount(dwarf);
+				}
+			}
+		}
+		assert(multiplier <= 1 && multiplier >= 0);
+		return multiplier;
+	}
+	
+	
+	
+
 }
+

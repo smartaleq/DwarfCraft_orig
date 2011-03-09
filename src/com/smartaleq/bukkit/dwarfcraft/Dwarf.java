@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 class Dwarf {
 	private final DwarfCraft plugin;
@@ -238,7 +239,7 @@ class Dwarf {
 	protected List<Skill> getSkills() {
 		return skills;
 	}
-
+	
 	protected boolean isElf() {
 		if (isElf)
 			return true;
@@ -349,4 +350,26 @@ class Dwarf {
 		return 0;
 	}
 
+	protected int countArmorPieces(ArmorType type){
+		int count = 0;
+		PlayerInventory inv = this.getPlayer().getInventory();
+		if (type.ids.contains(inv.getHelmet().getTypeId())) count++;
+		if (type.ids.contains(inv.getChestplate().getTypeId())) count++;
+		if (type.ids.contains(inv.getLeggings().getTypeId())) count++;
+		if (type.ids.contains(inv.getBoots().getTypeId())) count++;
+		return count;
+	}
+	
+	protected enum ArmorType{
+		IRON (Arrays.asList(306,307,308,309)),
+		GOLD (Arrays.asList(314,315,316,317)),
+		LEATHER (Arrays.asList(298,299,300,301)),
+		DIAMOND (Arrays.asList(310,311,312,313));
+		
+		List<Integer> ids;
+		ArmorType(List<Integer> ids){
+			this.ids = ids;
+		}
+	}
+	
 }
