@@ -35,10 +35,11 @@ class DCCraftSchedule implements Runnable {
 		ItemStack outputStack = CraftingManager.a().a(workBench.a);
 		if (outputStack != null) {
 			int materialId = outputStack.id;
+			int damage = outputStack.damage;
 			for (Skill s : dwarf.getSkills()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.CRAFT
-							&& materialId == e.getOutputId()) {
+							&& materialId == e.getOutputId() && damage == e.getInitiatorId()) {
 						outputStack.count = (int) e.getEffectAmount(dwarf);
 						// TODO: need code to check max stack size and if amount
 						// created > max stack size drop all count above 1 to

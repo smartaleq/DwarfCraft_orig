@@ -341,21 +341,25 @@ class DCEntityListener extends EntityListener {
 					if (e == null)
 						continue;
 					if (e.getEffectType() == EffectType.MOBDROP) {
-						if ((e.getId() == 810 && (deadThing instanceof CraftPig))
+						if (
+								   (e.getId() == 810 && (deadThing instanceof CraftPig))
 								|| (e.getId() == 811 && (deadThing instanceof CraftCow))
+								|| (e.getId() == 812 && (deadThing instanceof CraftSheep))
+								|| (e.getId() == 813 && (deadThing instanceof CraftChicken))
 								|| (e.getId() == 820 && (deadThing instanceof CraftCreeper))
 								|| (e.getId() == 823 && (deadThing instanceof CraftSpider))
 								|| (e.getId() == 821 && (deadThing instanceof CraftSkeleton))
 								|| (e.getId() == 822 && (deadThing instanceof CraftSkeleton))
 								|| (e.getId() == 850 && (deadThing instanceof CraftZombie))
-								|| (e.getId() == 851 && (deadThing instanceof CraftZombie))
-								|| (e.getId() == 852 && (deadThing instanceof CraftChicken))) {
+								|| (e.getId() == 851 && (deadThing instanceof CraftZombie))	) {
 
 							if (DwarfCraft.debugMessagesThreshold < 5)
 								System.out.println("DC5: killed a "
 										+ deadThing.getClass().getSimpleName()
 										+ " effect called:" + e.getId());
-							items.add(new ItemStack(e.getOutputId(),Util.randomAmount(e.getEffectAmount(killer))));
+							byte i = 0;
+							short j = 0;
+							items.add(new ItemStack(e.getOutputId(),Util.randomAmount(e.getEffectAmount(killer)),j,i));
 						}
 					}
 				}

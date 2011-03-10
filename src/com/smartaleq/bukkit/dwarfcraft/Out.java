@@ -11,18 +11,19 @@ import org.bukkit.inventory.ItemStack;
 public class Out {
 
 	public enum Color {
-		DC(FixedColor.Gold), COMMAND(FixedColor.DarkRed), HELP(FixedColor.Pink), BADAMOUNT(
-				FixedColor.Red), GOODAMOUNT(FixedColor.Green), NORMALAMOUNT(
-				FixedColor.Yellow),
-
-		ITEM(FixedColor.DarkGreen), SKILLID(FixedColor.DarkTeal), SKILLLEVEL(
-				FixedColor.Teal), EFFECT(FixedColor.Purple),
-
-		DWARF(FixedColor.Blue), ELF(FixedColor.White),
-
-		TRAINER(FixedColor.Gray),
-
-		;
+		DC(FixedColor.Gold), 
+		COMMAND(FixedColor.DarkRed), 
+		HELP(FixedColor.Pink), 
+		BADAMOUNT(FixedColor.Red), 
+		GOODAMOUNT(FixedColor.Green), 
+		NORMALAMOUNT(FixedColor.Yellow),
+		ITEM(FixedColor.DarkGreen),
+		SKILLID(FixedColor.DarkTeal), 
+		SKILLLEVEL(FixedColor.Teal), 
+		EFFECT(FixedColor.Purple),
+		DWARF(FixedColor.Blue), 
+		ELF(FixedColor.White),
+		TRAINER(FixedColor.Gray);
 		FixedColor fcolor;
 
 		Color(FixedColor fixedcolor) {
@@ -34,11 +35,9 @@ public class Out {
 		}
 	}
 	public enum FixedColor {
-		DarkRed("§4"), Red("§c"), Yellow("§e"), Gold("§6"), DarkGreen("§2"), Green(
-				"§a"), Teal("§b"), DarkTeal("§3"), Blue("§9"), Pink("§d"), Purple(
-				"§5"), White("§f"), Gray("§7"), DarkGray("§8"), Black("§0"),
-
-		;
+		DarkRed("§4"), Red("§c"), Yellow("§e"), Gold("§6"), DarkGreen("§2"), 
+		Green("§a"), Teal("§b"), DarkTeal("§3"), Blue("§9"), Pink("§d"), 
+		Purple("§5"), White("§f"), Gray("§7"), DarkGray("§8"), Black("§0");
 
 		String color;
 
@@ -207,8 +206,7 @@ public class Out {
 				else if (message.charAt(i + 1) == 's')
 					message = message.replace("&s", Messages.secondaryRaceName);
 				else if (message.charAt(i + 1) == 't')
-					message = message.replace("&t",
-							Messages.secondaryRacePlural);
+					message = message.replace("&t",Messages.secondaryRacePlural);
 				else
 					message = message.replaceFirst("&", " AND ");
 			}

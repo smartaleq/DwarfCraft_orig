@@ -45,7 +45,7 @@ final class Messages {
 
 		PRIMARYRACESUCCESS(
 				"&6Congratulations, you're now a hearty &9&p&6 with level 0 skills!"), PRIMARYRACECONFIRM(
-				"&6To become a &9&p&6 you need to confirm with &4/dc REALLYmake&p"
+				"&6To become a &9&p&6 you need to confirm with &4/race %p confirm&p"
 						+ "&6- this will reset your skills to 0!"), SECONDARYRACESUCCESS(
 				"&6I'm sorry to say this... really I must apologize... there was a problem "
 						+ "in surgery and you're now... ahem... an &f&s&6."), SECONDARYRACECONFIRM(

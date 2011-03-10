@@ -315,11 +315,8 @@ class Dwarf {
 		for (int i = 0; i < 40; i++) {
 			if (items[i].getTypeId() == itemId) {
 				if (items[i].getAmount() > amountLeft) {
-					ItemStack newItem = new ItemStack(items[i].getTypeId(),
-							items[i].getAmount() - amountLeft);
-					inventory.setItem(i, newItem);
+					items[i].setAmount(items[i].getAmount() - amountLeft);
 					break;
-
 				} else if (items[i].getAmount() == amountLeft) {
 					inventory.removeItem(items[i]);
 					break;

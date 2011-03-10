@@ -37,14 +37,14 @@ public class Util {
 	 *            Double number of blocks to drop
 	 * @param dropNaturally
 	 *            item naturally or not
-	 * @param data
+	 * @param dmgValue
 	 * @param loc
 	 *            Location of item drop
 	 */
 	protected static void dropBlockEffect(Location loc, Effect e,
-			double effectAmount, boolean dropNaturally, byte data) {
+			double effectAmount, boolean dropNaturally, short dmgValue) {
 		ItemStack item = new ItemStack(e.getOutputId(),
-				Util.randomAmount(effectAmount), (short) 0, data);
+				Util.randomAmount(effectAmount), dmgValue);
 		if (item.getAmount() == 0) {
 			if (DwarfCraft.debugMessagesThreshold < 6)
 				System.out.println("Debug: dropped " + item.toString());
@@ -90,15 +90,18 @@ public class Util {
 	protected static boolean toolChecker(Player player) {
 		Inventory inv = player.getInventory();
 		ItemStack[] contents = inv.getContents();
+		ItemStack[] newContents = contents.clone();
 		boolean removedSomething = false;
-		for (ItemStack item : contents) {
+		for (int i = 0; i < contents.length;i++) {
+			ItemStack item = contents[i];
 			int damage = item.getDurability();
 			int maxDamage = item.getType().getMaxDurability();
-			if (damage > maxDamage) {
-				inv.removeItem(item);
+			if (damage >= maxDamage) {
+				newContents[i] = null;
 				removedSomething = true;
 			}
 		}
+		inv.setContents(newContents);
 		return removedSomething;
 	}
 

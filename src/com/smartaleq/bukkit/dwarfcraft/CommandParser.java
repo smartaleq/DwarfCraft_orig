@@ -161,9 +161,9 @@ final class CommandParser {
 	}
 
 	private Boolean parseRace(int arrayIterator) throws DCCommandException {
-		if (input[arrayIterator].equalsIgnoreCase("elf"))
+		if (input[arrayIterator].equalsIgnoreCase(Messages.secondaryRaceName))
 			return true;
-		else if (input[arrayIterator].equalsIgnoreCase("dwarf"))
+		else if (input[arrayIterator].equalsIgnoreCase(Messages.primaryRaceName))
 			return false;
 		else
 			throw new DCCommandException(plugin, Type.PARSERACEFAIL);

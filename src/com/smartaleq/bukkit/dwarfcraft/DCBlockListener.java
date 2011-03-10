@@ -84,7 +84,7 @@ class DCBlockListener extends BlockListener {
 								+ e.getToolRequired());
 					if (correctTool || !e.getToolRequired()) {
 						Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf),
-								true, (byte) 0);
+								true, meta);
 						blockDropChange = true;
 					}
 				}
@@ -188,8 +188,6 @@ class DCBlockListener extends BlockListener {
 		Player player = event.getPlayer();
 		Dwarf dwarf = plugin.getDataManager().find(player);
 		List<Skill> skills = dwarf.getSkills();
-
-		// Effect Specific information
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -198,18 +196,8 @@ class DCBlockListener extends BlockListener {
 			durability = tool.getDurability();
 		}
 		Block block = event.getBlock();
-		// Block blockAbove = block.getRelative(0,1,0);
 		Location loc = block.getLocation();
 		Material material = event.getBlock().getType();
-		// boolean durabilityChange = false;
-		// boolean blockDropChange = false;
-		// if(tool.getType()==Material.SEEDS && block.getType() == Material.SOIL
-		// && blockAbove.getType()==Material.AIR){
-		// blockAbove.setType(Material.CROPS);
-		// if (tool.getAmount()==1) player.getInventory().removeItem(tool);
-		// else tool.setAmount(tool.getAmount()-1);
-		// }
-
 		for (Skill s : skills) {
 			if (s == null)
 				continue;
@@ -233,7 +221,6 @@ class DCBlockListener extends BlockListener {
 												+ tool.getDurability());
 							Util.toolChecker(player);
 							block.setTypeId(60);
-							// durabilityChange = true;
 						}
 					}
 				}
@@ -245,7 +232,6 @@ class DCBlockListener extends BlockListener {
 							if (DwarfCraft.debugMessagesThreshold < 3)
 								System.out.println("DC3: hoed some ground:"
 										+ e.getEffectAmount(dwarf));
-							// blockDropChange = true;
 						}
 					}
 				}

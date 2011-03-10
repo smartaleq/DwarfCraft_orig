@@ -57,9 +57,7 @@ final class DwarfTrainer {
 					.getTrainerHeldMaterial();
 		assert (material != null);
 		if (material != Material.AIR) {
-			itemStack = new ItemStack(material);
-			itemStack.setAmount(1);
-			itemStack.setDurability((short) 0);
+			itemStack = new ItemStack(material.getId(), 1, (short)0);
 			basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
 		}
 	}
@@ -90,9 +88,7 @@ final class DwarfTrainer {
 		Material material = newMaterial;
 		assert (material != null);
 		if (material != Material.AIR) {
-			itemStack = new ItemStack(material);
-			itemStack.setAmount(1);
-			itemStack.setDurability((short) 0);
+			itemStack = new ItemStack(material.getId(), 1, (short)0);
 			basicHumanNpc.getBukkitEntity().setItemInHand(itemStack);
 		}
 	}

@@ -50,6 +50,10 @@ class DCPlayerListener extends PlayerListener {
 					continue;
 				if (e.getEffectType() == EffectType.EAT
 						&& e.getInitiatorId() == itemId) {
+					if (player.getHealth()>=20) {
+						event.setCancelled(true);
+						return;
+					}
 					if (DwarfCraft.debugMessagesThreshold < 8)
 						System.out.println("DC8: ate food:"
 								+ item.getType().toString() + " for "
@@ -62,6 +66,7 @@ class DCPlayerListener extends PlayerListener {
 				}
 			}
 		}
+		
 		if (hadEffect)
 			event.setCancelled(true);
 	}
