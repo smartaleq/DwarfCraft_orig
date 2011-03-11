@@ -37,9 +37,8 @@ public class DwarfCraft extends JavaPlugin {
 	private ConfigManager cm;
 	private DataManager dm;
 	private Out out;
-	// TODO: remove statics
+	
 	protected static int debugMessagesThreshold = 0;
-	protected static boolean disableEffects = false;
 
 	protected ConfigManager getConfigManager() {
 		return cm;

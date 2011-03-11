@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.entity.*;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -120,8 +121,6 @@ class DCEntityListener extends EntityListener {
 	}
 
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
 		Entity damager = event.getDamager();
 		LivingEntity victim;
 		if (event.getEntity() instanceof LivingEntity)
@@ -221,8 +220,6 @@ class DCEntityListener extends EntityListener {
 	}
 
 	public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
 		LivingEntity attacker = (LivingEntity) event.getDamager();
 		LivingEntity hitThing = ((LivingEntity) event.getEntity());
 		int hp = hitThing.getHealth();
@@ -325,8 +322,6 @@ class DCEntityListener extends EntityListener {
 
 	@Override
 	public void onEntityDeath(EntityDeathEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
 		Entity deadThing = event.getEntity();
 		if (deadThing instanceof Player)
 			return;

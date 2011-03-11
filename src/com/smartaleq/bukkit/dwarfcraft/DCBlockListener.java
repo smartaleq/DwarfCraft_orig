@@ -32,18 +32,11 @@ class DCBlockListener extends BlockListener {
 	 */
 	@Override
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
 		if (event.isCancelled())
 			return;
-		if (DwarfCraft.debugMessagesThreshold < 2)
-			System.out.println("DC0: on block break called");
-		// General information
 		Player player = event.getPlayer();
 		Dwarf dwarf = plugin.getDataManager().find(player);
 		List<Skill> skills = dwarf.getSkills();
-
-		// Effect Specific information
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -52,10 +45,9 @@ class DCBlockListener extends BlockListener {
 			durability = tool.getDurability();
 		}
 		boolean correctTool = false;
-		Block block = event.getBlock();
-		Location loc = block.getLocation();
+		Location loc = event.getBlock().getLocation();
 		int materialId = event.getBlock().getTypeId();
-		byte meta = block.getData();
+		byte meta = event.getBlock().getData();
 
 		// Logic var
 		boolean blockDropChange = false;
@@ -116,7 +108,7 @@ class DCBlockListener extends BlockListener {
 		}
 
 		if (blockDropChange) {
-			block.setTypeId(0);
+			event.getBlock().setTypeId(0);
 			event.setCancelled(true);
 		}
 	}
@@ -127,7 +119,7 @@ class DCBlockListener extends BlockListener {
 	 */
 	@Override
 	public void onBlockDamage(BlockDamageEvent event) {
-		if (DwarfCraft.disableEffects)
+		if (event.isCancelled())
 			return;
 		// General information
 		Player player = event.getPlayer();
@@ -182,9 +174,6 @@ class DCBlockListener extends BlockListener {
 	 */
 	@Override
 	public void onBlockRightClick(BlockRightClickEvent event) {
-		if (DwarfCraft.disableEffects)
-			return;
-		// General information
 		Player player = event.getPlayer();
 		Dwarf dwarf = plugin.getDataManager().find(player);
 		List<Skill> skills = dwarf.getSkills();
