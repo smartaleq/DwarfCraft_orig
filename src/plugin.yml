@@ -5,6 +5,8 @@ main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
 version: 1.0
 commands:
  experiment:
+    description:
+    usage: 
  debug: 
     description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
     usage: |
