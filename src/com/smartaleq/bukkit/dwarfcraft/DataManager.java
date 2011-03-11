@@ -47,7 +47,7 @@ final class DataManager {
 
 	/**
 	 * this is untested and quite a lot of new code, it will probably fail
-	 * several times. no way to bugfix currently. Just praying it works - joey
+	 * several times. no way to bugfix currently. Just praying it works
 	 * 
 	 * @param oldVersion
 	 */
@@ -523,11 +523,14 @@ final class DataManager {
 		}
 	}
 
-	private void updateDwarfsTable() {
-		// TODO when table is not right size, resize it
-		// add columns or:
-
-		// remove columns
+	public void tryToRefreshPlayers() {
+		List<Dwarf> newList = new ArrayList<Dwarf>();
+		for(Dwarf d: dwarves){
+			Dwarf newD = new Dwarf(plugin, plugin.getServer().getPlayer(d.getPlayer().getName()));
+			newList.add(newD);
+			getDwarfData(newD,d.getPlayer().getName());
+		}
+		dwarves = newList;
 	}
 
 }

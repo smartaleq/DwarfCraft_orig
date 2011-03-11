@@ -4,9 +4,7 @@ author: smartaleq and RCarretta
 main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
 version: 1.0
 commands:
- dc:
-    description: DwarfCraft command prefix (alternative command syntax).
-    usage: /dc <DCCommand> <args>
+ experiment:
  debug: 
     description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
     usage: |
