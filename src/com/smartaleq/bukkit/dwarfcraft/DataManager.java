@@ -153,8 +153,7 @@ final class DataManager {
 		Dwarf newDwarf = new Dwarf(plugin, player);
 		newDwarf.setSkills(plugin.getConfigManager().getAllSkills());
 		for (Skill skill : newDwarf.getSkills())
-			if (skill != null)
-				skill.setLevel(0);
+			skill.setLevel(0);
 		if (player != null)
 			dwarves.add(newDwarf);
 		return newDwarf;

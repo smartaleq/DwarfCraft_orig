@@ -90,9 +90,9 @@ class DCPlayerListener extends PlayerListener {
 		plugin.getOut().welcome(plugin.getServer(), dwarf);
 	}
 
-	public void onPlayerQuit(PlayerEvent event) {
-		Dwarf dwarf = plugin.getDataManager().find(event.getPlayer());
-		plugin.getDataManager().Remove(dwarf);
-	}
+//	public void onPlayerQuit(PlayerEvent event) {
+//		Dwarf dwarf = plugin.getDataManager().find(event.getPlayer());
+//		plugin.getDataManager().Remove(dwarf);
+//	}
 	
 }

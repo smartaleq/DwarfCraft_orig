@@ -96,7 +96,7 @@ public class Util {
 			ItemStack item = contents[i];
 			int damage = item.getDurability();
 			int maxDamage = item.getType().getMaxDurability();
-			if (damage >= maxDamage) {
+			if (damage >= maxDamage && damage > 1 ) {
 				newContents[i] = null;
 				removedSomething = true;
 			}

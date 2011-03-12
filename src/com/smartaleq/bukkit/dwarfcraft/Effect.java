@@ -105,15 +105,14 @@ final class Effect {
 					initiator, effectLevelColor, effectAmount, output);
 			break;
 		case MOBDROP:
-			description = String
-			.format("&6Enemies that drop &2%s &6leave about %s%.2f&6",
-					output, effectLevelColor, effectAmount, output);
-			// special zombie exception
 			if (id == 850 || id == 851) {
 				description = String.format(
 						"&6Zombies drop about %s%.2f &2%s",
 						effectLevelColor, effectAmount, output);break;
 			}
+			description = String
+			.format("&6Enemies that drop &2%s &6leave about %s%.2f&6",
+					output, effectLevelColor, effectAmount, output);break;
 		case SWORDDURABILITY: 
 			description = String.format(
 					"&6Using &2%s &6removes about %s%.2f &6durability",
