@@ -298,7 +298,7 @@ class Dwarf {
 	 * Removes a Dwarf from the database. Only used for debugging/banning.
 	 */
 	private void remove() {
-		plugin.getDataManager().removeDwarf(this);
+		plugin.getDataManager().Remove(this);
 	}
 
 	/**

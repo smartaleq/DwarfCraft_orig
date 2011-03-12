@@ -201,15 +201,7 @@ final class DataManager {
 							+ configManager.getConfigSkillsVersion() + "';");
 			rs.next();
 			if (rs.isClosed()) { // if current version table doesn't exist
-				for (int versionNumber = configManager.getConfigSkillsVersion() - 1; versionNumber >= 100; versionNumber--) { // a
-																																// is
-																																// number
-																																// of
-																																// past
-																																// versions
-																																// to
-																																// look
-																																// for
+				for (int versionNumber = configManager.getConfigSkillsVersion() - 1; versionNumber >= 100; versionNumber--) { 
 					rs = statement
 							.executeQuery("select * from sqlite_master WHERE name = 'dwarfs"
 									+ versionNumber + "';");
@@ -250,6 +242,10 @@ final class DataManager {
 						return d;
 		}
 		return null;
+	}
+	
+	protected void Remove(Dwarf dwarf) {
+		getDwarves().remove(dwarf);
 	}
 
 	protected Dwarf findOffline(String name) {
@@ -463,10 +459,6 @@ final class DataManager {
 		return trainerList;
 	}
 
-	protected void removeDwarf(Dwarf dwarf) {
-		// TODO removedwarf
-
-	}
 
 	protected void removeTrainer(String str) {
 		DwarfTrainer d;
@@ -527,6 +519,7 @@ final class DataManager {
 		List<Dwarf> newList = new ArrayList<Dwarf>();
 		for(Dwarf d: dwarves){
 			Dwarf newD = new Dwarf(plugin, plugin.getServer().getPlayer(d.getPlayer().getName()));
+			newD.setSkills(plugin.getConfigManager().getAllSkills());
 			newList.add(newD);
 			getDwarfData(newD,d.getPlayer().getName());
 		}

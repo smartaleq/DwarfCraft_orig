@@ -160,27 +160,27 @@ class DCEntityListener extends EntityListener {
 			for (Effect e : s.getEffects()) {
 				if (e == null)
 					continue;
-				if (e.getEffectType() == EffectType.SWORDDURABILITY) {
-					for (int id : e.getTools()) {
-						if (id == toolId) {
-							sword = true;
-							double effectAmount = e.getEffectAmount(attacker);
-
-							if (DwarfCraft.debugMessagesThreshold < 2)
-								System.out
-										.println("DC2: affected durability of a sword - old:"
-												+ durability
-												+ " effect called:" + e.getId());
-							tool.setDurability((short) (durability + Util
-									.randomAmount(effectAmount)));
-							if (DwarfCraft.debugMessagesThreshold < 3)
-								System.out
-										.println("DC3: affected durability of a sword - new:"
-												+ tool.getDurability());
-							Util.toolChecker((Player) damager);
-						}
-					}
-				}
+//				if (e.getEffectType() == EffectType.SWORDDURABILITY) {
+//					for (int id : e.getTools()) {
+//						if (id == toolId) {
+//							sword = true;
+//							double effectAmount = e.getEffectAmount(attacker);
+//
+//							if (DwarfCraft.debugMessagesThreshold < 2)
+//								System.out
+//										.println("DC2: affected durability of a sword - old:"
+//												+ durability
+//												+ " effect called:" + e.getId());
+//							tool.setDurability((short) (durability + Util
+//									.randomAmount(effectAmount)));
+//							if (DwarfCraft.debugMessagesThreshold < 3)
+//								System.out
+//										.println("DC3: affected durability of a sword - new:"
+//												+ tool.getDurability());
+//							Util.toolChecker((Player) damager);
+//						}
+//					}
+//				}
 				if (e.getEffectType() == EffectType.PVEDAMAGE && !isPVP
 						&& sword) {
 					if (hp <= 0) {
@@ -378,13 +378,13 @@ class DCEntityListener extends EntityListener {
 			for (Effect e: s.getEffects()){
 				if (e.getEffectType()==type){
 					if (type == EffectType.BOWDEFEND)
-						multiplier = dwarf.countArmorPieces(ArmorType.LEATHER)/4 * e.getEffectAmount(dwarf);
+						multiplier -=  dwarf.countArmorPieces(ArmorType.LEATHER)/4 * e.getEffectAmount(dwarf);
 					if (type == EffectType.SUFFOCATEDEFEND)
-						multiplier = dwarf.countArmorPieces(ArmorType.IRON)/4 * e.getEffectAmount(dwarf);
+						multiplier -= dwarf.countArmorPieces(ArmorType.IRON)/4 * e.getEffectAmount(dwarf);
 					if (type == EffectType.LAVADEFEND)
-						multiplier = dwarf.countArmorPieces(ArmorType.GOLD)/4 * e.getEffectAmount(dwarf);
+						multiplier -= dwarf.countArmorPieces(ArmorType.GOLD)/4 * e.getEffectAmount(dwarf);
 					if (type == EffectType.DROWNDEFEND)
-						multiplier = dwarf.countArmorPieces(ArmorType.DIAMOND)/4 * e.getEffectAmount(dwarf);
+						multiplier -= dwarf.countArmorPieces(ArmorType.DIAMOND)/4 * e.getEffectAmount(dwarf);
 				}
 			}
 		}

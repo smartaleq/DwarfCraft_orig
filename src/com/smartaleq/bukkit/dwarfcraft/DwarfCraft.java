@@ -30,8 +30,7 @@ public class DwarfCraft extends JavaPlugin {
 	private final DCBlockListener blockListener = new DCBlockListener(this);
 	private final DCPlayerListener playerListener = new DCPlayerListener(this);
 	private final DCEntityListener entityListener = new DCEntityListener(this);
-	private final DCVehicleListener vehicleListener = new DCVehicleListener(
-			this);
+	private final DCVehicleListener vehicleListener = new DCVehicleListener(this);
 	private final DCWorldListener worldListener = new DCWorldListener(this);
 	private final DCCraftListener craftListener = new DCCraftListener(this);
 	private ConfigManager cm;
@@ -94,9 +93,9 @@ public class DwarfCraft extends JavaPlugin {
 				Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_ITEM, playerListener, Priority.Low,
 				this);
-		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Priority.Low,
+		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Low,
 				this);
-
+		
 		pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener,
 				Priority.High, this);
 		pm.registerEvent(Event.Type.ENTITY_TARGET, entityListener,

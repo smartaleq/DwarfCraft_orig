@@ -101,7 +101,7 @@ final class Effect {
 		switch(effectType){
 		case BLOCKDROP:
 			description = String.format(
-					"&6Break a &2%s &6 and %s%.2f &2%s&6 are created",
+					"&6Break a &2%s &6and %s%.2f &2%s&6 are created",
 					initiator, effectLevelColor, effectAmount, output);
 			break;
 		case MOBDROP:
@@ -115,7 +115,9 @@ final class Effect {
 						effectLevelColor, effectAmount, output);break;
 			}
 		case SWORDDURABILITY: 
-			
+			description = String.format(
+					"&6Using &2%s &6removes about %s%.2f &6durability",
+					toolType, effectLevelColor, effectAmount);break;
 		case PVPDAMAGE: 
 			description = String.format(
 					"&6You do %s%d&6%% &6of normal &2%s &6damage when fighting players",
