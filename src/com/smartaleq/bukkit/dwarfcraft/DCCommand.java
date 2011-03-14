@@ -36,9 +36,6 @@ class DCCommand extends Command {
 		List<Object> desiredArguments = new ArrayList<Object>();
 		List<Object> outputList = null;
 		try {
-			if (commandName.equalsIgnoreCase("experiment"))
-				plugin.getDataManager().tryToRefreshPlayers();
-			
 						/* first handle 0 arg commands */
 			if (commandName.equalsIgnoreCase("dchelp")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)

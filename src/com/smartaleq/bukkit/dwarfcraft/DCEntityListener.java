@@ -141,8 +141,11 @@ class DCEntityListener extends EntityListener {
 		}
 		int damage = event.getDamage();
 		int hp = victim.getHealth();
-		if (damager instanceof Player)
+		if (damager instanceof Player){
 			attacker = plugin.getDataManager().find((Player) damager);
+			assert(event.getDamager() == attacker.getPlayer());
+			assert(attacker!=null);
+		}
 		// EvP no effects, EvE no effects
 		else {
 			if (DwarfCraft.debugMessagesThreshold < 4)

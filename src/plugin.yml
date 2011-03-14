@@ -4,9 +4,6 @@ author: smartaleq and RCarretta
 main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
 version: 1.0
 commands:
- experiment:
-    description:
-    usage: 
  removenext:
     description:
     usage:
@@ -18,20 +15,21 @@ commands:
     aliases: []
  dchelp: 
     description: Displays general help information. Use /help <command> for command specific info.
-    usage: /<command> <command name>
+    usage: /<command> <command name> Displays general help information. Use /help <command> for command specific info.
     aliases: [dc]
  info: 
     description: Displays general information about the DwarfCraft plugin.
-    usage: /<command>
+    usage: /<command> Displays general information about the DwarfCraft plugin.
     aliases: [dcinfo]
  rules: 
     description: Displays server rules defined in the DwarfCraft messages config file.
-    usage: /rules
+    usage: /rules Displays server rules defined in the DwarfCraft messages config file.
     aliases: [dcrules]
  tutorial: 
     description: Displays a series of guide messages to instruct in the basics of DwarfCraft
     usage: |
-           /tutorial <page number>
+           Displays a series of guide messages to instruct in the basics of DwarfCraft
+           /tutorial <page number> 
            Example: /tutorial 2 - Prints the second tutorial section
     aliases: []
  commandlist: 
@@ -41,25 +39,33 @@ commands:
  skillsheet: 
     description: Displays a list of skills and levels for a Dwarf.
     usage: |
+           Displays a list of skills and levels for a Dwarf.
            /<command> <full/-f)> <Player Name or blank>
            Example: /skillsheet smartaleq - Prints smartaleq's skillsheet
            Example: /ss -f - Prints your complete skillsheet with level 0 Skills
     aliases: [ss]
  skillinfo: 
-    description: Displays a description of a dwarf's skill and 
+    description: Displays a description of a dwarf's skill and training costs
     usage: |
+           Displays a description of a dwarf's skill and training costs
            /<command> <player name> [Skill ID or Skill Name]
            Example: /skillinfo 11 - Prints details about Excavation skill
            Example: /skillinfo Dirt_Digging - Prints details about Dirt Digging skill
-           Example: /skill smartaleq 5 - Prints details about Smartaleq's Swordsman skill
-    aliases: [skill ]
+           Example: /skill smartaleq 3 - Prints details about Smartaleq's Axe use skill
+    aliases: [skill]
  effectinfo: 
     description: 
-    usage:
-    aliases: [effect ]
+    usage: |       
+           Displays a description of a dwarf's effect information
+           /<command> <player name> [EffectID]
+           Example: /effect smartaleq 131 - Prints details about Smartaleq's effect 131
+    aliases: [effect]
  race: 
     description: 
-    usage:
+    usage: |
+          /race dwarf
+          /race elf
+          /race elf confirm
     aliases: [dwarf, elf]
  setskill: 
     description: 

@@ -18,6 +18,10 @@ class Dwarf {
 	private boolean isElf;
 	private Player player;
 
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+
 	protected Dwarf(final DwarfCraft plugin, Player whoami) {
 		this.plugin = plugin;
 		player = whoami;
