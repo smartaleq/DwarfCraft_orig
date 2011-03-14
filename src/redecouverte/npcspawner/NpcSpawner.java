@@ -12,8 +12,8 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MobType;
 
 public class NpcSpawner {
 
@@ -104,7 +104,7 @@ public class NpcSpawner {
     }
 
 
-    public static LivingEntity SpawnMob(MobType type, World world, double x, double y, double z) {
+    public static LivingEntity SpawnMob(CreatureType type, World world, double x, double y, double z) {
         try {
             WorldServer ws = GetWorldServer(world);
 

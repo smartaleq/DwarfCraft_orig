@@ -217,7 +217,7 @@ final class DwarfTrainer {
 		}
 		if (skill.getLevel() > maxSkill) {
 			plugin.getOut().sendMessage(player,
-					"&cI can't teach you any more, find a new trainer",
+					"&cI can't teach you any more, find a higher level trainer",
 					"&6[Train &b" + skill.getId() + "&6] ");
 			soFarSoGood = false;
 		}

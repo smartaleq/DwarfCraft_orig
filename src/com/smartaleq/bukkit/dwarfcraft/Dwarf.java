@@ -294,12 +294,6 @@ class Dwarf {
 		return true;
 	}
 
-	/**
-	 * Removes a Dwarf from the database. Only used for debugging/banning.
-	 */
-	private void remove() {
-		plugin.getDataManager().Remove(this);
-	}
 
 	/**
 	 * Removes a set number of items from an inventory No error checking, should

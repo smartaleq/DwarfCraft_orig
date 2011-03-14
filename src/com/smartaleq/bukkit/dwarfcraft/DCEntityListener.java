@@ -72,6 +72,10 @@ class DCEntityListener extends EntityListener {
 				event.getEntity());
 		if (trainer != null) {
 			if (event.getDamager() instanceof Player) {
+				if (plugin.getDataManager().getTrainerRemove().contains(event.getDamager())){
+					plugin.getDataManager().removeTrainer(trainer.getUniqueId());
+					plugin.getDataManager().getTrainerRemove().remove(event.getDamager());
+				}
 				// in business, left click
 				if (trainer.isGreeter()) {
 					trainer.printLeftClick((Player) (event.getDamager()));
@@ -123,14 +127,17 @@ class DCEntityListener extends EntityListener {
 	public void onEntityAttack(EntityDamageByEntityEvent event) {
 		Entity damager = event.getDamager();
 		LivingEntity victim;
-		if (event.getEntity() instanceof LivingEntity)
+		if (event.getEntity() instanceof LivingEntity){
 			victim = (LivingEntity) event.getEntity();
-		else
-			return;
+			if (DwarfCraft.debugMessagesThreshold < 0)System.out.println("DC0: victim is living ");}
+		else{
+			if (DwarfCraft.debugMessagesThreshold < 0)System.out.println("DC0: victim is unliving ");
+			return;}
 		boolean isPVP = false;
 		Dwarf attacker = null;
 		if (victim instanceof Player) {
 			isPVP = true;
+			if (DwarfCraft.debugMessagesThreshold < 1)System.out.println("DC1: EDBE is PVP");
 		}
 		int damage = event.getDamage();
 		int hp = victim.getHealth();
@@ -148,72 +155,65 @@ class DCEntityListener extends EntityListener {
 		ItemStack tool = attacker.getPlayer().getItemInHand();
 		int toolId = -1;
 		short durability = 0;
+		boolean sword = false;
 		if (tool != null) {
 			toolId = tool.getTypeId();
 			durability = tool.getDurability();
+			if (toolId == 268||toolId ==272||toolId ==267||toolId ==283||toolId ==276) sword = true;
 		}
-		boolean sword = false;
+		
 		List<Skill> skills = attacker.getSkills();
 		for (Skill s : skills) {
-			if (s == null)
-				continue;
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
-//				if (e.getEffectType() == EffectType.SWORDDURABILITY) {
-//					for (int id : e.getTools()) {
-//						if (id == toolId) {
-//							sword = true;
-//							double effectAmount = e.getEffectAmount(attacker);
-//
-//							if (DwarfCraft.debugMessagesThreshold < 2)
-//								System.out
-//										.println("DC2: affected durability of a sword - old:"
-//												+ durability
-//												+ " effect called:" + e.getId());
-//							tool.setDurability((short) (durability + Util
-//									.randomAmount(effectAmount)));
-//							if (DwarfCraft.debugMessagesThreshold < 3)
-//								System.out
-//										.println("DC3: affected durability of a sword - new:"
-//												+ tool.getDurability());
-//							Util.toolChecker((Player) damager);
-//						}
-//					}
-//				}
-				if (e.getEffectType() == EffectType.PVEDAMAGE && !isPVP
-						&& sword) {
-					if (hp <= 0) {
-						event.setCancelled(true);
-						return;
-					}
-					damage = Util.randomAmount((e.getEffectAmount(attacker))
-							* damage);
-					if (damage >= hp && !killMap.containsKey(victim)){
-		                killMap.put(victim, attacker);
-					}
-					event.setDamage(damage);
-					if (DwarfCraft.debugMessagesThreshold < 6)
-						System.out.println("DC6: PVE "
-								+ attacker.getPlayer().getName() + " attacked "
-								+ victim.getClass().getSimpleName() + " for "
-								+ e.getEffectAmount(attacker) + " of "
-								+ event.getDamage() + " doing " + damage
-								+ " dmg of " + hp + "hp" + " effect called:"
-								+ e.getId());
+				if (e.getEffectType() == EffectType.SWORDDURABILITY && sword) {
+					double effectAmount = e.getEffectAmount(attacker);
+					if (DwarfCraft.debugMessagesThreshold < 2)
+						System.out
+								.println("DC2: affected durability of a sword - old:"
+										+ durability
+										+ " effect called:" + e.getId());
+//					tool.setDurability((short) (durability + Util
+//							.randomAmount(effectAmount)));
+					if (DwarfCraft.debugMessagesThreshold < 3)
+						System.out
+								.println("DC3: affected durability of a sword - new:"
+										+ tool.getDurability());
+					Util.toolChecker((Player) damager);
 				}
-				if (e.getEffectType() == EffectType.PVPDAMAGE && isPVP && sword) {
-					damage = Util.randomAmount((e.getEffectAmount(attacker))
-							* damage);
-					event.setDamage(damage);
-					if (DwarfCraft.debugMessagesThreshold < 6)
-						System.out.println("DC6: PVP "
-								+ attacker.getPlayer().getName() + " attacked "
-								+ ((Player) victim).getName() + " for "
-								+ e.getEffectAmount(attacker) + " of "
-								+ event.getDamage() + " doing " + damage
-								+ " dmg of " + hp + "hp" + " effect called:"
-								+ e.getId());
+				if (DwarfCraft.debugMessagesThreshold < 1)System.out.println("DC1: effect:"+e.getId()+e.getEffectType()+sword);
+					if (e.getEffectType() == EffectType.PVEDAMAGE && !isPVP
+							&& sword) {
+						if (hp <= 0) {
+							event.setCancelled(true);
+							return;
+						}
+						damage = Util.randomAmount((e.getEffectAmount(attacker))
+								* damage);
+						if (damage >= hp && !killMap.containsKey(victim)){
+			                killMap.put(victim, attacker);
+						}
+						event.setDamage(damage);
+						if (DwarfCraft.debugMessagesThreshold < 6)
+							System.out.println("DC6: PVE "
+									+ attacker.getPlayer().getName() + " attacked "
+									+ victim.getClass().getSimpleName() + " for "
+									+ e.getEffectAmount(attacker) + " of "
+									+ event.getDamage() + " doing " + damage
+									+ " dmg of " + hp + "hp" + " effect called:"
+									+ e.getId());
+					}
+					if (e.getEffectType() == EffectType.PVPDAMAGE && isPVP && sword) {
+						damage = Util.randomAmount((e.getEffectAmount(attacker))
+								* damage);
+						event.setDamage(damage);
+						if (DwarfCraft.debugMessagesThreshold < 6)
+							System.out.println("DC6: PVP "
+									+ attacker.getPlayer().getName() + " attacked "
+									+ ((Player) victim).getName() + " for "
+									+ e.getEffectAmount(attacker) + " of "
+									+ event.getDamage() + " doing " + damage
+									+ " dmg of " + hp + "hp" + " effect called:"
+									+ e.getId());
 				}
 			}
 		}

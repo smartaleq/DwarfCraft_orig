@@ -7,6 +7,9 @@ commands:
  experiment:
     description:
     usage: 
+ removenext:
+    description:
+    usage:
  debug: 
     description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
     usage: |

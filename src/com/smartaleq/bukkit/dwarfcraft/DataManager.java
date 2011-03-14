@@ -29,6 +29,7 @@ final class DataManager {
 	private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
 	private final ConfigManager configManager;
 	private final DwarfCraft plugin;
+	private List<Player> trainerRemove = new ArrayList<Player>();
 
 	protected DataManager(DwarfCraft plugin, ConfigManager cm) {
 		this.plugin = plugin;
@@ -236,17 +237,15 @@ final class DataManager {
 		for (Dwarf d : plugin.getDataManager().getDwarves()) {
 			if (d != null)
 				if (d.getPlayer() != null)
+					System.out.println("finding player:"+player.getName()+player.hashCode()+" looked at dwarf:"+d.getPlayer().getName()+player.hashCode());
 					if (d.getPlayer().getName()
 							.equalsIgnoreCase(player.getName()))
+						
 						return d;
 		}
 		return null;
 	}
 	
-	protected void Remove(Dwarf dwarf) {
-		getDwarves().remove(dwarf);
-	}
-
 	protected Dwarf findOffline(String name) {
 		Dwarf dwarf = createDwarf(null);
 		if (getDwarfData(dwarf, name))
@@ -523,6 +522,14 @@ final class DataManager {
 			getDwarfData(newD,d.getPlayer().getName());
 		}
 		dwarves = newList;
+	}
+
+	public void setTrainerRemove(List<Player> trainerRemove) {
+		this.trainerRemove = trainerRemove;
+	}
+
+	public List<Player> getTrainerRemove() {
+		return trainerRemove;
 	}
 
 }

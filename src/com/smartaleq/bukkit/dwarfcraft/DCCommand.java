@@ -46,7 +46,12 @@ class DCCommand extends Command {
 				plugin.getOut().sendMessage(sender, Messages.GeneralInfo);
 				return true;
 			}
-			
+			if (commandName.equalsIgnoreCase("removenext")) {
+				if(plugin.getDataManager().getTrainerRemove().contains((Player) sender)){
+					return true;
+				}
+				else plugin.getDataManager().getTrainerRemove().add((Player) sender);
+			}
 			if (commandName.equalsIgnoreCase("skillsheet")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'skillsheet'");
@@ -93,40 +98,6 @@ class DCCommand extends Command {
 						printFull);
 				return true;
 			}
-			/* then check for args */
-			if (args.length==0) {
-				plugin.getOut().sendMessage(sender, getDescription());
-			}
-			if (args[0].equalsIgnoreCase("?")){
-				plugin.getOut().sendMessage(sender, getUsage());
-			}
-			/* Then handle commands with arguments */
-			if (commandName.equalsIgnoreCase("debug")) {
-				if (DwarfCraft.debugMessagesThreshold < 1)
-					System.out.println("DC1: started command 'debug'");
-				if (!sender.isOp())
-					throw new DCCommandException(plugin, Type.NEEDPERMISSIONS);
-				Integer i = 0;
-				desiredArguments.add(i);
-				outputList = parser.parse(desiredArguments, false);
-				debug((Integer) outputList.get(0));
-				return true;
-			} 
-			
-			if (commandName.equalsIgnoreCase("info")) {
-				if (DwarfCraft.debugMessagesThreshold < 1)
-					System.out.println("DC1: started command 'info'");
-				outputList = parser.parse(desiredArguments, false);
-				plugin.getOut().info(sender);
-				return true;
-			} 
-			if (commandName.equalsIgnoreCase("rules")) {
-				if (DwarfCraft.debugMessagesThreshold < 1)
-					System.out.println("DC1: started command 'rules'");
-				outputList = parser.parse(desiredArguments, false);
-				plugin.getOut().rules(sender);
-				return true;
-			} 
 			if (commandName.equalsIgnoreCase("tutorial")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'tutorial'");
@@ -147,6 +118,39 @@ class DCCommand extends Command {
 				plugin.getOut().tutorial(sender, page);
 				return true;
 			}
+			if (commandName.equalsIgnoreCase("info")) {
+				if (DwarfCraft.debugMessagesThreshold < 1)
+					System.out.println("DC1: started command 'info'");
+				outputList = parser.parse(desiredArguments, false);
+				plugin.getOut().info(sender);
+				return true;
+			} 
+			if (commandName.equalsIgnoreCase("rules")) {
+				if (DwarfCraft.debugMessagesThreshold < 1)
+					System.out.println("DC1: started command 'rules'");
+				outputList = parser.parse(desiredArguments, false);
+				plugin.getOut().rules(sender);
+				return true;
+			} 
+			/* then check for args */
+			if (args.length==0) {
+				plugin.getOut().sendMessage(sender, getDescription());
+			}
+			if (args[0].equalsIgnoreCase("?")){
+				plugin.getOut().sendMessage(sender, getUsage());
+			}
+			/* Then handle commands with arguments */
+			if (commandName.equalsIgnoreCase("debug")) {
+				if (DwarfCraft.debugMessagesThreshold < 1)
+					System.out.println("DC1: started command 'debug'");
+				if (!sender.isOp())
+					throw new DCCommandException(plugin, Type.NEEDPERMISSIONS);
+				Integer i = 0;
+				desiredArguments.add(i);
+				outputList = parser.parse(desiredArguments, false);
+				debug((Integer) outputList.get(0));
+				return true;
+			} 
 			if (commandName.equalsIgnoreCase("dccommands")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'dccommands'");
@@ -327,36 +331,30 @@ class DCCommand extends Command {
 				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0,
 						0, null, 0, 0, null);
 				Integer maxSkill = 1;
-				Dwarf dwarf = new Dwarf(plugin, null);
-				desiredArguments.add(dwarf);
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(skill);
 				desiredArguments.add(maxSkill);
 				try {
-					outputList = parser.parse(desiredArguments, false);
-					dwarf = (Dwarf) outputList.get(0);
-					uniqueId = (String) outputList.get(1);
-					name = (String) outputList.get(2);
-					skill = (Skill) outputList.get(3);
-					maxSkill = (Integer) outputList.get(4);
-				} catch (DCCommandException e) {
-					if (e.getType() == Type.TOOFEWARGS) {
-						if (!(sender instanceof Player))
+					if (!(sender instanceof Player))
 							throw new DCCommandException(plugin,
 									Type.CONSOLECANNOTUSE);
-						desiredArguments.remove(0);
-						desiredArguments.add(dwarf);
+					outputList = parser.parse(desiredArguments, false);
+					uniqueId = (String) outputList.get(0);
+					name = (String) outputList.get(1);
+					skill = (Skill) outputList.get(2);
+					maxSkill = (Integer) outputList.get(3);
+				} catch (DCCommandException e) {
+					if (e.getType() == Type.TOOFEWARGS) {
 						outputList = parser.parse(desiredArguments, true);
 						uniqueId = (String) outputList.get(0);
 						name = (String) outputList.get(1);
 						skill = (Skill) outputList.get(2);
 						maxSkill = (Integer) outputList.get(3);
-						dwarf = (Dwarf) outputList.get(4);
 					} else
 						throw e;
 				}
-				Location location = dwarf.getPlayer().getLocation();
+				Location location = ((Player) sender).getLocation();
 				DwarfTrainer d = new DwarfTrainer(plugin, location,
 						uniqueId, name, skill.getId(), maxSkill, null, false);
 				plugin.getDataManager().insertTrainer(d);

@@ -13,9 +13,9 @@ final class Messages {
 						+ " When you first start, things may be more difficult"
 						+ " than you are used to, but as you level your skills up you "
 						+ "will be much more productive than normal players. Each of "
-						+ "the skills listed in your skillsheet(&4/dc skillsheet&d) "
+						+ "the skills listed in your skillsheet(&4/skillsheet full&d) "
 						+ "has multiple effects. You can find out more about "
-						+ "training a skill and its effects with &4/dc skillinfo "
+						+ "training a skill and its effects with &4/skill "
 						+ "<skillname or id>&d."), COMMANDLIST1(""), COMMANDLIST2(
 				""),
 

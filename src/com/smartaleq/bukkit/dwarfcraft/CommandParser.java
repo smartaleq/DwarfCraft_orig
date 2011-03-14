@@ -92,8 +92,10 @@ final class CommandParser {
 			player = sender.getServer().getPlayer(dwarfName);
 			if (player != null && player.isOnline())
 				dwarf = plugin.getDataManager().find(player);
-			else if (player == null || !player.isOnline())
+			else if (player == null || !player.isOnline()){
+				System.out.println("looking for offline player");
 				dwarf = plugin.getDataManager().findOffline(dwarfName);
+			}
 			if (dwarf == null) {
 				throw new DCCommandException(plugin, Type.PARSEDWARFFAIL);
 			}
