@@ -37,7 +37,7 @@ public class DwarfCraft extends JavaPlugin {
 	private DataManager dm;
 	private Out out;
 	
-	protected static int debugMessagesThreshold = 0;
+	protected static int debugMessagesThreshold = 10;
 
 	protected ConfigManager getConfigManager() {
 		return cm;

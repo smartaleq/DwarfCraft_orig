@@ -2,11 +2,8 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: smartaleq and RCarretta
 main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
-version: 1.0
-commands:
- removenext:
-    description:
-    usage:
+version: 1.01 
+commands: 
  debug: 
     description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
     usage: |
@@ -34,7 +31,7 @@ commands:
     aliases: []
  commandlist: 
     description: 
-    usage:
+    usage: 
     aliases: [command, commands, commandslist]
  skillsheet: 
     description: Displays a list of skills and levels for a Dwarf.
@@ -73,7 +70,7 @@ commands:
            /<command> <player name> [Skill ID or Skill Name or All] [new skill level]
  creategreeter: 
     description: 
-    usage:
+    usage: 
  createtrainer: 
     description: 
     usage:
@@ -85,3 +82,7 @@ commands:
     description: 
     usage:
     aliases: [listtrainer]
+ removenext: 
+    description: 
+    usage: 
+
