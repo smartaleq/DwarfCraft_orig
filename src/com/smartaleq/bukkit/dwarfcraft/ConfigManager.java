@@ -79,7 +79,6 @@ final class ConfigManager {
 			configSkillsFileName = "skills.config";
 		if (configEffectsFileName == null)
 			configEffectsFileName = "effects.config";
-		;
 		if (configMessagesFileName == null)
 			configMessagesFileName = "messages.config";
 		if (configGreeterMessagesFileName == null)

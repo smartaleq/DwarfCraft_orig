@@ -52,18 +52,7 @@ final class Messages {
 				"&6If you really want to remove all your skills, you'll have to say you &4'/dc "
 						+ "REALLYmake&s&6, which is an altogether bad idea!"), SECONDARYRACEALREADY(
 				"&6You're already an &f&s&6. No wonder you're so confused!"),
-
-		// ERRORBADINPUT("(Input Error)Could not understand your input, try again"),
-		// ERRORNOTOP("(Not OP)You are not authorized to use that command"),
-		// ERRORINVALIDDWARFNAME("(Input Error)Could not find that player"),
-		// ERRORINVALIDSKILLLEVEL("(Input Error)Skill levels must be between 0 and 30"),
-		// ERRORNOTANUMBER("(Input Error)Where an integer was expected something else was found"),
-		// ERRORMISSINGINPUT("(Input Error)Could not find all the arguments required for that command"),
-		// ERRORNOTVALIDSKILLINPUT("(Input Error)To find a skill you must input either the name or ID of an existing skill"),
-		// ERRORNOTVALIDEFFECTINPUT("(Input Error)To find an effect you must input either the name or ID of an existing effect"),
-		// ERRORTOOMANYINPUTS("(Input Error)You gave me too many arguments. Please use underscores for spaces in skill names and no extra inputs."),
-		// ERRORCOMMANDNOTFOUND("(Input Error)Could not understand your input as a command."),
-		//
+		WELCOME("Welcome to a DwarfCraft world, first time player!")
 		;
 
 		private String message;
