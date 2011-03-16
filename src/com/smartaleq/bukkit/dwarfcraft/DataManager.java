@@ -237,7 +237,6 @@ final class DataManager {
 		for (Dwarf d : plugin.getDataManager().getDwarves()) {
 			if (d != null)
 				if (d.getPlayer() != null)
-					System.out.println("finding player:"+player.getName()+player.hashCode()+" looked at dwarf:"+d.getPlayer().getName()+player.hashCode());
 					if (d.getPlayer().getName().equalsIgnoreCase(player.getName())){
 					d.setPlayer(player);
 					return d;	
