@@ -65,20 +65,20 @@ class DCCommand extends Command {
 					printFull = true;
 					desiredArguments.add(args[0]);
 				}
-				Dwarf dwarf = new Dwarf(plugin, null);
-				desiredArguments.add(dwarf);
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
+				desiredArguments.add(dCPlayer);
 				String displayName = null;
 				try {
 					outputList = parser.parse(desiredArguments, false);
 					if (outputList.get(0) instanceof String)
-						dwarf = (Dwarf) outputList.get(1);
+						dCPlayer = (DCPlayer) outputList.get(1);
 					else
-						dwarf = (Dwarf) outputList.get(0);
-					displayName = dwarf.getPlayer().getDisplayName();
+						dCPlayer = (DCPlayer) outputList.get(0);
+					displayName = dCPlayer.getPlayer().getDisplayName();
 				} catch (DCCommandException dce) {
 					if (dce.getType() == Type.PARSEDWARFFAIL) {
 						if (sender instanceof Player)
-							dwarf = plugin.getDataManager().find(
+							dCPlayer = plugin.getDataManager().find(
 									(Player) sender);
 						else
 							throw new DCCommandException(plugin,
@@ -91,7 +91,7 @@ class DCCommand extends Command {
 					else
 						displayName = args[0];
 				}
-				plugin.getOut().printSkillSheet(dwarf, sender, displayName,
+				plugin.getOut().printSkillSheet(dCPlayer, sender, displayName,
 						printFull);
 				return true;
 			}
@@ -156,17 +156,17 @@ class DCCommand extends Command {
 			if (commandName.equalsIgnoreCase("skillinfo")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'skillinfo'");
-				Dwarf dwarf = new Dwarf(plugin, null);
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
 				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0,
 						0, null, 0, 0, null);
-				desiredArguments.add(dwarf);
+				desiredArguments.add(dCPlayer);
 				desiredArguments.add(skill);
 				try {
 					outputList = parser.parse(desiredArguments, false);
 					if (args.length > outputList.size())
 						throw new DCCommandException(plugin, Type.TOOMANYARGS);
 					skill = (Skill) outputList.get(1);
-					dwarf = (Dwarf) outputList.get(0);
+					dCPlayer = (DCPlayer) outputList.get(0);
 				} catch (DCCommandException dce) {
 					if (dce.getType() == Type.PARSEDWARFFAIL
 							|| dce.getType() == Type.TOOFEWARGS) {
@@ -176,37 +176,37 @@ class DCCommand extends Command {
 						if (!(sender instanceof Player))
 							throw new DCCommandException(plugin,
 									Type.CONSOLECANNOTUSE);
-						dwarf = plugin.getDataManager().find((Player) sender);
+						dCPlayer = plugin.getDataManager().find((Player) sender);
 					} else
 						throw dce;
 				}
-				plugin.getOut().printSkillInfo(sender, skill, dwarf, 30);
+				plugin.getOut().printSkillInfo(sender, skill, dCPlayer, 30);
 				return true;
 			} 
 			if (commandName.equalsIgnoreCase("effectinfo")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'effectinfo'");
-				Dwarf dwarf = new Dwarf(plugin, null);
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
 				Effect effect = new Effect(0, 0, 0, 0, 0, 0, false, false, 0,
 						0, 0, 0, null, 0, 0, false, null);
-				desiredArguments.add(dwarf);
+				desiredArguments.add(dCPlayer);
 				desiredArguments.add(effect);
 				try {
 					outputList = parser.parse(desiredArguments, false);
 					effect = (Effect) outputList.get(1);
-					dwarf = (Dwarf) outputList.get(0);
+					dCPlayer = (DCPlayer) outputList.get(0);
 				} catch (DCCommandException dce) {
 					if (dce.getType() == Type.PARSEDWARFFAIL
 							|| dce.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
-						desiredArguments.add(dwarf);
+						desiredArguments.add(dCPlayer);
 						outputList = parser.parse(desiredArguments, true);
 						effect = (Effect) outputList.get(0);
-						dwarf = (Dwarf) outputList.get(1);
+						dCPlayer = (DCPlayer) outputList.get(1);
 					} else
 						throw dce;
 				}
-				plugin.getOut().effectInfo(sender, dwarf, effect);
+				plugin.getOut().effectInfo(sender, dCPlayer, effect);
 				return true;
 			} 
 			if (commandName.equalsIgnoreCase("race")) {
@@ -214,61 +214,62 @@ class DCCommand extends Command {
 					System.out.println("DC1#: started command 'race'");
 				if (args.length == 0 && sender instanceof Player)
 					plugin.getOut().race((Player) sender);
-				Dwarf dwarf = new Dwarf(plugin, null);
-				String newRace = "newRace";
-				boolean isElf = false;
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
+				Race newRace = null;
 				Boolean confirmed = false;
-				desiredArguments.add(dwarf);
+				desiredArguments.add(dCPlayer);
 				desiredArguments.add(newRace);
 				desiredArguments.add(confirmed);
 				try {
 					outputList = parser.parse(desiredArguments, false);
-					dwarf = (Dwarf) outputList.get(0);
-					isElf = (Boolean) outputList.get(1);
+					dCPlayer = (DCPlayer) outputList.get(0);
+					newRace = (Race) outputList.get(1);
 					confirmed = (Boolean) outputList.get(2);
 					if (sender.isOp())
-						race(isElf, confirmed, dwarf);
+						race(newRace, confirmed, dCPlayer);
+					
 				} catch (DCCommandException e) {
 					if (e.getType() == Type.TOOFEWARGS) {
 						desiredArguments.remove(0);
-						desiredArguments.add(dwarf);
+						desiredArguments.add(dCPlayer);
 						outputList = parser.parse(desiredArguments, true);
-						dwarf = (Dwarf) outputList.get(2);
-						isElf = (Boolean) outputList.get(0);
+						dCPlayer = (DCPlayer) outputList.get(2);
+						newRace = (Race) outputList.get(0);
 						confirmed = (Boolean) outputList.get(1);
 					}
+					else throw e;
 				} catch (IndexOutOfBoundsException f) {
 					plugin.getOut().race((Player) sender);
 					return true;
 				}
-				race(isElf, confirmed, dwarf);
+				race(newRace, confirmed, dCPlayer);
 			} 
 			if (commandName.equalsIgnoreCase("setskill")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'setskill'");
 				if (!(sender.isOp()))
 					throw new DCCommandException(plugin, Type.NEEDPERMISSIONS);
-				Dwarf dwarf = new Dwarf(plugin, null);
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
 				Skill skill = new Skill(0, null, 0, null, null, 0, 0, null, 0,
 						0, null, 0, 0, null);
 				int level = 0;
 				String name;
-				desiredArguments.add(dwarf);
+				desiredArguments.add(dCPlayer);
 				desiredArguments.add(skill);
 				desiredArguments.add(level);
 				try {
 					outputList = parser.parse(desiredArguments, false);
-					dwarf = (Dwarf) outputList.get(0);
+					dCPlayer = (DCPlayer) outputList.get(0);
 					skill = (Skill) outputList.get(1);
 					level = (Integer) outputList.get(2);
-					name = dwarf.getPlayer().getName();
+					name = dCPlayer.getPlayer().getName();
 				} catch (DCCommandException e) {
 					if (e.getType() == Type.TOOFEWARGS) {
 						if (sender instanceof Player){
 							desiredArguments.remove(0);
-							desiredArguments.add(dwarf);
+							desiredArguments.add(dCPlayer);
 							outputList = parser.parse(desiredArguments, true);
-							dwarf = (Dwarf) outputList.get(2);
+							dCPlayer = (DCPlayer) outputList.get(2);
 							skill = (Skill) outputList.get(0);
 							level = (Integer) outputList.get(1);
 							name = ((Player) sender).getName();
@@ -277,7 +278,12 @@ class DCCommand extends Command {
 					}
 					else throw e;
 				}
-				setSkill(dwarf, name , skill, level);
+				if(skill == null){
+					for(Skill s:dCPlayer.getSkills()){
+						setSkill(dCPlayer, name, s, level);
+					}
+				}
+				else setSkill(dCPlayer, name , skill, level);
 				return true;
 			} else if (commandName.equalsIgnoreCase("creategreeter")) {
 				if (DwarfCraft.debugMessagesThreshold < 1)
@@ -288,14 +294,14 @@ class DCCommand extends Command {
 				String uniqueId = "UniqueIdAdd";
 				String name = "Name";
 				String greeterMessage = "GreeterMessage";
-				Dwarf dwarf = new Dwarf(plugin, null);
-				desiredArguments.add(dwarf);
+				DCPlayer dCPlayer = new DCPlayer(plugin, null);
+				desiredArguments.add(dCPlayer);
 				desiredArguments.add(uniqueId);
 				desiredArguments.add(name);
 				desiredArguments.add(greeterMessage);
 				try {
 					outputList = parser.parse(desiredArguments, false);
-					dwarf = (Dwarf) outputList.get(0);
+					dCPlayer = (DCPlayer) outputList.get(0);
 					uniqueId = (String) outputList.get(1);
 					name = (String) outputList.get(2);
 					greeterMessage = (String) outputList.get(3);
@@ -305,16 +311,16 @@ class DCCommand extends Command {
 							throw new DCCommandException(plugin,
 									Type.CONSOLECANNOTUSE);
 						desiredArguments.remove(0);
-						desiredArguments.add(dwarf);
+						desiredArguments.add(dCPlayer);
 						outputList = parser.parse(desiredArguments, false);
 						uniqueId = (String) outputList.get(0);
 						name = (String) outputList.get(1);
 						greeterMessage = (String) outputList.get(2);
-						dwarf = (Dwarf) outputList.get(3);;
+						dCPlayer = (DCPlayer) outputList.get(3);;
 					} else
 						throw e;
 				}
-				DwarfTrainer d = new DwarfTrainer(plugin, dwarf.getPlayer().getLocation(),
+				DwarfTrainer d = new DwarfTrainer(plugin, dCPlayer.getPlayer().getLocation(),
 						uniqueId, name, null, null, greeterMessage, true);
 				plugin.getDataManager().insertTrainer(d);
 				return true;
@@ -381,22 +387,19 @@ class DCCommand extends Command {
 		return false;
 	}
 	
-	private void race(boolean elf, boolean confirm, Dwarf dwarf) {
-		if (elf) {
-			if (dwarf.isElf())
-				plugin.getOut().alreadyElf(sender, dwarf);
-			else if (confirm)
-				plugin.getOut().becameElf(sender, dwarf);
+	private void race(Race newRace, boolean confirm, DCPlayer dCPlayer) {
+		if (dCPlayer.getRace() == newRace) {
+			if (confirm)
+				plugin.getOut().resetRace(sender, dCPlayer, newRace);
 			else
-				plugin.getOut().confirmBecomingElf(sender, dwarf);
+				plugin.getOut().alreadyRace(sender, dCPlayer);
 		} else {
-			if (dwarf.isElf())
-				dwarf.makeElfIntoDwarf();
-			else if (confirm) {
-				plugin.getOut().becameDwarf(sender, dwarf);
-				dwarf.makeElfIntoDwarf();
-			} else {
-				plugin.getOut().confirmBecomingDwarf(sender, dwarf);
+			if (confirm) {
+				plugin.getOut().changedRace(sender, dCPlayer);
+				dCPlayer.changeRace(newRace);
+			} 
+			else {
+				plugin.getOut().confirmRace(sender, dCPlayer);
 			}
 		}
 	}
@@ -406,13 +409,13 @@ class DCCommand extends Command {
 	 * <skill> <level> <player> is target, <skill> is skill ID or alpha <level>
 	 * is desired level in range 0-30
 	 */
-	private void setSkill(Dwarf dwarf, String name, Skill skill, int skillLevel) {
+	private void setSkill(DCPlayer dCPlayer, String name, Skill skill, int skillLevel) {
 		skill.setLevel(skillLevel);
 		plugin.getOut().sendMessage(
 				sender,
 				"&aAdmin: &eset skill &b" + skill.getDisplayName()
 						+ "&e for player &9" + name + "&e to &3" + skillLevel);
-		plugin.getDataManager().saveDwarfData(dwarf);
+		plugin.getDataManager().saveDwarfData(dCPlayer);
 	}
 
 	/**

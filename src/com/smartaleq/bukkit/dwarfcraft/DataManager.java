@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import redecouverte.npcspawner.NpcSpawner;
 
 final class DataManager {
 
-	private List<Dwarf> dwarves = new ArrayList<Dwarf>();
+	private List<DCPlayer> dwarves = new ArrayList<DCPlayer>();
 	private List<DwarfVehicle> vehicleList = new ArrayList<DwarfVehicle>();
 	public HashMap<String, DwarfTrainer> trainerList = new HashMap<String, DwarfTrainer>();
 	private HashMap<String, GreeterMessage> greeterMessageList = new HashMap<String, GreeterMessage>();
@@ -72,7 +73,7 @@ final class DataManager {
 			rs1.close();
 			// Create the new table based on current version of skills file
 			String skillTableCreater = "";
-			for (Skill s : configManager.getAllSkills())
+			for (Skill s : configManager.getAllSkills().values())
 				skillTableCreater = skillTableCreater
 						.concat("," + s.toString());
 			String tableCreateSQL = "create table dwarfs"
@@ -95,10 +96,10 @@ final class DataManager {
 
 			String sqlLine1 = "insert into dwarfs"
 					+ configManager.getConfigSkillsVersion()
-					+ " (playername, iself";
+					+ " (playername, race";
 			String sqlLine2 = ") values (?,?";
 
-			List<Skill> tempSkills = configManager.getAllSkills();
+			Collection<Skill> tempSkills = configManager.getAllSkills().values();
 			for (Skill s : tempSkills) {
 				if (schema.contains(s.toString())) {
 					s.setLevel(1);
@@ -110,7 +111,7 @@ final class DataManager {
 			PreparedStatement prep = conn.prepareStatement(sqlLine1 + sqlLine2);
 			while (rs3.next()) {
 				prep.setString(1, rs3.getString("playername"));
-				prep.setString(2, rs3.getString("iself"));
+				prep.setString(2, (rs3.getString("iself").equalsIgnoreCase("true")?"Elf":"Dwarf"));
 				int i = 3;
 				for (Skill s : tempSkills) {
 					if (s.getLevel() == 1) {
@@ -150,9 +151,10 @@ final class DataManager {
 		return false;
 	}
 
-	protected Dwarf createDwarf(Player player) {
-		Dwarf newDwarf = new Dwarf(plugin, player);
-		newDwarf.setSkills(plugin.getConfigManager().getAllSkills());
+	protected DCPlayer createDwarf(Player player) {
+		DCPlayer newDwarf = new DCPlayer(plugin, player);
+		newDwarf.setRace(plugin.getConfigManager().getDefaultRace());
+		newDwarf.setSkills(plugin.getConfigManager().getAllSkills(newDwarf.getRace()));
 		for (Skill skill : newDwarf.getSkills())
 			skill.setLevel(0);
 		if (player != null)
@@ -160,7 +162,7 @@ final class DataManager {
 		return newDwarf;
 	}
 
-	protected void createDwarfData(Dwarf dwarf) {
+	protected void createDwarfData(DCPlayer dCPlayer) {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:"
@@ -169,14 +171,14 @@ final class DataManager {
 			String sql = "insert into dwarfs"
 					+ configManager.getConfigSkillsVersion()
 					+ " (playername, iself";
-			List<Skill> allSkills = configManager.getAllSkills();
+			Collection<Skill> allSkills = configManager.getAllSkills().values();
 			for (Skill skill : allSkills) {
 				if (skill != null)
 					sql = sql.concat("," + skill.toString());
 			}
 			sql = sql.concat(") values (");
-			sql = sql.concat("'" + dwarf.getPlayer().getName() + "'," + "'"
-					+ dwarf.isElf() + "'");
+			sql = sql.concat("'" + dCPlayer.getPlayer().getName() + "'," + "'"
+					+ dCPlayer.isElf() + "'");
 			for (Skill skill : allSkills) {
 				if (skill != null)
 					sql = sql.concat("," + skill.getLevel());
@@ -233,8 +235,8 @@ final class DataManager {
 	 * @param player
 	 * @return dwarf or null
 	 */
-	protected Dwarf find(Player player) {
-		for (Dwarf d : plugin.getDataManager().getDwarves()) {
+	protected DCPlayer find(Player player) {
+		for (DCPlayer d : plugin.getDataManager().getDwarves()) {
 			if (d != null)
 				if (d.getPlayer() != null)
 					if (d.getPlayer().getName().equalsIgnoreCase(player.getName())){
@@ -247,17 +249,17 @@ final class DataManager {
 		return null;
 	}
 	
-	protected Dwarf findOffline(String name) {
-		Dwarf dwarf = createDwarf(null);
-		if (getDwarfData(dwarf, name))
-			return dwarf;
+	protected DCPlayer findOffline(String name) {
+		DCPlayer dCPlayer = createDwarf(null);
+		if (getDwarfData(dCPlayer, name))
+			return dCPlayer;
 		else {
 			// No dwarf or data found
 			return null;
 		}
 	}
 
-	protected boolean getDwarfData(Dwarf dwarf) {
+	protected boolean getDwarfData(DCPlayer dCPlayer) {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:"
@@ -267,16 +269,16 @@ final class DataManager {
 			// dwarfs;
 			String query = "select * from dwarfs"
 					+ configManager.getConfigSkillsVersion()
-					+ " WHERE playername = '" + dwarf.getPlayer().getName()
+					+ " WHERE playername = '" + dCPlayer.getPlayer().getName()
 					+ "';";
 			ResultSet rs = statement.executeQuery(query);
 			rs.next();
 			if (rs.isClosed())
 				return false;
 			System.out.println("DC: PlayerJoin success for "
-					+ dwarf.getPlayer().getName());
-			dwarf.setElf(rs.getBoolean("iself"));
-			for (Skill skill : dwarf.getSkills()) {
+					+ dCPlayer.getPlayer().getName());
+			dCPlayer.setElf(rs.getBoolean("iself"));
+			for (Skill skill : dCPlayer.getSkills()) {
 				if (skill != null)
 					skill.setLevel(rs.getInt(skill.toString()));
 			}
@@ -292,10 +294,10 @@ final class DataManager {
 	/**
 	 * Used for creating and populating a dwarf with a null(offline) player
 	 * 
-	 * @param dwarf
+	 * @param dCPlayer
 	 * @param name
 	 */
-	private boolean getDwarfData(Dwarf dwarf, String name) {
+	private boolean getDwarfData(DCPlayer dCPlayer, String name) {
 		try {
 			String sanitizedName;
 			sanitizedName = Util.sanitize(name);
@@ -315,8 +317,8 @@ final class DataManager {
 				conn.close();
 				return false;
 			}
-			dwarf.setElf(rs.getBoolean("iself"));
-			for (Skill skill : dwarf.getSkills()) {
+			dCPlayer.setElf(rs.getBoolean("iself"));
+			for (Skill skill : dCPlayer.getSkills()) {
 				if (skill != null)
 					skill.setLevel(rs.getInt(skill.toString()));
 			}
@@ -331,7 +333,7 @@ final class DataManager {
 
 	@Deprecated
 	// TODO: remove this and replace by other stuff
-	protected List<Dwarf> getDwarves() {
+	protected List<DCPlayer> getDwarves() {
 		return dwarves;
 	}
 
@@ -489,7 +491,7 @@ final class DataManager {
 		}
 	}
 
-	protected boolean saveDwarfData(Dwarf dwarf) {
+	protected boolean saveDwarfData(DCPlayer dCPlayer) {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			Connection conn = DriverManager.getConnection("jdbc:sqlite:"
@@ -497,13 +499,13 @@ final class DataManager {
 			Statement statement = conn.createStatement();
 			String sqlsend = "UPDATE dwarfs"
 					+ configManager.getConfigSkillsVersion() + " SET iself='"
-					+ dwarf.isElf() + "', ";
-			for (Skill skill : dwarf.getSkills())
+					+ dCPlayer.isElf() + "', ";
+			for (Skill skill : dCPlayer.getSkills())
 				if (skill != null)
 					sqlsend = sqlsend.concat(skill.toString() + "="
 							+ skill.getLevel() + ", ");
 			sqlsend = sqlsend.substring(0, sqlsend.length() - 2)
-					+ " WHERE playername = '" + dwarf.getPlayer().getName()
+					+ " WHERE playername = '" + dCPlayer.getPlayer().getName()
 					+ "';";
 			statement.execute(sqlsend);
 			conn.close();
@@ -512,17 +514,6 @@ final class DataManager {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	public void tryToRefreshPlayers() {
-		List<Dwarf> newList = new ArrayList<Dwarf>();
-		for(Dwarf d: dwarves){
-			Dwarf newD = new Dwarf(plugin, plugin.getServer().getPlayer(d.getPlayer().getName()));
-			newD.setSkills(plugin.getConfigManager().getAllSkills());
-			newList.add(newD);
-			getDwarfData(newD,d.getPlayer().getName());
-		}
-		dwarves = newList;
 	}
 
 	public void setTrainerRemove(List<Player> trainerRemove) {

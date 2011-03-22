@@ -63,40 +63,15 @@ public class Out {
 		this.plugin = plugin;
 	}
 
-	protected void alreadyElf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACEALREADY.getMessage(),
-				"&6[DC] ");
-	}
-
-	protected void becameDwarf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.PRIMARYRACESUCCESS.getMessage(),
-				"&6[DC] ");
-	}
-
-	protected void becameElf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACESUCCESS.getMessage(),
-				"&6[DC] ");
-	}
-
-	protected void confirmBecomingDwarf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.PRIMARYRACECONFIRM.getMessage(),
-				"&6[DC] ");
-	}
-
-	protected void confirmBecomingElf(CommandSender sender, Dwarf dwarf) {
-		sendMessage(sender, Messages.Fixed.SECONDARYRACECONFIRM.getMessage(),
-				"&6[DC] ");
-	}
-
 	private String consoleLinePrinter(CommandSender sender, String line,
 			String prefix) {
 		System.out.print(prefix.concat(line));
 		return null;
 	}
 
-	protected boolean effectInfo(CommandSender sender, Dwarf dwarf,
+	protected boolean effectInfo(CommandSender sender, DCPlayer dCPlayer,
 			Effect effect) {
-		sendMessage(sender, effect.describeLevel(dwarf),
+		sendMessage(sender, effect.describeLevel(dCPlayer),
 				"&6[&5" + effect.getId() + "&6] ");
 		sendMessage(sender, effect.describeGeneral(), "&6[&5" + effect.getId()
 				+ "&6] ");
@@ -199,14 +174,6 @@ public class Out {
 					message = message.replace("&e", "§e");
 				else if (message.charAt(i + 1) == 'f')
 					message = message.replace("&f", "§f");
-				else if (message.charAt(i + 1) == 'p')
-					message = message.replace("&p", Messages.primaryRaceName);
-				else if (message.charAt(i + 1) == 'q')
-					message = message.replace("&q", Messages.primaryRacePlural);
-				else if (message.charAt(i + 1) == 's')
-					message = message.replace("&s", Messages.secondaryRaceName);
-				else if (message.charAt(i + 1) == 't')
-					message = message.replace("&t",Messages.secondaryRacePlural);
 				else
 					message = message.replaceFirst("&", " AND ");
 			}
@@ -245,7 +212,7 @@ public class Out {
 	}
 
 	protected boolean printSkillInfo(CommandSender sender, Skill skill,
-			Dwarf dwarf, int maxTrainLevel) {
+			DCPlayer dCPlayer, int maxTrainLevel) {
 		// general line
 		sendMessage(
 				sender,
@@ -256,7 +223,7 @@ public class Out {
 		sendMessage(sender, "&6[&5EffectID&6]&f------&6[Effect]&f------");
 		for (Effect effect : skill.getEffects()) {
 			if (effect != null)
-				sendMessage(sender, effect.describeLevel(dwarf), "&6[&5"
+				sendMessage(sender, effect.describeLevel(dCPlayer), "&6[&5"
 						+ effect.getId() + "&6] ");
 		}
 		// training lines
@@ -272,7 +239,7 @@ public class Out {
 		}
 		sendMessage(sender, "&6---Train costs for level &3"
 				+ (skill.getLevel() + 1));
-		List<ItemStack> costs = dwarf.calculateTrainingCost(skill);
+		List<ItemStack> costs = dCPlayer.calculateTrainingCost(skill);
 		for (ItemStack item : costs) {
 			if (item != null)
 				sendMessage(sender,
@@ -282,7 +249,7 @@ public class Out {
 		return true;
 	}
 
-	protected void printSkillSheet(Dwarf dwarf, CommandSender sender,
+	protected void printSkillSheet(DCPlayer dCPlayer, CommandSender sender,
 			String displayName, boolean printFull) {
 		String message1;
 		String message2 = "";
@@ -290,19 +257,19 @@ public class Out {
 
 		String prefix2 = "&6[&dSS&6] ";
 		message1 = ("&6Printing Skill Sheet for &9"
-				+ (displayName == null ? dwarf.getPlayer().getName()
-						: displayName) + " Dwarf &6Level is &3" + dwarf
+				+ (displayName == null ? dCPlayer.getPlayer().getName()
+						: displayName) + " Dwarf &6Level is &3" + dCPlayer
 				.getDwarfLevel());
 		sendMessage(sender, message1, prefix1);
 
-		if (dwarf.isElf()) {
+		if (dCPlayer.isElf()) {
 			message2 = ("&fElves &6don't have skills, numbskull");
 			sendMessage(sender, message2, prefix2);
 			return;
 		}
 		boolean odd = true;
 		String untrainedSkills = "&6Untrained Skills: ";
-		for (Skill s : dwarf.getSkills()) {
+		for (Skill s : dCPlayer.getSkills()) {
 			if (s == null)
 				continue;
 			if (s.getLevel() == 0) {
@@ -366,7 +333,7 @@ public class Out {
 							+ " Name: " + d.getName());
 				} else {
 					String skillName = null;
-					for (Skill s : plugin.getConfigManager().getAllSkills())
+					for (Skill s : plugin.getConfigManager().getAllSkills().values())
 						if (s.getId() == d.getSkillTrained())
 							skillName = s.getDisplayName();
 					sendMessage(
@@ -379,10 +346,7 @@ public class Out {
 		}
 	}
 
-	protected void race(Player player) {
-		// TODO Auto-generated method stub
 
-	}
 
 	protected void rules(CommandSender sender) {
 		sendMessage(sender, Messages.ServerRules, "&6[&dRules&6] ");
@@ -431,8 +395,8 @@ public class Out {
 	/**
 	 * Dwarf version
 	 */
-	protected void sendMessage(Dwarf dwarf, String message) {
-		sendMessage(dwarf.getPlayer(), message);
+	protected void sendMessage(DCPlayer dCPlayer, String message) {
+		sendMessage(dCPlayer.getPlayer(), message);
 	}
 
 	/**
@@ -493,15 +457,6 @@ public class Out {
 					message = message.replace("&e", "");
 				else if (message.charAt(i + 1) == 'f')
 					message = message.replace("&f", "");
-				else if (message.charAt(i + 1) == 'p')
-					message = message.replace("&p", Messages.primaryRaceName);
-				else if (message.charAt(i + 1) == 'q')
-					message = message.replace("&q", Messages.primaryRacePlural);
-				else if (message.charAt(i + 1) == 's')
-					message = message.replace("&s", Messages.secondaryRaceName);
-				else if (message.charAt(i + 1) == 't')
-					message = message.replace("&t",
-							Messages.secondaryRacePlural);
 				else
 					message = message.replaceFirst("&", " AND ");
 			}
@@ -536,20 +491,44 @@ public class Out {
 	 * the whole server
 	 * 
 	 * @param server
-	 * @param dwarf
+	 * @param dCPlayer
 	 */
-	protected void welcome(Server server, Dwarf dwarf) {
+	protected void welcome(Server server, DCPlayer dCPlayer) {
 		try {
 			String raceName = "";
-			if (dwarf.isElf())
+			if (dCPlayer.isElf())
 				raceName = "&f&s";
 			else
 				raceName = "&9&p";
 			sendBroadcast(server, "&fWelcome, " + raceName + " &6"
-					+ dwarf.getPlayer().getName(), "&6[DC]         ");
+					+ dCPlayer.getPlayer().getName(), "&6[DC]         ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected void race(Player player) {
+		// TODO Auto-generated method stub
+	}
+	
+	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void resetRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void changedRace(CommandSender sender, DCPlayer dCPlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void confirmRace(CommandSender sender, DCPlayer dCPlayer) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -194,15 +194,15 @@ final class DwarfTrainer {
 				basicNpcName, world, x, y, z, yaw, pitch);
 	}
 
-	protected void trainSkill(Dwarf dwarf) {
+	protected void trainSkill(DCPlayer dCPlayer) {
 		boolean soFarSoGood = true;
-		Skill skill = dwarf.getSkill(this.skillId);
+		Skill skill = dCPlayer.getSkill(this.skillId);
 		assert (skill != null);
-		Player player = dwarf.getPlayer();
-		List<ItemStack> trainingCosts = dwarf.calculateTrainingCost(skill);
+		Player player = dCPlayer.getPlayer();
+		List<ItemStack> trainingCosts = dCPlayer.calculateTrainingCost(skill);
 
 		// Must be a dwarf, not an elf
-		if (dwarf.isElf()) {
+		if (dCPlayer.isElf()) {
 			plugin.getOut().sendMessage(player,
 					"&cYou are an &fElf &cnot a &9Dwarf&6!",
 					"&6[Train &b" + skill.getId() + "&6] ");
@@ -228,7 +228,7 @@ final class DwarfTrainer {
 				continue;
 			if (itemStack.getAmount() == 0)
 				continue;
-			if (dwarf.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
+			if (dCPlayer.countItem(itemStack.getTypeId()) < itemStack.getAmount()) {
 				plugin.getOut().sendMessage(
 						player,
 						"&cYou do not have the &2" + itemStack.getAmount()
@@ -248,11 +248,11 @@ final class DwarfTrainer {
 		if (soFarSoGood) {
 			skill.setLevel(skill.getLevel() + 1);
 			for (ItemStack itemStack : trainingCosts)
-				dwarf.removeInventoryItems(itemStack.getTypeId(),
+				dCPlayer.removeInventoryItems(itemStack.getTypeId(),
 						itemStack.getAmount());
 			plugin.getOut().sendMessage(player, "&6Training Successful!",
 					"&6[&b" + skill.getId() + "&6] ");
-			plugin.getDataManager().saveDwarfData(dwarf);
+			plugin.getDataManager().saveDwarfData(dCPlayer);
 			return;
 		} else {
 			return; // something else goes here

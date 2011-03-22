@@ -1,6 +1,7 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,7 @@ final class CommandParser {
 	private final DwarfCraft plugin;
 	private CommandSender sender;
 	private String[] input;
-	private Dwarf target = null;
+	private DCPlayer target = null;
 
 	protected CommandParser(final DwarfCraft plugin, CommandSender sender,
 			String[] args) {
@@ -27,7 +28,7 @@ final class CommandParser {
 		int arrayIterator = 0;
 		try {
 			for (Object o : desiredArguments) {
-				if (o instanceof Dwarf)
+				if (o instanceof DCPlayer)
 					output.add(parseDwarf(arrayIterator));
 				else if (o instanceof Player)
 					output.add(parsePlayer(arrayIterator));
@@ -37,6 +38,9 @@ final class CommandParser {
 					output.add(parseEffect(arrayIterator));
 				else if (o instanceof Boolean)
 					output.add(parseConfirm(arrayIterator));
+				else if (o instanceof Race
+						&& ((String) o).equalsIgnoreCase("newRace"))
+					output.add(parseRace(arrayIterator));
 				else if (o instanceof String
 						&& ((String) o).equalsIgnoreCase("SkillLevelInt"))
 					output.add(parseSkillLevel(arrayIterator));
@@ -52,9 +56,6 @@ final class CommandParser {
 				else if (o instanceof String
 						&& ((String) o).equalsIgnoreCase("GreeterMessage"))
 					output.add(parseGreeterMessage(arrayIterator));
-				else if (o instanceof String
-						&& ((String) o).equalsIgnoreCase("newRace"))
-					output.add(parseRace(arrayIterator));
 				else if (o instanceof Integer)
 					output.add(parseInteger(arrayIterator));
 				else if (o instanceof String)
@@ -84,23 +85,23 @@ final class CommandParser {
 		return false;
 	}
 
-	private Dwarf parseDwarf(int argNumber) throws DCCommandException {
+	private DCPlayer parseDwarf(int argNumber) throws DCCommandException {
 		Player player;
-		Dwarf dwarf = null;
+		DCPlayer dCPlayer = null;
 		try {
 			String dwarfName = input[argNumber];
 			player = sender.getServer().getPlayer(dwarfName);
 			if (player != null && player.isOnline())
-				dwarf = plugin.getDataManager().find(player);
+				dCPlayer = plugin.getDataManager().find(player);
 			else if (player == null || !player.isOnline()){
 				System.out.println("looking for offline player");
-				dwarf = plugin.getDataManager().findOffline(dwarfName);
+				dCPlayer = plugin.getDataManager().findOffline(dwarfName);
 			}
-			if (dwarf == null) {
+			if (dCPlayer == null) {
 				throw new DCCommandException(plugin, Type.PARSEDWARFFAIL);
 			}
-			this.target = dwarf;
-			return dwarf;
+			this.target = dCPlayer;
+			return dCPlayer;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			if (sender instanceof Player) {
 				String[] fakeInput = new String[input.length + 1];
@@ -162,21 +163,24 @@ final class CommandParser {
 		return null;
 	}
 
-	private Boolean parseRace(int arrayIterator) throws DCCommandException {
-		if (input[arrayIterator].equalsIgnoreCase(Messages.secondaryRaceName))
-			return true;
-		else if (input[arrayIterator].equalsIgnoreCase(Messages.primaryRaceName))
-			return false;
-		else
-			throw new DCCommandException(plugin, Type.PARSERACEFAIL);
+	private Race parseRace(int arrayIterator) throws DCCommandException {
+		HashMap<String,Race> racemap = plugin.getConfigManager().getRaceMap();
+		for (String name:racemap.keySet()){
+			if(name.equalsIgnoreCase(input[arrayIterator])) return racemap.get(name);
+		}
+		throw new DCCommandException(plugin, Type.PARSERACEFAIL);
 	}
 
 	private Skill parseSkill(int argNumber) throws DCCommandException {
 		Skill skill = null;
 		String inputString = input[argNumber];
+		if (inputString.equalsIgnoreCase("all")) return null;
 		int skillID;
+
+		if (target == null)
+			target = plugin.getDataManager().find((Player) sender);
 		if (!(sender instanceof Player)) {
-			for (Skill s : plugin.getConfigManager().getAllSkills()) {
+			for (Skill s : plugin.getConfigManager().getAllSkills(target.getRace())) {
 				try {
 					skillID = Integer.parseInt(inputString);
 					if (s.getId() == skillID)
@@ -191,8 +195,6 @@ final class CommandParser {
 			}
 			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
 		}
-		if (target == null)
-			target = plugin.getDataManager().find((Player) sender);
 		try {
 			try {
 				skillID = Integer.parseInt(inputString);

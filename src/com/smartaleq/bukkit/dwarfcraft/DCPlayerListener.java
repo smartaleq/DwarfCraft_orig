@@ -32,8 +32,8 @@ class DCPlayerListener extends PlayerListener {
 	public void onPlayerItem(PlayerItemEvent event) {
 		// General information
 		Player player = event.getPlayer();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		List<Skill> skills = dwarf.getSkills();
+		DCPlayer dCPlayer = plugin.getDataManager().find(player);
+		List<Skill> skills = dCPlayer.getSkills();
 		boolean hadEffect = false;
 		// Effect Specific information
 		ItemStack item = player.getItemInHand();
@@ -57,9 +57,9 @@ class DCPlayerListener extends PlayerListener {
 					if (DwarfCraft.debugMessagesThreshold < 8)
 						System.out.println("DC8: ate food:"
 								+ item.getType().toString() + " for "
-								+ e.getEffectAmount(dwarf));
+								+ e.getEffectAmount(dCPlayer));
 					player.setHealth((int) (player.getHealth() + e
-							.getEffectAmount(dwarf)));
+							.getEffectAmount(dCPlayer)));
 					player.getInventory().removeItem(item);
 					hadEffect = true;
 
@@ -80,14 +80,14 @@ class DCPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerJoin(PlayerEvent event) {
 		Player player = event.getPlayer();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		if (dwarf == null) {
-			dwarf = plugin.getDataManager().createDwarf(player);
+		DCPlayer dCPlayer = plugin.getDataManager().find(player);
+		if (dCPlayer == null) {
+			dCPlayer = plugin.getDataManager().createDwarf(player);
 		}
-		if (!plugin.getDataManager().getDwarfData(dwarf)) {
-			plugin.getDataManager().createDwarfData(dwarf);
+		if (!plugin.getDataManager().getDwarfData(dCPlayer)) {
+			plugin.getDataManager().createDwarfData(dCPlayer);
 		}
-		plugin.getOut().welcome(plugin.getServer(), dwarf);
+		plugin.getOut().welcome(plugin.getServer(), dCPlayer);
 	}
 
 //	public void onPlayerQuit(PlayerEvent event) {

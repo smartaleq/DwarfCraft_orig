@@ -35,8 +35,8 @@ class DCBlockListener extends BlockListener {
 		if (event.isCancelled())
 			return;
 		Player player = event.getPlayer();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		List<Skill> skills = dwarf.getSkills();
+		DCPlayer dCPlayer = plugin.getDataManager().find(player);
+		List<Skill> skills = dCPlayer.getSkills();
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -67,15 +67,16 @@ class DCBlockListener extends BlockListener {
 						if (id == toolId)
 							correctTool = true;
 					// Crops special line:
-					if (e.getInitiatorId() == 59)
+					if (e.getInitiatorId() == 59){
 						if (meta != 7)
 							continue;
+					}
 					if (DwarfCraft.debugMessagesThreshold < 4)
 						System.out.println("DC4: Effect:" + e.getId()
 								+ " tool: " + toolId + " and toolRequired:"
 								+ e.getToolRequired());
 					if (correctTool || !e.getToolRequired()) {
-						Util.dropBlockEffect(loc, e, e.getEffectAmount(dwarf),
+						Util.dropBlockEffect(loc, e, e.getEffectAmount(dCPlayer),
 								true, meta);
 						blockDropChange = true;
 					}
@@ -87,7 +88,7 @@ class DCBlockListener extends BlockListener {
 						&& durability != -1) {
 					for (int id : e.getTools()) {
 						if (id == toolId) {
-							double effectAmount = e.getEffectAmount(dwarf);
+							double effectAmount = e.getEffectAmount(dCPlayer);
 							if (DwarfCraft.debugMessagesThreshold < 3)
 								System.out
 										.println("DC2: affected durability of a tool - old:"
@@ -123,8 +124,8 @@ class DCBlockListener extends BlockListener {
 			return;
 		// General information
 		Player player = event.getPlayer();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		List<Skill> skills = dwarf.getSkills();
+		DCPlayer dCPlayer = plugin.getDataManager().find(player);
+		List<Skill> skills = dCPlayer.getSkills();
 
 		// Effect Specific information
 		ItemStack tool = player.getItemInHand();
@@ -150,14 +151,14 @@ class DCBlockListener extends BlockListener {
 						if (id == toolId)
 							correctTool = true;
 					if (correctTool || !e.getToolRequired()) {
-						if (Util.randomAmount(e.getEffectAmount(dwarf)) == 0)
+						if (Util.randomAmount(e.getEffectAmount(dCPlayer)) == 0)
 							return;
 						if (DwarfCraft.debugMessagesThreshold < 3)
 							System.out
 									.println("DC3: Insta-mine occured. Block:"
 											+ materialId);
 						BlockBreakEvent bbe = new BlockBreakEvent(event.getBlock(), player);
-						onBlockBreak(bbe);
+						plugin.getServer().getPluginManager().callEvent(bbe);
 					}
 				}
 			}
@@ -175,8 +176,8 @@ class DCBlockListener extends BlockListener {
 	@Override
 	public void onBlockRightClick(BlockRightClickEvent event) {
 		Player player = event.getPlayer();
-		Dwarf dwarf = plugin.getDataManager().find(player);
-		List<Skill> skills = dwarf.getSkills();
+		DCPlayer dCPlayer = plugin.getDataManager().find(player);
+		List<Skill> skills = dCPlayer.getSkills();
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -197,7 +198,7 @@ class DCBlockListener extends BlockListener {
 					for (int id : e.getTools()) {
 						if (id == toolId
 								&& (material == Material.DIRT || material == Material.GRASS)) {
-							double effectAmount = e.getEffectAmount(dwarf);
+							double effectAmount = e.getEffectAmount(dCPlayer);
 							if (DwarfCraft.debugMessagesThreshold < 3)
 								System.out
 										.println("DC2: affected durability of a hoe - old:"
@@ -216,11 +217,12 @@ class DCBlockListener extends BlockListener {
 				if (e.getEffectType() == EffectType.PLOW) {
 					for (int id : e.getTools()) {
 						if (id == toolId && material == Material.GRASS) {
+							loc.setY(loc.getY()+1);
 							Util.dropBlockEffect(loc, e,
-									e.getEffectAmount(dwarf), true, (byte) 0);
+									e.getEffectAmount(dCPlayer), true, (byte) 0);
 							if (DwarfCraft.debugMessagesThreshold < 3)
 								System.out.println("DC3: hoed some ground:"
-										+ e.getEffectAmount(dwarf));
+										+ e.getEffectAmount(dCPlayer));
 						}
 					}
 				}

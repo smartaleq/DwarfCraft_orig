@@ -38,20 +38,9 @@ final class Messages {
 						+ "best trainers in the world to eventually reach level 30 in a skill. Go gather"
 						+ "some dirt, stone, or logs and try to train up a relevant skill, using what"
 						+ "you have learned, then continue with &4/tutorial 6&f"), TUTORIAL6(
-				"&fYou now know the basic commands you need to succeed and develop as a "
-						+ primaryRaceName
-						+ ". "
-						+ "To find out more, use &4/help&f and &4/help <command>&f."),
+				"&fYou now know the basic commands you need to succeed and develop. "
+						+ "To find out more, use &4/dchelp&f and &4/dchelp <command>&f."),
 
-		PRIMARYRACESUCCESS(
-				"&6Congratulations, you're now a hearty &9&p&6 with level 0 skills!"), PRIMARYRACECONFIRM(
-				"&6To become a &9&p&6 you need to confirm with &4/race %p confirm&p"
-						+ "&6- this will reset your skills to 0!"), SECONDARYRACESUCCESS(
-				"&6I'm sorry to say this... really I must apologize... there was a problem "
-						+ "in surgery and you're now... ahem... an &f&s&6."), SECONDARYRACECONFIRM(
-				"&6If you really want to remove all your skills, you'll have to say you &4'/dc "
-						+ "REALLYmake&s&6, which is an altogether bad idea!"), SECONDARYRACEALREADY(
-				"&6You're already an &f&s&6. No wonder you're so confused!"),
 		WELCOME("Welcome to a DwarfCraft world, first time player!")
 		;
 
@@ -67,17 +56,5 @@ final class Messages {
 	}
 	// String messages loaded from messages.config
 	protected static String GeneralInfo = null;
-
 	protected static String ServerRules = null;
-	protected static String primaryRaceName = "Dwarf";
-	protected static String primaryRacePlural = "Dwarves";
-	protected static String secondaryRaceName = "Elf";
-
-	protected static String secondaryRacePlural = "Elves";
-	protected static String PRIMARYRACESUCCESS = null;
-	protected static String PRIMARYRACECONFIRM = null;
-	protected static String SECONDARYRACESUCCESS = null;
-	protected static String SECONDARYRACECONFIRM = null;
-
-	protected static String SECONDARYRACEALREADY = null;
 }

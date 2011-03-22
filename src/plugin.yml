@@ -2,7 +2,7 @@ name: DwarfCraft
 description: A skills and progression plugin for character development in RPG worlds.
 author: smartaleq and RCarretta
 main: com.smartaleq.bukkit.dwarfcraft.DwarfCraft
-version: 1.01 
+version: 1.03 
 commands: 
  debug: 
     description: Sets the debug message threshold in console, from -10(everthing) to +10(critical only).
@@ -28,11 +28,11 @@ commands:
            Displays a series of guide messages to instruct in the basics of DwarfCraft
            /tutorial <page number> 
            Example: /tutorial 2 - Prints the second tutorial section
-    aliases: []
- commandlist: 
-    description: 
-    usage: 
-    aliases: [command, commands, commandslist]
+    aliases: [] 
+ dccommands: 
+    description: Displays all DwarfCraft commands.
+    usage: /dccommands Displays all DwarfCraft commands.
+    aliases: [commands, commandslist] 
  skillsheet: 
     description: Displays a list of skills and levels for a Dwarf.
     usage: |
@@ -58,14 +58,16 @@ commands:
            Example: /effect smartaleq 131 - Prints details about Smartaleq's effect 131
     aliases: [effect]
  race: 
-    description: 
+    description: Checks a players race information, or changes it.
     usage: |
-          /race dwarf
-          /race elf
-          /race elf confirm
+           /race <Race name> <confirm>
+           Example: /race - Displays the player's current race information.
+           Example: /race elf - Displays information about the elf race.
+           Example: /race elf confirm - Changes the player's race to elf and resets their skills.
+           Admin: /race <Player> <Racename> <confirm> - Alters another player's race, use confirm.
     aliases: [dwarf, elf]
  setskill: 
-    description: 
+    description: Admin command to change a players skill level manually.
     usage: |
            /<command> <player name> [Skill ID or Skill Name or All] [new skill level]
  creategreeter: 

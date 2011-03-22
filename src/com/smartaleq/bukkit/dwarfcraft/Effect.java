@@ -82,20 +82,20 @@ final class Effect {
 	/**
 	 * Description of a skills effect at a given level
 	 * 
-	 * @param dwarf
+	 * @param dCPlayer
 	 * @return
 	 */
-	protected String describeLevel(Dwarf dwarf) {
-		if (dwarf == null)
+	protected String describeLevel(DCPlayer dCPlayer) {
+		if (dCPlayer == null)
 			return "Failed"; // TODO add failure code
 		String description = "no skill description";
 		// Variables used in skill descriptions
 		String initiator = Material.getMaterial(initiatorId).toString();
 		String output = Material.getMaterial(outputId).toString();
-		double effectAmount = getEffectAmount(dwarf);
+		double effectAmount = getEffectAmount(dCPlayer);
 		double elfAmount = getEffectAmount(elfEffectLevel);
 		boolean moreThanOne = (effectAmount > 1);
-		String effectLevelColor = effectLevelColor(dwarf.getSkill(this)
+		String effectLevelColor = effectLevelColor(dCPlayer.getSkill(this)
 				.getLevel());
 		String toolType = toolType();
 		switch(effectType){
@@ -242,14 +242,14 @@ final class Effect {
 	/**
 	 * Returns an effect Amount for a particular Dwarf
 	 * 
-	 * @param dwarf
+	 * @param dCPlayer
 	 * @return
 	 */
-	protected double getEffectAmount(Dwarf dwarf) {
+	protected double getEffectAmount(DCPlayer dCPlayer) {
 		double effectAmount = baseValue;
 		int skillLevel;
-		skillLevel = dwarf.skillLevel(this.id / 10);
-		if (dwarf.isElf() || skillLevel == -1)
+		skillLevel = dCPlayer.skillLevel(this.id / 10);
+		if (dCPlayer.isElf() || skillLevel == -1)
 			skillLevel = this.elfEffectLevel;
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;

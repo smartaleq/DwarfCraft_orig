@@ -43,15 +43,20 @@ public class Util {
 	 */
 	protected static void dropBlockEffect(Location loc, Effect e,
 			double effectAmount, boolean dropNaturally, short dmgValue) {
-		ItemStack item = new ItemStack(e.getOutputId(),
+		int outputId = e.getOutputId();
+		ItemStack item;
+		if (outputId == 35 || outputId == 44 || outputId == 17) 
+			item = new ItemStack(e.getOutputId(),
 				Util.randomAmount(effectAmount), dmgValue);
+		else item = new ItemStack(e.getOutputId(),
+				Util.randomAmount(effectAmount));
 		if (item.getAmount() == 0) {
 			if (DwarfCraft.debugMessagesThreshold < 6)
 				System.out.println("Debug: dropped " + item.toString());
 			return;
 		}
-		// if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
-		loc.getWorld().dropItem(loc, item);
+		if(dropNaturally) loc.getWorld().dropItemNaturally(loc, item);
+		else loc.getWorld().dropItem(loc, item);
 		if (DwarfCraft.debugMessagesThreshold < 5)
 			System.out.println("Debug: dropped " + item.toString());
 	}

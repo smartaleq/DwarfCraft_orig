@@ -12,20 +12,22 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-class Dwarf {
+class DCPlayer {
 	private final DwarfCraft plugin;
 	private List<Skill> skills;
 	private boolean isElf;
 	private Player player;
+	private Race race ;
 
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
 
-	protected Dwarf(final DwarfCraft plugin, Player whoami) {
+	protected DCPlayer(final DwarfCraft plugin, Player whoami) {
 		this.plugin = plugin;
 		player = whoami;
 		isElf = false;
+		race = plugin.getConfigManager().getDefaultRace();
 	}
 
 	protected List<ItemStack> calculateTrainingCost(Skill skill) {
@@ -355,6 +357,14 @@ class Dwarf {
 		return count;
 	}
 	
+	public void setRace(Race race) {
+		this.race = race;
+	}
+
+	public Race getRace() {
+		return race;
+	}
+
 	protected enum ArmorType{
 		IRON (Arrays.asList(306,307,308,309)),
 		GOLD (Arrays.asList(314,315,316,317)),
@@ -365,6 +375,11 @@ class Dwarf {
 		ArmorType(List<Integer> ids){
 			this.ids = ids;
 		}
+	}
+
+	public void changeRace(Race newRace) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

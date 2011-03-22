@@ -58,15 +58,15 @@ class DCTowny extends TownyPlayerListener {
 		int residentTotal = 0;
 		int mayorMax = 5;
 		Resident mayor = town.getMayor();
-		Dwarf mayorDwarf = dwarfCraftPlugin.getDataManager().findOffline(
+		DCPlayer mayorDwarf = dwarfCraftPlugin.getDataManager().findOffline(
 				mayor.getName());
 		mayorMax = (int) mayorDwarf.getEffect(920).getEffectAmount(mayorDwarf);
 		List<Resident> residentList = town.getResidents();
 		for (Resident r : residentList) {
 			String residentName = r.getName();
-			Dwarf dwarf = dwarfCraftPlugin.getDataManager().findOffline(
+			DCPlayer dCPlayer = dwarfCraftPlugin.getDataManager().findOffline(
 					residentName);
-			residentTotal += dwarf.getEffect(910).getEffectAmount(dwarf);
+			residentTotal += dCPlayer.getEffect(910).getEffectAmount(dCPlayer);
 		}
 		System.out.println("got town max blocks");
 		return Math.min(Math.max(residentTotal, 5), mayorMax);

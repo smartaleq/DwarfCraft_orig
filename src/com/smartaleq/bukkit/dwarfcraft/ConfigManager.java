@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.bukkit.Material;
 
@@ -21,7 +22,11 @@ final class ConfigManager {
 	private String configMessagesFileName;
 	private String configGreeterMessagesFileName;
 	private String dbpath;
-	private List<Skill> skillsArray = new ArrayList<Skill>();
+	private HashMap<Race, ArrayList<Skill>> skillsArray = new HashMap<Race,ArrayList<Skill>>();
+	private Race defaultRace;
+	private Race optOutRace;
+	private HashMap<String, Race> raceMap = new HashMap<String, Race>();
+	
 	protected ConfigManager(DwarfCraft plugin, String directory,
 			String paramsFileName) {
 		this.plugin = plugin;
@@ -33,32 +38,37 @@ final class ConfigManager {
 			System.out
 					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
-			// TODO failed to init skills
 		}
 
 	}
 
-	protected int countSkills() {
-		int count = 0;
-		for (Skill s : skillsArray) {
-			if (s != null)
-				count++;
+	
+	protected HashMap<Integer, Skill> getAllSkills() {
+		HashMap<Integer, Skill> newSkillsArray = new HashMap<Integer,Skill>();
+		for(Race r:raceMap.values()){
+			for (Skill s : skillsArray.get(r)) {
+				if (newSkillsArray.containsKey(s.getId())) continue;
+				newSkillsArray.put(s.getId(), s.clone());
+			}
 		}
-		return count;
+		return newSkillsArray;
 	}
-
-	protected List<Skill> getAllSkills() {
-		List<Skill> newSkillsArray = new ArrayList<Skill>();
-		for (Skill s : skillsArray) {
+	
+	protected ArrayList<Skill> getAllSkills(Race race) {
+		ArrayList<Skill> newSkillsArray = new ArrayList<Skill>();
+		ArrayList<Skill> raceList = skillsArray.get(race); 
+		for (Skill s : raceList) {
 			newSkillsArray.add(s.clone());
 		}
 		return newSkillsArray;
 	}
 	
 	protected Skill getGenericSkill(int skillId){
-		for (Skill s:skillsArray){
-			if(s.getId() == skillId) return s.clone(); 
-		}
+		for (Race race:raceMap.values()){
+			for (Skill s:skillsArray.get(race)){
+				if(s.getId() == skillId) return s.clone(); 
+			}
+		}	
 		return null;
 	}
 
@@ -85,21 +95,6 @@ final class ConfigManager {
 			configGreeterMessagesFileName = "greeters.config";
 		if (dbpath == null)
 			dbpath = "./DwarfCraft/dwarfcraft.db";
-		if (Messages.PRIMARYRACECONFIRM == null)
-			Messages.PRIMARYRACECONFIRM = Messages.Fixed.PRIMARYRACECONFIRM
-					.getMessage();
-		if (Messages.PRIMARYRACESUCCESS == null)
-			Messages.PRIMARYRACESUCCESS = Messages.Fixed.PRIMARYRACESUCCESS
-					.getMessage();
-		if (Messages.SECONDARYRACEALREADY == null)
-			Messages.SECONDARYRACEALREADY = Messages.Fixed.SECONDARYRACEALREADY
-					.getMessage();
-		if (Messages.SECONDARYRACECONFIRM == null)
-			Messages.SECONDARYRACECONFIRM = Messages.Fixed.SECONDARYRACECONFIRM
-					.getMessage();
-		if (Messages.SECONDARYRACESUCCESS == null)
-			Messages.SECONDARYRACESUCCESS = Messages.Fixed.SECONDARYRACESUCCESS
-					.getMessage();
 	}
 
 	private boolean readConfigFile() {
@@ -137,14 +132,12 @@ final class ConfigManager {
 				if (theline[0].equalsIgnoreCase("Debug Level"))
 					DwarfCraft.debugMessagesThreshold = Integer
 							.parseInt(theline[1].trim());
-				if (theline[0].equalsIgnoreCase("Primary Race Name"))
-					Messages.primaryRaceName = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Secondary Race Name"))
-					Messages.secondaryRaceName = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Primary Race Plural"))
-					Messages.primaryRacePlural = theline[1].trim();
-				if (theline[0].equalsIgnoreCase("Secondary Race Plural"))
-					Messages.secondaryRacePlural = theline[1].trim();
+				if (theline[0].equalsIgnoreCase("Default Race")){
+					defaultRace = new Race(theline[1].trim());
+					raceMap.put(defaultRace.getName(), defaultRace);}
+				if (theline[0].equalsIgnoreCase("Default Race")){
+					optOutRace = new Race(theline[1].trim());
+					raceMap.put(optOutRace.getName(), optOutRace);}
 				line = br.readLine();
 			}
 
@@ -207,19 +200,20 @@ final class ConfigManager {
 						Integer.parseInt(theline[18]),
 						Integer.parseInt(theline[19]),
 						Integer.parseInt(theline[20]) };
-
-				for (Skill skill : skillsArray) {
-					if (effectId / 10 == skill.getId()) {
-						skill.getEffects().add(
-								new Effect(effectId, baseValue,
-										levelUpMultiplier,
-										noviceLevelUpMultiplier, minValue,
-										maxValue, floorResult, hasException,
-										exceptionLow, exceptionHigh,
-										exceptionValue, elfLevel, effectType,
-										initiator, output, toolRequired,
-										tooltable));
-						break;
+				for (Race race:raceMap.values()){
+					for (Skill skill : skillsArray.get(race)) {
+						if (effectId / 10 == skill.getId()) {
+							skill.getEffects().add(
+									new Effect(effectId, baseValue,
+											levelUpMultiplier,
+											noviceLevelUpMultiplier, minValue,
+											maxValue, floorResult, hasException,
+											exceptionLow, exceptionHigh,
+											exceptionValue, elfLevel, effectType,
+											initiator, output, toolRequired,
+											tooltable));
+							break;
+						}
 					}
 				}
 				line = br.readLine();
@@ -370,13 +364,16 @@ final class ConfigManager {
 				// Effects generated from effects file
 				List<Effect> effects = new ArrayList<Effect>();
 				// create the new skill in the skillsarray
-
-				skillsArray.add(new Skill(id, displayName, level, effects,
-						TrainingItem1Mat, TrainingItem1BaseCost,
-						TrainingItem1MaxAmount, TrainingItem2Mat,
-						TrainingItem2BaseCost, TrainingItem2MaxAmount,
-						TrainingItem3Mat, TrainingItem3BaseCost,
-						TrainingItem3MaxAmount, trainerHeldMaterial));
+				for (int i = 12;i<theline.length;i++){
+					Race race = findRace(theline[i], true);
+					skillsArray.get(race).add(new Skill(id, displayName, level, effects,
+							TrainingItem1Mat, TrainingItem1BaseCost,
+							TrainingItem1MaxAmount, TrainingItem2Mat,
+							TrainingItem2BaseCost, TrainingItem2MaxAmount,
+							TrainingItem3Mat, TrainingItem3BaseCost,
+							TrainingItem3MaxAmount, trainerHeldMaterial));
+				}
+				
 
 				line = br.readLine();
 			}
@@ -387,6 +384,42 @@ final class ConfigManager {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	private Race findRace(String string, boolean addNew) {
+		for(String s: raceMap.keySet())
+			if (s.equalsIgnoreCase(string)) return raceMap.get(s);
+		if (!addNew) return null;
+		Race newRace= new Race(string);
+		raceMap.put(string, newRace);
+		skillsArray.put(newRace, new ArrayList<Skill>());
+		return newRace;
+	}
+
+	public void setDefaultRace(Race defaultRace) {
+		this.defaultRace = defaultRace;
+	}
+
+	public Race getDefaultRace() {
+		return defaultRace;
+	}
+
+	public void setRaceMap(HashMap<String, Race> raceMap) {
+		this.raceMap = raceMap;
+	}
+
+	public HashMap<String, Race> getRaceMap() {
+		return raceMap;
+	}
+
+
+	public void setOptOutRace(Race optOutRace) {
+		this.optOutRace = optOutRace;
+	}
+
+
+	public Race getOptOutRace() {
+		return optOutRace;
 	}
 
 }

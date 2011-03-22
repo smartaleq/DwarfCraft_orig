@@ -7,15 +7,15 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import net.minecraft.server.ContainerWorkbench;
 
 class DCCraftSchedule implements Runnable {
-	private final Dwarf dwarf;
+	private final DCPlayer dCPlayer;
 	private final DwarfCraft plugin;
 	private final EntityPlayer entityPlayer;
 	private ContainerWorkbench workBench;
 
-	protected DCCraftSchedule(DwarfCraft newPlugin, Dwarf newDwarf) {
-		this.dwarf = newDwarf;
+	protected DCCraftSchedule(DwarfCraft newPlugin, DCPlayer newDwarf) {
+		this.dCPlayer = newDwarf;
 		this.plugin = newPlugin;
-		this.entityPlayer = ((CraftPlayer) (dwarf.getPlayer())).getHandle();
+		this.entityPlayer = ((CraftPlayer) (dCPlayer.getPlayer())).getHandle();
 	}
 
 	@Override
@@ -36,11 +36,11 @@ class DCCraftSchedule implements Runnable {
 		if (outputStack != null) {
 			int materialId = outputStack.id;
 			int damage = outputStack.damage;
-			for (Skill s : dwarf.getSkills()) {
+			for (Skill s : dCPlayer.getSkills()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.CRAFT
 							&& materialId == e.getOutputId() && damage == e.getInitiatorId()) {
-						outputStack.count = (int) e.getEffectAmount(dwarf);
+						outputStack.count = (int) e.getEffectAmount(dCPlayer);
 						// TODO: need code to check max stack size and if amount
 						// created > max stack size drop all count above 1 to
 						// ground/inventory.
@@ -55,6 +55,6 @@ class DCCraftSchedule implements Runnable {
 		plugin.getServer()
 				.getScheduler()
 				.scheduleSyncDelayedTask(plugin,
-						new DCCraftSchedule(plugin, dwarf), 2);
+						new DCCraftSchedule(plugin, dCPlayer), 2);
 	}
 }

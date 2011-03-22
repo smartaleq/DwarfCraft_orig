@@ -1,5 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
+import org.bukkit.craftbukkit.entity.CraftBoat;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleListener;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
@@ -28,6 +29,7 @@ class DCVehicleListener extends VehicleListener {
 
 	@Override
 	public void onVehicleEnter(VehicleEnterEvent event) {
+		if (!(event.getVehicle() instanceof CraftBoat)) return;
 		plugin.getDataManager()
 				.addVehicle(new DwarfVehicle(event.getVehicle()));
 		if (DwarfCraft.debugMessagesThreshold < 6)
@@ -36,6 +38,7 @@ class DCVehicleListener extends VehicleListener {
 
 	@Override
 	public void onVehicleExit(VehicleExitEvent event) {
+		if (!(event.getVehicle() instanceof CraftBoat)) return;
 		plugin.getDataManager().removeVehicle(event.getVehicle());
 	}
 
@@ -50,21 +53,21 @@ class DCVehicleListener extends VehicleListener {
 	public void onVehicleMove(VehicleMoveEvent event) {
 		if (event.getVehicle().getPassenger() == null)
 			return;
-
-		Dwarf dwarf = plugin.getDataManager().find(
+		if (!(event.getVehicle() instanceof CraftBoat)) return;
+		DCPlayer dCPlayer = plugin.getDataManager().find(
 				(Player) event.getVehicle().getPassenger()); // this will break
 																// when zombies
 																// ride boats.
 		double effectAmount = 1.0;
 
-		for (Skill s : dwarf.getSkills()) {
+		for (Skill s : dCPlayer.getSkills()) {
 			if (s == null)
 				continue;
 			for (Effect e : s.getEffects()) {
 				if (e == null)
 					continue;
 				if (e.getEffectType() == EffectType.VEHICLEMOVE) {
-					effectAmount = e.getEffectAmount(dwarf);
+					effectAmount = e.getEffectAmount(dCPlayer);
 				}
 			}
 		}
