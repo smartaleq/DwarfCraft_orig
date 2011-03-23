@@ -155,7 +155,7 @@ final class DataManager {
 		DCPlayer newDwarf = new DCPlayer(plugin, player);
 		newDwarf.setRace(plugin.getConfigManager().getDefaultRace());
 		newDwarf.setSkills(plugin.getConfigManager().getAllSkills(newDwarf.getRace()));
-		for (Skill skill : newDwarf.getSkills())
+		for (Skill skill : newDwarf.getSkills().values())
 			skill.setLevel(0);
 		if (player != null)
 			dwarves.add(newDwarf);
@@ -277,10 +277,9 @@ final class DataManager {
 				return false;
 			System.out.println("DC: PlayerJoin success for "
 					+ dCPlayer.getPlayer().getName());
-			dCPlayer.setElf(rs.getBoolean("iself"));
-			for (Skill skill : dCPlayer.getSkills()) {
-				if (skill != null)
-					skill.setLevel(rs.getInt(skill.toString()));
+			dCPlayer.setRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
+			for (Skill skill : dCPlayer.getSkills().values()) {
+				skill.setLevel(rs.getInt(skill.toString()));
 			}
 			rs.close();
 			conn.close();
@@ -317,10 +316,9 @@ final class DataManager {
 				conn.close();
 				return false;
 			}
-			dCPlayer.setElf(rs.getBoolean("iself"));
-			for (Skill skill : dCPlayer.getSkills()) {
-				if (skill != null)
-					skill.setLevel(rs.getInt(skill.toString()));
+			dCPlayer.setRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
+			for (Skill skill : dCPlayer.getSkills().values()) {
+				skill.setLevel(rs.getInt(skill.toString()));
 			}
 			rs.close();
 			conn.close();
@@ -499,11 +497,10 @@ final class DataManager {
 			Statement statement = conn.createStatement();
 			String sqlsend = "UPDATE dwarfs"
 					+ configManager.getConfigSkillsVersion() + " SET iself='"
-					+ dCPlayer.isElf() + "', ";
-			for (Skill skill : dCPlayer.getSkills())
-				if (skill != null)
-					sqlsend = sqlsend.concat(skill.toString() + "="
-							+ skill.getLevel() + ", ");
+					+ dCPlayer.getRace() + "', ";
+			for (Skill skill : dCPlayer.getSkills().values())
+				sqlsend = sqlsend.concat(skill.toString() + "="
+						+ skill.getLevel() + ", ");
 			sqlsend = sqlsend.substring(0, sqlsend.length() - 2)
 					+ " WHERE playername = '" + dCPlayer.getPlayer().getName()
 					+ "';";

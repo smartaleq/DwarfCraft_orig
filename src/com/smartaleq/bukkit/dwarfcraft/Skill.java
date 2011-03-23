@@ -68,7 +68,6 @@ public class Skill implements Cloneable {
 		return displayName;
 	}
 
-	@Deprecated
 	protected List<Effect> getEffects() {
 		return effects;
 	}

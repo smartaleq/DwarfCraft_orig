@@ -2,7 +2,6 @@ package com.smartaleq.bukkit.dwarfcraft;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -50,17 +49,6 @@ public class DwarfCraft extends JavaPlugin {
 	// TODO: deprecate this, there has to be a better way - move Out to Dwarf?
 	protected Out getOut() {
 		return out;
-	}
-
-	// this is never used, I don't think
-	@Deprecated
-	private Player getPlayer(String playerName) {
-		Player[] players = this.getServer().getOnlinePlayers();
-		for (Player player : players) {
-			if (player.getName().equalsIgnoreCase(playerName))
-				return player;
-		}
-		return null;
 	}
 
 	@Override

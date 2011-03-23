@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.craftbukkit.entity.*;
 import org.bukkit.entity.*;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -165,11 +164,11 @@ class DCEntityListener extends EntityListener {
 			if (toolId == 268||toolId ==272||toolId ==267||toolId ==283||toolId ==276) sword = true;
 		}
 		
-		List<Skill> skills = attacker.getSkills();
-		for (Skill s : skills) {
+		HashMap<Integer, Skill> skills = attacker.getSkills();
+		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.SWORDDURABILITY && sword) {
-					double effectAmount = e.getEffectAmount(attacker);
+//					double effectAmount = e.getEffectAmount(attacker);
 					if (DwarfCraft.debugMessagesThreshold < 2)
 						System.out
 								.println("DC2: affected durability of a sword - old:"
@@ -181,7 +180,11 @@ class DCEntityListener extends EntityListener {
 						System.out
 								.println("DC3: affected durability of a sword - new:"
 										+ tool.getDurability());
-					Util.toolChecker((Player) damager);
+					boolean brokentool = Util.toolChecker((Player) damager);
+					if (DwarfCraft.debugMessagesThreshold < 2)
+						System.out
+								.println("DC2: sword broken after durability check:"
+										+ brokentool);
 				}
 				if (DwarfCraft.debugMessagesThreshold < 1)System.out.println("DC1: effect:"+e.getId()+e.getEffectType()+sword);
 					if (e.getEffectType() == EffectType.PVEDAMAGE && !isPVP
@@ -236,17 +239,17 @@ class DCEntityListener extends EntityListener {
 		DCPlayer defendDwarf = null;
 		if(attacker instanceof Player){
 			attackDwarf = plugin.getDataManager().find((Player) attacker);
-			for (Skill s : attackDwarf.getSkills()) {
+			for (Skill s : attackDwarf.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.BOWATTACK) {
-						damage = event.getDamage() * e.getEffectAmount(attackDwarf);
+						damage = e.getEffectAmount(attackDwarf);
 					}
 				}
 			}
 		}
 		if(hitThing instanceof Player){
 			defendDwarf = plugin.getDataManager().find((Player) hitThing);
-			for (Skill s : defendDwarf.getSkills()) {
+			for (Skill s : defendDwarf.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.BOWDEFEND) {
 						mitigation = armorMitigation(EffectType.BOWDEFEND, defendDwarf);
@@ -267,7 +270,7 @@ class DCEntityListener extends EntityListener {
 			return;
 		DCPlayer dCPlayer = plugin.getDataManager().find((Player) event.getEntity());
 		double damage = event.getDamage();
-		for (Skill s : dCPlayer.getSkills()) {
+		for (Skill s : dCPlayer.getSkills().values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.FALLDAMAGE && event
 						.getCause() == DamageCause.FALL){
@@ -332,12 +335,8 @@ class DCEntityListener extends EntityListener {
 		items.clear();
 		if (killMap.containsKey(event.getEntity())){
 			DCPlayer killer = killMap.get(deadThing);
-			for (Skill s : killer.getSkills()) {
-				if (s == null)
-					continue;
+			for (Skill s : killer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
-					if (e == null)
-						continue;
 					if (e.getEffectType() == EffectType.MOBDROP) {
 						if (
 								   (e.getId() == 810 && (deadThing instanceof CraftPig))
@@ -377,7 +376,7 @@ class DCEntityListener extends EntityListener {
 	protected double armorMitigation(EffectType type, DCPlayer defendDwarf ){
 		double multiplier = 1;
 		DCPlayer dCPlayer = plugin.getDataManager().find(defendDwarf.getPlayer());
-		for (Skill s:dCPlayer.getSkills()){
+		for (Skill s:dCPlayer.getSkills().values()){
 			for (Effect e: s.getEffects()){
 				if (e.getEffectType()==type){
 					if (type == EffectType.BOWDEFEND)

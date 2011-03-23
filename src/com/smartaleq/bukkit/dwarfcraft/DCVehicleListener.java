@@ -42,7 +42,7 @@ class DCVehicleListener extends VehicleListener {
 		plugin.getDataManager().removeVehicle(event.getVehicle());
 	}
 
-	// public void onVehicleDestroyed(VehicleDestroyedEvent event)
+//	 public void onVehicleDestroyed(VehicleDestroyedEvent event)
 
 	/**
 	 * Called when a vehicle moves.
@@ -60,12 +60,8 @@ class DCVehicleListener extends VehicleListener {
 																// ride boats.
 		double effectAmount = 1.0;
 
-		for (Skill s : dCPlayer.getSkills()) {
-			if (s == null)
-				continue;
+		for (Skill s : dCPlayer.getSkills().values()) {
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
 				if (e.getEffectType() == EffectType.VEHICLEMOVE) {
 					effectAmount = e.getEffectAmount(dCPlayer);
 				}

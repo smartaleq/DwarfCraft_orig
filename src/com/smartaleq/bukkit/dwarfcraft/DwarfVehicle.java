@@ -24,15 +24,15 @@ public class DwarfVehicle {
 		return false;
 	}
 
-	private Location getLocation() {
+	protected Location getLocation() {
 		return location;
 	}
 
-	private Vehicle getVehicle() {
+	protected Vehicle getVehicle() {
 		return vehicle;
 	}
 
-	private Vector getVelocity() {
+	protected Vector getVelocity() {
 		return velocity;
 	}
 

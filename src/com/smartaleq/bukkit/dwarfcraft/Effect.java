@@ -12,7 +12,6 @@ final class Effect {
 	final private double noviceLevelUpMultiplier;
 	final private double minValue;
 	final private double maxValue;
-	final private boolean floorResult;
 	final private boolean hasException;
 	final private double exceptionLow;
 	final private double exceptionHigh;
@@ -27,7 +26,7 @@ final class Effect {
 
 	protected Effect(int id, double baseValue, double levelUpMultiplier,
 			double noviceLevelUpMultiplier, double minValue, double maxValue,
-			boolean floorResult, boolean hasException, double exceptionLow,
+			boolean hasException, double exceptionLow,
 			double exceptionHigh, double exceptionValue, int elfEffectLevel,
 			EffectType effectType, int initiatorId, int outputId,
 			boolean toolRequired, int[] tools) {
@@ -37,7 +36,6 @@ final class Effect {
 		this.noviceLevelUpMultiplier = noviceLevelUpMultiplier;
 		this.minValue = minValue;
 		this.maxValue = maxValue;
-		this.floorResult = floorResult;
 		this.hasException = hasException;
 		this.exceptionLow = exceptionLow;
 		this.exceptionHigh = exceptionHigh;
@@ -253,8 +251,6 @@ final class Effect {
 			skillLevel = this.elfEffectLevel;
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
-		if (floorResult)
-			effectAmount = Math.floor(effectAmount);
 		effectAmount = Math.min(effectAmount, maxValue);
 		effectAmount = Math.max(effectAmount, minValue);
 		if (hasException && skillLevel <= exceptionHigh
@@ -279,8 +275,6 @@ final class Effect {
 		double effectAmount = baseValue;
 		effectAmount += skillLevel * levelUpMultiplier;
 		effectAmount += Math.min(skillLevel, 5) * noviceLevelUpMultiplier;
-		if (floorResult)
-			effectAmount = Math.floor(effectAmount);
 		effectAmount = Math.min(effectAmount, maxValue);
 		effectAmount = Math.max(effectAmount, minValue);
 		if (hasException && skillLevel <= exceptionHigh

@@ -187,7 +187,7 @@ class DCCommand extends Command {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1: started command 'effectinfo'");
 				DCPlayer dCPlayer = new DCPlayer(plugin, null);
-				Effect effect = new Effect(0, 0, 0, 0, 0, 0, false, false, 0,
+				Effect effect = new Effect(0, 0, 0, 0, 0, 0, false, 0,
 						0, 0, 0, null, 0, 0, false, null);
 				desiredArguments.add(dCPlayer);
 				desiredArguments.add(effect);
@@ -279,7 +279,7 @@ class DCCommand extends Command {
 					else throw e;
 				}
 				if(skill == null){
-					for(Skill s:dCPlayer.getSkills()){
+					for(Skill s:dCPlayer.getSkills().values()){
 						setSkill(dCPlayer, name, s, level);
 					}
 				}

@@ -1,7 +1,6 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-import java.util.List;
-
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,7 +35,7 @@ class DCBlockListener extends BlockListener {
 			return;
 		Player player = event.getPlayer();
 		DCPlayer dCPlayer = plugin.getDataManager().find(player);
-		List<Skill> skills = dCPlayer.getSkills();
+		HashMap<Integer, Skill> skills = dCPlayer.getSkills();
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -52,13 +51,8 @@ class DCBlockListener extends BlockListener {
 		// Logic var
 		boolean blockDropChange = false;
 
-		for (Skill s : skills) {
-			if (s == null)
-				continue;
+		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
-
 				// Check if blockdrop change happens
 				if (e.getEffectType() == EffectType.BLOCKDROP
 						&& e.getInitiatorId() == materialId) {
@@ -125,7 +119,7 @@ class DCBlockListener extends BlockListener {
 		// General information
 		Player player = event.getPlayer();
 		DCPlayer dCPlayer = plugin.getDataManager().find(player);
-		List<Skill> skills = dCPlayer.getSkills();
+		HashMap<Integer, Skill> skills = dCPlayer.getSkills();
 
 		// Effect Specific information
 		ItemStack tool = player.getItemInHand();
@@ -140,7 +134,7 @@ class DCBlockListener extends BlockListener {
 					.println("DC-1: damage level = " + event.getDamageLevel());
 		if (event.getDamageLevel() != BlockDamageLevel.STARTED)
 			return;
-		for (Skill s : skills) {
+		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
 				if (e.getEffectType() == EffectType.DIGTIME
 						&& e.getInitiatorId() == materialId) {
@@ -177,7 +171,7 @@ class DCBlockListener extends BlockListener {
 	public void onBlockRightClick(BlockRightClickEvent event) {
 		Player player = event.getPlayer();
 		DCPlayer dCPlayer = plugin.getDataManager().find(player);
-		List<Skill> skills = dCPlayer.getSkills();
+		HashMap<Integer, Skill> skills = dCPlayer.getSkills();
 		ItemStack tool = player.getItemInHand();
 		int toolId = -1;
 		short durability = 0;
@@ -188,12 +182,8 @@ class DCBlockListener extends BlockListener {
 		Block block = event.getBlock();
 		Location loc = block.getLocation();
 		Material material = event.getBlock().getType();
-		for (Skill s : skills) {
-			if (s == null)
-				continue;
+		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
 				if (e.getEffectType() == EffectType.PLOWDURABILITY) {
 					for (int id : e.getTools()) {
 						if (id == toolId

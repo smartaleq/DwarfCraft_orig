@@ -6,7 +6,8 @@ import org.bukkit.entity.Entity;
 
 public class BasicHumanNpcList extends HashMap<String, BasicHumanNpc> {
 
-    public boolean containsBukkitEntity(Entity entity)
+
+	public boolean containsBukkitEntity(Entity entity)
     {
         for(BasicHumanNpc bnpc : this.values())
         {

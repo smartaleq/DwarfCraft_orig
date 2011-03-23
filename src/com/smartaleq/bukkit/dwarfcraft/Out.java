@@ -269,9 +269,7 @@ public class Out {
 		}
 		boolean odd = true;
 		String untrainedSkills = "&6Untrained Skills: ";
-		for (Skill s : dCPlayer.getSkills()) {
-			if (s == null)
-				continue;
+		for (Skill s : dCPlayer.getSkills().values()) {
 			if (s.getLevel() == 0) {
 				untrainedSkills = untrainedSkills.concat("|&7"
 						+ s.getDisplayName() + "&6| ");

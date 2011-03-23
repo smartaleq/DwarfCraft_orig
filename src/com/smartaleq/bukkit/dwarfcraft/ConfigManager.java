@@ -22,7 +22,8 @@ final class ConfigManager {
 	private String configMessagesFileName;
 	private String configGreeterMessagesFileName;
 	private String dbpath;
-	private HashMap<Race, ArrayList<Skill>> skillsArray = new HashMap<Race,ArrayList<Skill>>();
+	
+	private HashMap<Race, HashMap<Integer, Skill>> skillsArray = new HashMap<Race,HashMap<Integer, Skill>>();
 	private Race defaultRace;
 	private Race optOutRace;
 	private HashMap<String, Race> raceMap = new HashMap<String, Race>();
@@ -33,10 +34,16 @@ final class ConfigManager {
 		configDirectory = directory;
 		configMainFileName = paramsFileName;
 
+		try{
 		if (!readConfigFile() || !readSkillsFile() || !readEffectsFile()
 				 || !readMessagesFile()) {
 			System.out
 					.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
+			plugin.getServer().getPluginManager().disablePlugin(plugin);
+		}
+		}catch (Exception e){
+			e.printStackTrace();
+			System.out.println("[SEVERE] Failed to Enable DwarfCraft Skills and Effects)");
 			plugin.getServer().getPluginManager().disablePlugin(plugin);
 		}
 
@@ -46,7 +53,7 @@ final class ConfigManager {
 	protected HashMap<Integer, Skill> getAllSkills() {
 		HashMap<Integer, Skill> newSkillsArray = new HashMap<Integer,Skill>();
 		for(Race r:raceMap.values()){
-			for (Skill s : skillsArray.get(r)) {
+			for (Skill s : skillsArray.get(r).values()) {
 				if (newSkillsArray.containsKey(s.getId())) continue;
 				newSkillsArray.put(s.getId(), s.clone());
 			}
@@ -54,18 +61,18 @@ final class ConfigManager {
 		return newSkillsArray;
 	}
 	
-	protected ArrayList<Skill> getAllSkills(Race race) {
-		ArrayList<Skill> newSkillsArray = new ArrayList<Skill>();
-		ArrayList<Skill> raceList = skillsArray.get(race); 
-		for (Skill s : raceList) {
-			newSkillsArray.add(s.clone());
+	protected HashMap<Integer, Skill> getAllSkills(Race race) {
+		HashMap<Integer, Skill> newSkillsArray = new HashMap<Integer, Skill>();
+		HashMap<Integer, Skill> raceList = skillsArray.get(race); 
+		for (Skill s : raceList.values()) {
+			newSkillsArray.put(s.getId(),s.clone());
 		}
 		return newSkillsArray;
 	}
 	
 	protected Skill getGenericSkill(int skillId){
 		for (Race race:raceMap.values()){
-			for (Skill s:skillsArray.get(race)){
+			for (Skill s:skillsArray.get(race).values()){
 				if(s.getId() == skillId) return s.clone(); 
 			}
 		}	
@@ -184,37 +191,32 @@ final class ConfigManager {
 				double noviceLevelUpMultiplier = Double.parseDouble(theline[3]);
 				double minValue = Double.parseDouble(theline[4]);
 				double maxValue = Double.parseDouble(theline[5]);
-				boolean floorResult = (theline[6].equalsIgnoreCase("TRUE"));
-				boolean hasException = (theline[7].equalsIgnoreCase("TRUE"));
-				int exceptionLow = Integer.parseInt(theline[8]);
-				int exceptionHigh = Integer.parseInt(theline[9]);
-				double exceptionValue = Double.parseDouble(theline[10]);
-				int elfLevel = Integer.parseInt(theline[11]);
-				EffectType effectType = EffectType.getEffectType(theline[12]);
-				int initiator = Integer.parseInt(theline[13]);
-				int output = Integer.parseInt(theline[14]);
-				boolean toolRequired = (theline[15].equalsIgnoreCase("TRUE"));
+				boolean hasException = (theline[6].equalsIgnoreCase("TRUE"));
+				int exceptionLow = Integer.parseInt(theline[7]);
+				int exceptionHigh = Integer.parseInt(theline[8]);
+				double exceptionValue = Double.parseDouble(theline[9]);
+				int elfLevel = Integer.parseInt(theline[10]);
+				EffectType effectType = EffectType.getEffectType(theline[11]);
+				int initiator = Integer.parseInt(theline[12]);
+				int output = Integer.parseInt(theline[13]);
+				boolean toolRequired = (theline[14].equalsIgnoreCase("TRUE"));
 
-				int[] tooltable = { Integer.parseInt(theline[16]),
+				int[] tooltable = { Integer.parseInt(theline[15]),
+						Integer.parseInt(theline[16]),
 						Integer.parseInt(theline[17]),
 						Integer.parseInt(theline[18]),
-						Integer.parseInt(theline[19]),
-						Integer.parseInt(theline[20]) };
+						Integer.parseInt(theline[19]) };
 				for (Race race:raceMap.values()){
-					for (Skill skill : skillsArray.get(race)) {
-						if (effectId / 10 == skill.getId()) {
-							skill.getEffects().add(
-									new Effect(effectId, baseValue,
-											levelUpMultiplier,
-											noviceLevelUpMultiplier, minValue,
-											maxValue, floorResult, hasException,
-											exceptionLow, exceptionHigh,
-											exceptionValue, elfLevel, effectType,
-											initiator, output, toolRequired,
-											tooltable));
-							break;
-						}
-					}
+					Skill skill = skillsArray.get(race).get(effectId/10);
+					if(skill!=null) skill.getEffects().add(
+								new Effect(effectId, baseValue,
+										levelUpMultiplier,
+										noviceLevelUpMultiplier, minValue,
+										maxValue, hasException,
+										exceptionLow, exceptionHigh,
+										exceptionValue, elfLevel, effectType,
+										initiator, output, toolRequired,
+										tooltable));
 				}
 				line = br.readLine();
 			}
@@ -366,7 +368,7 @@ final class ConfigManager {
 				// create the new skill in the skillsarray
 				for (int i = 12;i<theline.length;i++){
 					Race race = findRace(theline[i], true);
-					skillsArray.get(race).add(new Skill(id, displayName, level, effects,
+					skillsArray.get(race).put(id,new Skill(id, displayName, level, effects,
 							TrainingItem1Mat, TrainingItem1BaseCost,
 							TrainingItem1MaxAmount, TrainingItem2Mat,
 							TrainingItem2BaseCost, TrainingItem2MaxAmount,
@@ -386,13 +388,13 @@ final class ConfigManager {
 		return false;
 	}
 
-	private Race findRace(String string, boolean addNew) {
+	protected Race findRace(String string, boolean addNew) {
 		for(String s: raceMap.keySet())
 			if (s.equalsIgnoreCase(string)) return raceMap.get(s);
 		if (!addNew) return null;
 		Race newRace= new Race(string);
 		raceMap.put(string, newRace);
-		skillsArray.put(newRace, new ArrayList<Skill>());
+		skillsArray.put(newRace, new HashMap<Integer, Skill>());
 		return newRace;
 	}
 
@@ -416,7 +418,6 @@ final class ConfigManager {
 	public void setOptOutRace(Race optOutRace) {
 		this.optOutRace = optOutRace;
 	}
-
 
 	public Race getOptOutRace() {
 		return optOutRace;

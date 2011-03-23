@@ -1,10 +1,8 @@
 package com.smartaleq.bukkit.dwarfcraft;
 
-import java.util.List;
-
+import java.util.HashMap;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerItemEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +31,7 @@ class DCPlayerListener extends PlayerListener {
 		// General information
 		Player player = event.getPlayer();
 		DCPlayer dCPlayer = plugin.getDataManager().find(player);
-		List<Skill> skills = dCPlayer.getSkills();
+		HashMap<Integer, Skill> skills = dCPlayer.getSkills();
 		boolean hadEffect = false;
 		// Effect Specific information
 		ItemStack item = player.getItemInHand();
@@ -42,24 +40,16 @@ class DCPlayerListener extends PlayerListener {
 			itemId = item.getTypeId();
 		}
 
-		for (Skill s : skills) {
-			if (s == null)
-				continue;
+		for (Skill s : skills.values()) {
 			for (Effect e : s.getEffects()) {
-				if (e == null)
-					continue;
 				if (e.getEffectType() == EffectType.EAT
 						&& e.getInitiatorId() == itemId) {
-					if (player.getHealth()>=20) {
-						event.setCancelled(true);
-						return;
-					}
 					if (DwarfCraft.debugMessagesThreshold < 8)
 						System.out.println("DC8: ate food:"
 								+ item.getType().toString() + " for "
 								+ e.getEffectAmount(dCPlayer));
-					player.setHealth((int) (player.getHealth() + e
-							.getEffectAmount(dCPlayer)));
+					player.setHealth(Math.min((int) (player.getHealth() + Util.randomAmount(e
+							.getEffectAmount(dCPlayer))), 20));
 					player.getInventory().removeItem(item);
 					hadEffect = true;
 

@@ -44,10 +44,7 @@ final class DwarfTrainer {
 		basicNpcUniqueId = uniqueId;
 		basicNpcName = name;
 
-		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(uniqueId, name, location
-				.getWorld(), location.getX(), location
-				.getY(), location.getZ(), location
-				.getYaw(), location.getPitch());
+		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(basicNpcUniqueId, basicNpcName, world, x, y, z, yaw, pitch);
 
 		Material material;
 		if (greeter)
@@ -84,7 +81,9 @@ final class DwarfTrainer {
 		basicNpcName = newName;
 		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(newUniqueId, newName,
 				newWorld, newX, newY, newZ, newYaw, newPitch);
-
+		//experimental likely to mess stuff up
+		((Player) basicHumanNpc.getBukkitEntity()).setSneaking(true);
+		
 		Material material = newMaterial;
 		assert (material != null);
 		if (material != Material.AIR) {
@@ -189,25 +188,20 @@ final class DwarfTrainer {
 		return;
 	}
 
-	private void spawn() {
-		basicHumanNpc = NpcSpawner.SpawnBasicHumanNpc(basicNpcUniqueId,
-				basicNpcName, world, x, y, z, yaw, pitch);
-	}
-
 	protected void trainSkill(DCPlayer dCPlayer) {
 		boolean soFarSoGood = true;
 		Skill skill = dCPlayer.getSkill(this.skillId);
-		assert (skill != null);
 		Player player = dCPlayer.getPlayer();
-		List<ItemStack> trainingCosts = dCPlayer.calculateTrainingCost(skill);
-
-		// Must be a dwarf, not an elf
-		if (dCPlayer.isElf()) {
+				// Must have the skill
+		if (skill == null) {
 			plugin.getOut().sendMessage(player,
-					"&cYou are an &fElf &cnot a &9Dwarf&6!",
-					"&6[Train &b" + skill.getId() + "&6] ");
+					"&cYour race doesn't have this skill!",
+					"&6[Train &b" + this.skillId + "&6] ");
 			soFarSoGood = false;
+			return;
 		}
+		
+		List<ItemStack> trainingCosts = dCPlayer.calculateTrainingCost(skill);
 		// Must have skill level between 0 and 29
 		if (skill.getLevel() >= 30) {
 			plugin.getOut().sendMessage(player,
@@ -215,7 +209,7 @@ final class DwarfTrainer {
 					"&6[Train &b" + skill.getId() + "&6] ");
 			soFarSoGood = false;
 		}
-		if (skill.getLevel() > maxSkill) {
+		if (skill.getLevel() >= maxSkill) {
 			plugin.getOut().sendMessage(player,
 					"&cI can't teach you any more, find a higher level trainer",
 					"&6[Train &b" + skill.getId() + "&6] ");

@@ -36,7 +36,7 @@ class DCCraftSchedule implements Runnable {
 		if (outputStack != null) {
 			int materialId = outputStack.id;
 			int damage = outputStack.damage;
-			for (Skill s : dCPlayer.getSkills()) {
+			for (Skill s : dCPlayer.getSkills().values()) {
 				for (Effect e : s.getEffects()) {
 					if (e.getEffectType() == EffectType.CRAFT
 							&& materialId == e.getOutputId() && damage == e.getInitiatorId()) {

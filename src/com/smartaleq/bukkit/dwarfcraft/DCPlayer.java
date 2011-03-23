@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -14,8 +13,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 class DCPlayer {
 	private final DwarfCraft plugin;
-	private List<Skill> skills;
-	private boolean isElf;
+	private HashMap<Integer, Skill> skills;
 	private Player player;
 	private Race race ;
 
@@ -26,7 +24,6 @@ class DCPlayer {
 	protected DCPlayer(final DwarfCraft plugin, Player whoami) {
 		this.plugin = plugin;
 		player = whoami;
-		isElf = false;
 		race = plugin.getConfigManager().getDefaultRace();
 	}
 
@@ -43,9 +40,7 @@ class DCPlayer {
 		// the skill is (what quartile)
 		if (DwarfCraft.debugMessagesThreshold < 0)
 			System.out.println("DC0: starting skill ordering for quartiles");
-		for (Skill s : getSkills()) {
-			if (s == null)
-				continue;
+		for (Skill s : getSkills().values()) {
 			if (s.getLevel() > 5) {
 				levelList[i] = s.getLevel();
 				i++;
@@ -98,8 +93,7 @@ class DCPlayer {
 	 */
 	private int countHighSkills() {
 		int highCount = 0;
-		for (Skill s : getSkills()) {
-			if (s != null)
+		for (Skill s : getSkills().values()) {
 				if (s.getLevel() > 5)
 					highCount++;
 		}
@@ -141,26 +135,17 @@ class DCPlayer {
 	 * @return
 	 */
 	protected int getDwarfLevel() {
-		if (isElf)
-			return 0;
 		int playerLevel = 5;
 		int highestSkill = 0;
-		for (Skill s : getSkills()) {
-			if (s == null)
-				continue;
-			if (s.getLevel() > highestSkill) {
+		for (Skill s : getSkills().values()) {
+			if (s.getLevel() > highestSkill)
 				highestSkill = s.getLevel();
-			}
-			;
-			if (s.getLevel() > 5) {
+			
+			if (s.getLevel() > 5)
 				playerLevel = playerLevel + s.getLevel() - 5;
-			}
-			;
 		}
-		if (playerLevel == 5) {
+		if (playerLevel == 5) 
 			playerLevel = highestSkill;
-		}
-		;
 		return playerLevel;
 	}
 
@@ -191,7 +176,7 @@ class DCPlayer {
 	 * @return Skill or null if none found
 	 */
 	protected Skill getSkill(Effect effect) {
-		for (Skill skill : getSkills()) {
+		for (Skill skill : skills.values()) {
 			if (skill.getId() == effect.getId() / 10)
 				return skill;
 		}
@@ -205,11 +190,8 @@ class DCPlayer {
 	 * @return Skill or null if none found
 	 */
 	protected Skill getSkill(int skillId) {
-		for (Skill skill : getSkills()) {
-			if (skill.getId() == skillId)
-				return skill;
-		}
-		return null;
+		Skill skill = skills.get(skillId);
+		return skill;
 	}
 
 	/**
@@ -222,7 +204,7 @@ class DCPlayer {
 		try {
 			return getSkill(Integer.parseInt(skillName));
 		} catch (NumberFormatException n) {
-			for (Skill skill : getSkills()) {
+			for (Skill skill : getSkills().values()) {
 				if (skill.getDisplayName() == null)
 					continue;
 				if (skill.getDisplayName().equalsIgnoreCase(skillName))
@@ -241,13 +223,12 @@ class DCPlayer {
 		return null;
 	}
 
-	@Deprecated
-	protected List<Skill> getSkills() {
+	protected HashMap<Integer, Skill> getSkills() {
 		return skills;
 	}
 	
 	protected boolean isElf() {
-		if (isElf)
+		if (skills.size()==0)
 			return true;
 		return false;
 	}
@@ -257,10 +238,10 @@ class DCPlayer {
 	 * 
 	 * @return total level
 	 */
-	private int level() {
+	protected int level() {
 		int playerLevel = 5;
 		int highestSkill = 0;
-		for (Skill s : getSkills()) {
+		for (Skill s : getSkills().values()) {
 			if (s.getLevel() > highestSkill)
 				highestSkill = s.getLevel();
 			if (s.getLevel() > 5)
@@ -277,28 +258,28 @@ class DCPlayer {
 	 * 
 	 * @return
 	 */
-	private boolean makeElf() {
-		if (isElf)
-			return false;
-		isElf = true;
-		for (Skill skill : getSkills())
-			if (skill != null)
-				skill.setLevel(0);
-		plugin.getDataManager().saveDwarfData(this);
-		return isElf;
-	}
-
-	/**
-	 * Makes an elf into a dwarf
-	 */
-	protected boolean makeElfIntoDwarf() {
-		isElf = false;
-		for (Skill skill : getSkills())
-			if (skill != null)
-				skill.setLevel(0);
-		plugin.getDataManager().saveDwarfData(this);
-		return true;
-	}
+//	private boolean makeElf() {
+//		if (isElf)
+//			return false;
+//		isElf = true;
+//		for (Skill skill : getSkills().values)
+//			if (skill != null)
+//				skill.setLevel(0);
+//		plugin.getDataManager().saveDwarfData(this);
+//		return isElf;
+//	}
+//
+//	/**
+//	 * Makes an elf into a dwarf
+//	 */
+//	protected boolean makeElfIntoDwarf() {
+//		isElf = false;
+//		for (Skill skill : getSkills().values())
+//			if (skill != null)
+//				skill.setLevel(0);
+//		plugin.getDataManager().saveDwarfData(this);
+//		return true;
+//	}
 
 
 	/**
@@ -310,38 +291,37 @@ class DCPlayer {
 	 */
 	protected void removeInventoryItems(int itemId, int amount) {
 		Inventory inventory = player.getInventory();
-		ItemStack[] items = inventory.getContents();
+		ItemStack[] contents = inventory.getContents();
+		ItemStack[] newcontents = contents.clone();
 		int amountLeft = amount;
 		for (int i = 0; i < 40; i++) {
-			if (items[i].getTypeId() == itemId) {
-				if (items[i].getAmount() > amountLeft) {
-					items[i].setAmount(items[i].getAmount() - amountLeft);
+			ItemStack item = contents[i];
+			if (item.getTypeId() == itemId) {
+				if (item.getAmount() > amountLeft) {
+					newcontents[i].setAmount(item.getAmount() - amountLeft);
 					break;
-				} else if (items[i].getAmount() == amountLeft) {
-					inventory.removeItem(items[i]);
+				} else if (item.getAmount() == amountLeft) {
+					newcontents[i] = null;
 					break;
 				} else {
-					amountLeft = amountLeft - items[i].getAmount();
-					inventory.removeItem(items[i]);
+					amountLeft = amountLeft - item.getAmount();
+					newcontents[i] = null;
 				}
 			}
 		}
-	}
-
-	protected void setElf(boolean elf) {
-		isElf = elf;
+		player.getInventory().setContents(newcontents);
 	}
 
 	/**
 	 * @param skills
 	 *            the skills to set
 	 */
-	protected void setSkills(List<Skill> skills) {
+	protected void setSkills(HashMap<Integer,Skill> skills) {
 		this.skills = skills;
 	}
 
 	protected int skillLevel(int i) {
-		for (Skill s : getSkills())
+		for (Skill s : getSkills().values())
 			if (s.getId() == i)
 				return s.getLevel();
 		return 0;
@@ -359,6 +339,7 @@ class DCPlayer {
 	
 	public void setRace(Race race) {
 		this.race = race;
+		this.skills = plugin.getConfigManager().getAllSkills(race);
 	}
 
 	public Race getRace() {

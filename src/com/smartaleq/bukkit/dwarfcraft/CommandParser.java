@@ -180,17 +180,16 @@ final class CommandParser {
 		if (target == null)
 			target = plugin.getDataManager().find((Player) sender);
 		if (!(sender instanceof Player)) {
-			for (Skill s : plugin.getConfigManager().getAllSkills(target.getRace())) {
-				try {
-					skillID = Integer.parseInt(inputString);
-					if (s.getId() == skillID)
-						return s;
-				} catch (NumberFormatException nfe) {
-					if (inputString.length() < 5)
-						throw new DCCommandException(plugin,
-								Type.PARSESKILLFAIL);
+			try {
+				skillID = Integer.parseInt(inputString);
+				return plugin.getConfigManager().getAllSkills(target.getRace()).get(skillID);
+			} catch (NumberFormatException nfe) {
+				if (inputString.length() < 5)
+					throw new DCCommandException(plugin,
+							Type.PARSESKILLFAIL);
+				for (Skill s : plugin.getConfigManager().getAllSkills(target.getRace()).values()) {
 					if (s.getDisplayName().regionMatches(0, inputString, 0, 5))
-						return s;
+					return s;
 				}
 			}
 			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);
