@@ -213,7 +213,7 @@ class DCCommand extends Command {
 				if (DwarfCraft.debugMessagesThreshold < 1)
 					System.out.println("DC1#: started command 'race'");
 				if (args.length == 0 && sender instanceof Player)
-					plugin.getOut().race((Player) sender);
+					plugin.getOut().race(sender, (Player)sender);
 				DCPlayer dCPlayer = new DCPlayer(plugin, null);
 				Race newRace = null;
 				Boolean confirmed = false;
@@ -239,7 +239,7 @@ class DCCommand extends Command {
 					}
 					else throw e;
 				} catch (IndexOutOfBoundsException f) {
-					plugin.getOut().race((Player) sender);
+					plugin.getOut().race(sender, (Player) sender);
 					return true;
 				}
 				race(newRace, confirmed, dCPlayer);
@@ -392,14 +392,14 @@ class DCCommand extends Command {
 			if (confirm)
 				plugin.getOut().resetRace(sender, dCPlayer, newRace);
 			else
-				plugin.getOut().alreadyRace(sender, dCPlayer);
+				plugin.getOut().alreadyRace(sender, dCPlayer, newRace);
 		} else {
 			if (confirm) {
-				plugin.getOut().changedRace(sender, dCPlayer);
+				plugin.getOut().changedRace(sender, dCPlayer, newRace);
 				dCPlayer.changeRace(newRace);
 			} 
 			else {
-				plugin.getOut().confirmRace(sender, dCPlayer);
+				plugin.getOut().confirmRace(sender, dCPlayer, newRace);
 			}
 		}
 	}

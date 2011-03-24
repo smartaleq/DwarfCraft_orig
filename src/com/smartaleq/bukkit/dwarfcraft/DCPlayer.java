@@ -337,7 +337,7 @@ class DCPlayer {
 		return count;
 	}
 	
-	public void setRace(Race race) {
+	public void changeRace(Race race) {
 		this.race = race;
 		this.skills = plugin.getConfigManager().getAllSkills(race);
 	}
@@ -358,9 +358,4 @@ class DCPlayer {
 		}
 	}
 
-	public void changeRace(Race newRace) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

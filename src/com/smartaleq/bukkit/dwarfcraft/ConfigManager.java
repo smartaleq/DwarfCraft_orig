@@ -423,4 +423,23 @@ final class ConfigManager {
 		return optOutRace;
 	}
 
+
+	public Skill getGenericSkill(String skillName) {
+		for (Skill skill : getAllSkills().values()) {
+			if (skill.getDisplayName() == null)
+				continue;
+			if (skill.getDisplayName().equalsIgnoreCase(skillName))
+				return skill;
+			if (skill.toString().equalsIgnoreCase(skillName))
+				return skill;
+			if (skill.getDisplayName().toLowerCase()
+					.regionMatches(0, skillName.toLowerCase(), 0, 5))
+				return skill;
+			if (skill.toString().toLowerCase()
+					.regionMatches(0, skillName.toLowerCase(), 0, 5))
+				return skill;
+		}
+		return null;
+	}
+
 }

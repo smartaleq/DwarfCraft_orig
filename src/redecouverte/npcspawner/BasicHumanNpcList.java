@@ -4,6 +4,7 @@ import java.util.HashMap;
 import org.bukkit.entity.Entity;
 
 
+@SuppressWarnings("serial")
 public class BasicHumanNpcList extends HashMap<String, BasicHumanNpc> {
 
 

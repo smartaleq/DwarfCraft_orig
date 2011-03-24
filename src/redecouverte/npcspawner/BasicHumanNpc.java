@@ -10,7 +10,8 @@ import org.bukkit.entity.LivingEntity;
 public class BasicHumanNpc extends BasicNpc {
 
     private CHumanNpc mcEntity;
-    private static final Logger logger = Logger.getLogger("Minecraft");
+    @SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger("Minecraft");
 
     public BasicHumanNpc(CHumanNpc entity, String uniqueId, String name) {
         super(uniqueId, name);

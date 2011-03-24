@@ -505,28 +505,30 @@ public class Out {
 		}
 	}
 
-	protected void race(Player player) {
+	protected void race(CommandSender sender, Player player) {
 		// TODO Auto-generated method stub
+		sendMessage(sender, "You are a "+plugin.getDataManager().find(player).getRace());
 	}
 	
-	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer) {
+	public void alreadyRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
 		// TODO Auto-generated method stub
+		sendMessage(sender, "You are already a "+newRace);
 		
 	}
 
 	public void resetRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
 		// TODO Auto-generated method stub
-		
+		sendMessage(sender, "You are once again a fresh new "+newRace);
 	}
 
-	public void changedRace(CommandSender sender, DCPlayer dCPlayer) {
+	public void changedRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
 		// TODO Auto-generated method stub
-		
+		sendMessage(sender, "You are now a "+newRace);
 	}
 
-	public void confirmRace(CommandSender sender, DCPlayer dCPlayer) {
+	public void confirmRace(CommandSender sender, DCPlayer dCPlayer, Race newRace) {
 		// TODO Auto-generated method stub
-		
+		sendMessage(sender, "You need to confirm this command with confirm at the end");
 	}
 
 }

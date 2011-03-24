@@ -153,7 +153,7 @@ final class DataManager {
 
 	protected DCPlayer createDwarf(Player player) {
 		DCPlayer newDwarf = new DCPlayer(plugin, player);
-		newDwarf.setRace(plugin.getConfigManager().getDefaultRace());
+		newDwarf.changeRace(plugin.getConfigManager().getDefaultRace());
 		newDwarf.setSkills(plugin.getConfigManager().getAllSkills(newDwarf.getRace()));
 		for (Skill skill : newDwarf.getSkills().values())
 			skill.setLevel(0);
@@ -236,15 +236,13 @@ final class DataManager {
 	 * @return dwarf or null
 	 */
 	protected DCPlayer find(Player player) {
-		for (DCPlayer d : plugin.getDataManager().getDwarves()) {
+		for (DCPlayer d : dwarves) {
 			if (d != null)
 				if (d.getPlayer() != null)
 					if (d.getPlayer().getName().equalsIgnoreCase(player.getName())){
 					d.setPlayer(player);
 					return d;	
 					}
-						
-						
 		}
 		return null;
 	}
@@ -277,7 +275,7 @@ final class DataManager {
 				return false;
 			System.out.println("DC: PlayerJoin success for "
 					+ dCPlayer.getPlayer().getName());
-			dCPlayer.setRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
+			dCPlayer.changeRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
 			for (Skill skill : dCPlayer.getSkills().values()) {
 				skill.setLevel(rs.getInt(skill.toString()));
 			}
@@ -316,7 +314,7 @@ final class DataManager {
 				conn.close();
 				return false;
 			}
-			dCPlayer.setRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
+			dCPlayer.changeRace(plugin.getConfigManager().findRace(rs.getString("iself"),false));
 			for (Skill skill : dCPlayer.getSkills().values()) {
 				skill.setLevel(rs.getInt(skill.toString()));
 			}
@@ -327,12 +325,6 @@ final class DataManager {
 			e.printStackTrace();
 			return false;
 		}
-	}
-
-	@Deprecated
-	// TODO: remove this and replace by other stuff
-	protected List<DCPlayer> getDwarves() {
-		return dwarves;
 	}
 
 	protected GreeterMessage getGreeterMessage(String messageId) {

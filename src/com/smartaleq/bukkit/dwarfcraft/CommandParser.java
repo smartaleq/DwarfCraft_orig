@@ -202,7 +202,12 @@ final class CommandParser {
 				skill = target.getSkill(inputString);
 			}
 		} catch (NullPointerException npe) {
-			throw new DCCommandException(plugin, Type.EMPTYPLAYER);
+			try {
+				skillID = Integer.parseInt(inputString);
+				skill = plugin.getConfigManager().getGenericSkill(skillID);
+			} catch (NumberFormatException nfe) {
+				skill = plugin.getConfigManager().getGenericSkill(inputString);
+			}
 		}
 		if (skill == null)
 			throw new DCCommandException(plugin, Type.PARSESKILLFAIL);

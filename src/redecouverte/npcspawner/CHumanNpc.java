@@ -15,7 +15,8 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 public class CHumanNpc extends EntityPlayer {
 
-    private static final Logger logger = Logger.getLogger("Minecraft");
+    @SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger("Minecraft");
     private int lastTargetId;
     private long lastBounceTick;
     private int lastBounceId;

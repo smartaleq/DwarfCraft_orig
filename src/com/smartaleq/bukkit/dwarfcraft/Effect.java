@@ -84,10 +84,7 @@ final class Effect {
 	 * @return
 	 */
 	protected String describeLevel(DCPlayer dCPlayer) {
-		if (dCPlayer == null)
-			return "Failed"; // TODO add failure code
 		String description = "no skill description";
-		// Variables used in skill descriptions
 		String initiator = Material.getMaterial(initiatorId).toString();
 		String output = Material.getMaterial(outputId).toString();
 		double effectAmount = getEffectAmount(dCPlayer);
